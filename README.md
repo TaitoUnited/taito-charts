@@ -1,17 +1,33 @@
-# taito-charts
+# Helm Chart Repository
 
-Create a new chart:
+## Creating a new chart
 
 ```
 taito create: my-chart
 ```
 
-Package current version of the chart:
+## Making changes to an existing chart
 
-```
-taito package: my-chart
-```
+1. Make some changes to the chart. You can test the changes locally by mounting `taito-charts` directory in taito-cli container:
 
-Publish chart by committing changes to git.
+    ```
+    -v ${taito_home_path}/projects/taito-charts:/taito-charts
+    ```
+
+    and by referencing the local chart directly in `requirements.yaml` of some project:
+
+    ```
+    repository: file://../../../taito-charts/full-stack
+    ```
+
+2. Increase chart version number in `Chart.yaml` and create a new package for it:
+
+    ```
+    taito package: my-chart
+    ```
+
+3. Publish new chart version by committing changes to git.
+
+## Conventions
 
 TODO: Use these conventions: [technical-requirements](https://github.com/helm/charts/blob/master/CONTRIBUTING.md#technical-requirements)

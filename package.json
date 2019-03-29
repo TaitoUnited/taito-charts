@@ -1,0 +1,8 @@
+{
+  "name": "taito-charts",
+  "scripts": {
+    "create": "sh -c 'helm create ${0}'",
+    "package": "sh -c 'helm package ${0} && mv ${0}*.tgz docs && npm run index'",
+    "index": "helm repo index docs --url https://taitounited.github.io/taito-charts"
+  }
+}

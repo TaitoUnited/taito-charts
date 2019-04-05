@@ -5,6 +5,15 @@ serviceAccount:
 podSecurityPolicy:
   enabled: true
 
+persistence:
+  enabled: false
+  existingClaim:
+  storageClass:
+  # NOTE: Google does not support ReadWriteMany
+  # --> all containers will be placed on the same Kubernetes node
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
 ingress:
   class: nginx
   tls: true
@@ -22,6 +31,7 @@ serviceDefaults:
   port: 8080
   tier:
   livenessPath: /healthz
+  livenessInitialDelay: 30
   # Security
   runAsUser:
   fsGroup:
@@ -39,6 +49,17 @@ serviceDefaults:
   # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
   # TODO vertical autoscaling:
   # https://cloud.google.com/kubernetes-engine/docs/how-to/vertical-pod-autoscaling
+  # Sidecar
+  sidecar:
+  # Mounts
+  temporaryVolumeMounts:
+    # - mountPath: /mnt/data
+    #   volumePath: data
+    #   readOnly: false
+  persistentVolumeMounts:
+    # - mountPath: /mnt/data
+    #   volumePath: data
+    #   readOnly: false
   # Env
   env:
     # Environment variables

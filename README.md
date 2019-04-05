@@ -8,7 +8,7 @@ taito create: my-chart
 
 ## Making changes to an existing chart
 
-1. Make some changes to the chart. You can test the changes locally by mounting `taito-charts` directory in taito-cli container:
+1. Make some changes to the chart. You can test the changes locally by mounting `taito-charts` directory in taito-cli container in `taito` bash script:
 
     ```
     -v ${taito_home_path}/projects/taito-charts:/taito-charts
@@ -26,7 +26,7 @@ taito create: my-chart
     taito package: my-chart
     ```
 
-3. Publish new chart version by committing changes to git.
+3. Publish new chart version by pushing changes to git.
 
 ## Conventions
 

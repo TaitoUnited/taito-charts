@@ -92,9 +92,21 @@ spec:
               path: {{ .livenessPath | default $defaults.livenessPath }}
               port: {{ .livenessPort | default .port | default $defaults.port }}
               scheme: HTTP
+            initialDelaySeconds: {{ .livenessInitialDelay | default $defaults.livenessInitialDelay }}
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: {{ .livenessPath | default $defaults.livenessPath }}
+              port: {{ .livenessPort | default .port | default $defaults.port }}
+              scheme: HTTP
             initialDelaySeconds: 30
-            periodSeconds: 15
-            timeoutSeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+            successThreshold: 1
           {{- end }}
           envFrom:
             - prefix: COMMON_
@@ -128,10 +140,28 @@ spec:
                   key: {{ regexFind "[a-zA-Z]*$" $value }}
             {{- end }}
           volumeMounts:
+          {{- if .temporaryVolumeMounts }}
+          {{- range .temporaryVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: temporary-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- if $root.Values.persistence.enabled }}
+          {{- if .persistentVolumeMounts }}
+          {{- range .persistentVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: persistent-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
           {{- if .sidecar }}
           {{- if .sidecar.enabled }}
           {{- if .sidecar.sharedVolume }}
-            - name: shared
+            - name: sidecar-volume
               mountPath: {{ .sidecar.sharedVolume.mountPath }}
           {{- end }}
           {{- end }}
@@ -198,8 +228,26 @@ spec:
                   key: {{ regexFind "[a-zA-Z]*$" $value }}
             {{- end }}
           volumeMounts:
+          {{- if .sidecar.temporaryVolumeMounts }}
+          {{- range .sidecar.temporaryVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: temporary-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- if $root.Values.persistence.enabled }}
+          {{- if .sidecar.persistentVolumeMounts }}
+          {{- range .sidecar.persistentVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: persistent-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
           {{- if .sidecar.sharedVolume }}
-            - name: shared
+            - name: sidecar-volume
               mountPath: {{ .sidecar.sharedVolume.sidecarMountPath }}
           {{- end }}
           {{- if and (.sidecar.serviceAccount) (eq $provider "gcloud") }}
@@ -234,10 +282,21 @@ spec:
               mountPath: /cloudsql
         {{- end }}
       volumes:
+        {{- if .temporaryVolumeMounts }}
+        - name: temporary-volume
+          emptyDir:
+        {{- end }}
+        {{- if $root.Values.persistence.enabled }}
+        {{- if .persistentVolumeMounts }}
+        - name: persistent-volume
+          persistentVolumeClaim:
+            claimName: {{ $root.Values.persistence.existingClaim | default (include "fullname" $root) }}
+        {{- end }}
+        {{- end }}
         {{- if .sidecar }}
         {{- if .sidecar.enabled }}
         {{- if .sidecar.sharedVolume }}
-        - name: shared
+        - name: sidecar-volume
           emptyDir:
         {{- end }}
         {{- end }}

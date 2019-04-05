@@ -14,6 +14,8 @@ metadata:
     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
     release: {{ $root.Release.Name }}
     heritage: {{ $root.Release.Service }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
     app: {{ template "name" $root }}

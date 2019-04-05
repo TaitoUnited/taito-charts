@@ -203,9 +203,21 @@ spec:
               path: {{ .sidecar.livenessPath | default $defaults.livenessPath }}
               port: {{ .sidecar.livenessPort | default .sidecar.port | default $defaults.port }}
               scheme: HTTP
+            initialDelaySeconds: {{ .sidecar.livenessInitialDelay | default $defaults.livenessInitialDelay }}
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: {{ .sidecar.livenessPath | default $defaults.livenessPath }}
+              port: {{ .sidecar.livenessPort | default .sidecar.port | default $defaults.port }}
+              scheme: HTTP
             initialDelaySeconds: 30
-            periodSeconds: 15
-            timeoutSeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+            successThreshold: 1
           {{- end }}
           envFrom:
             - prefix: COMMON_

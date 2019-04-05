@@ -89,23 +89,23 @@ spec:
           {{- if not .livenessDisabled }}
           livenessProbe:
             httpGet:
-              path: {{ .livenessPath | default $defaults.livenessPath }}
-              port: {{ .livenessPort | default .port | default $defaults.port }}
+              path: {{ coalesce .livenessPath $defaults.livenessPath }}
+              port: {{ coalesce .livenessPort .port $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: {{ .livenessInitialDelay | default $defaults.livenessInitialDelay }}
+            initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay }}
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
             successThreshold: 1
           readinessProbe:
             httpGet:
-              path: {{ .livenessPath | default $defaults.livenessPath }}
-              port: {{ .livenessPort | default .port | default $defaults.port }}
+              path: {{ coalesce .readinessPath .livenessPath $defaults.livenessPath }}
+              port: {{ coalesce .readinessPort .livenessPort .port $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: 30
+            initialDelaySeconds: {{ coalesce .readinessInitialDelay 30 }}
             periodSeconds: 10
             timeoutSeconds: 3
-            failureThreshold: 6
+            failureThreshold: {{ coalesce .readinessFailureThreshold 6 }}
             successThreshold: 1
           {{- end }}
           envFrom:
@@ -213,7 +213,7 @@ spec:
               path: {{ .sidecar.livenessPath | default $defaults.livenessPath }}
               port: {{ .sidecar.livenessPort | default .sidecar.port | default $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: 30
+            initialDelaySeconds: {{ .sidecar.livenessInitialDelay | default $defaults.livenessInitialDelay }}
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 6

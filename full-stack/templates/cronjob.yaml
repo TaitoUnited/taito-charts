@@ -78,21 +78,19 @@ spec:
                 - name: {{ $name }}
                   value: {{ $value | quote }}
                 {{- end }}
-                {{- range $name, $value := $defaults.secrets }}
-                - name: {{ $name }}
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                      key: {{ regexFind "[a-zA-Z]*$" $value }}
-                {{- end }}
-                {{- range $name, $value := .secrets }}
-                - name: {{ $name }}
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                      key: {{ regexFind "[a-zA-Z]*$" $value }}
-                {{- end }}
               volumeMounts:
+              {{- range $name, $value := $defaults.secrets }}
+                - name: default- {{- lower $name | replace "_" "-" }}
+                  mountPath: /run/secrets/ {{- $name }}
+                  subPath: {{ $name }}
+                  readOnly: true
+              {{- end }}
+              {{- range $name, $value := .secrets }}
+                - name: {{ lower $name | replace "_" "-" }}
+                  mountPath: /run/secrets/ {{- $name }}
+                  subPath: {{ $name }}
+                  readOnly: true
+              {{- end }}
               {{- if and (.serviceAccount) (eq $provider "gcloud") }}
                 - name: serviceaccount
                   mountPath: /serviceaccount
@@ -118,6 +116,22 @@ spec:
                   mountPath: /cloudsql
             {{- end }}
           volumes:
+            {{- range $name, $value := $defaults.secrets }}
+            - name: default- {{- lower $name | replace "_" "-" }}
+              secret:
+                secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                items:
+                - key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  path: {{ $name }}
+            {{- end }}
+            {{- range $name, $value := .secrets }}
+            - name: {{ lower $name | replace "_" "-" }}
+              secret:
+                secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                items:
+                - key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  path: {{ $name }}
+            {{- end }}
             {{- if and (.db) (ne $env "local") (eq $provider "gcloud") }}
             - name: cloudsql-instance-credentials
               secret:

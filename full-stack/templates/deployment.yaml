@@ -125,21 +125,19 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
-            {{- range $name, $value := $defaults.secrets }}
-            - name: {{ $name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
-            {{- end }}
-            {{- range $name, $value := .secrets }}
-            - name: {{ $name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
-            {{- end }}
           volumeMounts:
+          {{- range $name, $value := $defaults.secrets }}
+            - name: default- {{- lower $name | replace "_" "-" }}
+              mountPath: /run/secrets/ {{- $name }}
+              subPath: {{ $name }}
+              readOnly: true
+          {{- end }}
+          {{- range $name, $value := .secrets }}
+            - name: {{ lower $name | replace "_" "-" }}
+              mountPath: /run/secrets/ {{- $name }}
+              subPath: {{ $name }}
+              readOnly: true
+          {{- end }}
           {{- if .temporaryVolumeMounts }}
           {{- range .temporaryVolumeMounts }}
             - mountPath: {{ .mountPath }}
@@ -232,14 +230,13 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
-            {{- range $name, $value := .sidecar.secrets }}
-            - name: {{ $name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
-            {{- end }}
           volumeMounts:
+          {{- range $name, $value := .sidecar.secrets }}
+            - name: sidecar- {{- lower $name | replace "_" "-" }}
+              mountPath: /run/secrets/ {{- $name }}
+              subPath: {{ $name }}
+              readOnly: true
+          {{- end }}
           {{- if .sidecar.temporaryVolumeMounts }}
           {{- range .sidecar.temporaryVolumeMounts }}
             - mountPath: {{ .mountPath }}
@@ -294,6 +291,34 @@ spec:
               mountPath: /cloudsql
         {{- end }}
       volumes:
+        {{- range $name, $value := $defaults.secrets }}
+        - name: default- {{- lower $name | replace "_" "-" }}
+          secret:
+            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            items:
+            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+              path: {{ $name }}
+        {{- end }}
+        {{- range $name, $value := .secrets }}
+        - name: {{ lower $name | replace "_" "-" }}
+          secret:
+            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            items:
+            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+              path: {{ $name }}
+        {{- end }}
+        {{- if .sidecar }}
+        {{- if .sidecar.enabled }}
+        {{- range $name, $value := .sidecar.secrets }}
+        - name: sidecar- {{- lower $name | replace "_" "-" }}
+          secret:
+            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            items:
+            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+              path: {{ $name }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
         {{- if .temporaryVolumeMounts }}
         - name: temporary-volume
           emptyDir:

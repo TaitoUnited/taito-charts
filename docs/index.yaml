@@ -3,7 +3,16 @@ entries:
   full-stack:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-04-07T00:15:43.7668794Z
+    created: 2019-04-07T10:54:42.6641136Z
+    description: A Helm chart for Kubernetes
+    digest: f215f30f96fd0d94dac3fdb3ccb1cdbb800187a432c27dd9ba78696bd9f15408
+    name: full-stack
+    urls:
+    - https://taitounited.github.io/taito-charts/full-stack-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2019-04-07T10:54:42.6587254Z
     description: A Helm chart for Kubernetes
     digest: bb88b83b8faeaf4f2746c5a8af2a8fc00e0c4462b34f49c47d6f5578ff5d92ee
     name: full-stack
@@ -12,7 +21,7 @@ entries:
     version: 0.2.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-04-07T00:15:43.7610377Z
+    created: 2019-04-07T10:54:42.6549087Z
     description: A Helm chart for Kubernetes
     digest: c550a326df7b5e6aa090e5676a8be57323c71a21cc7369cb11ba3a08d49fc003
     name: full-stack
@@ -21,7 +30,7 @@ entries:
     version: 0.1.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-04-07T00:15:43.7559401Z
+    created: 2019-04-07T10:54:42.6512639Z
     description: A Helm chart for Kubernetes
     digest: b4f574fa7ea15cb8f02c35aabc5ae86af51eda7699959604c2bab034ba64c0cf
     name: full-stack
@@ -30,7 +39,7 @@ entries:
     version: 0.1.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-04-07T00:15:43.7496311Z
+    created: 2019-04-07T10:54:42.6475392Z
     description: A Helm chart for Kubernetes
     digest: 5e499bb62aa41cd1edd202a15cb41b2422fe1680d5a9eb4300180ef0cf52a6ca
     name: full-stack
@@ -39,11 +48,11 @@ entries:
     version: 0.1.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-04-07T00:15:43.6961208Z
+    created: 2019-04-07T10:54:42.6437255Z
     description: A Helm chart for Kubernetes
     digest: ddbe9d23fe8580d5df920542ff019b23c58696ea0dee4278b1c8f96b8505f976
     name: full-stack
     urls:
     - https://taitounited.github.io/taito-charts/full-stack-0.1.0.tgz
     version: 0.1.0
-generated: 2019-04-07T00:15:43.6907793Z
+generated: 2019-04-07T10:54:42.63948Z

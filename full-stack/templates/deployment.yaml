@@ -125,6 +125,20 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- range $name, $value := $defaults.secretEnv }}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "[a-zA-Z]*$" $value }}
+            {{- end }}
+            {{- range $name, $value := .secretEnv }}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "[a-zA-Z]*$" $value }}
+            {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
             - name: default- {{- lower $name | replace "_" "-" }}
@@ -229,6 +243,13 @@ spec:
             {{- range $name, $value := .sidecar.env }}
             - name: {{ $name }}
               value: {{ $value | quote }}
+            {{- end }}
+            {{- range $name, $value := .sidecar.secretEnv }}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "[a-zA-Z]*$" $value }}
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}

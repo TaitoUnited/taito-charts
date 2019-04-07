@@ -61,9 +61,11 @@ serviceDefaults:
     #   volumePath: data
     #   readOnly: false
   # Env
+  secrets:
+    # Secrets as mounted files
+  secretEnv:
+    # Secrets as environment variables (not recommended)
   env:
     # Environment variables
-  secrets:
-    # Secrets
 
 services:

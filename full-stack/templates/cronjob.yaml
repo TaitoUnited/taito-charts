@@ -8,11 +8,11 @@
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- range $job := .cronJobs }}
-{{- with (index $root.Values $serviceName) }}
+{{- with (index $root.Values.services $serviceName) }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ template "fullname" $root }}-{{ $job.name }}
+  name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
   labels:
     app: {{ template "name" $root }}
     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}

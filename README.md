@@ -8,22 +8,32 @@ taito create: my-chart
 
 ## Making changes to an existing chart
 
-1. Make some changes to the chart. You can test the changes locally by mounting `taito-charts` directory in taito-cli container in `taito` bash script:
+1. Make some changes to the chart. You can test the changes locally by referencing the chart directly.
+
+    Edit `requirements.yaml` of a project:
 
     ```
-    -v ${taito_home_path}/projects/taito-charts:/taito-charts
+    repository: file:///taito-charts/full-stack
     ```
 
-    and by referencing the local chart directly in `requirements.yaml` of some project:
+    Run dry-run deployment with a mounted `/taito-charts` directory:
 
     ```
-    repository: file://../../../taito-charts/full-stack
+    taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev --dry-run
     ```
 
-2. Increase chart version number in `Chart.yaml` and create a new package for it:
+    Run real deployment with a mounted `/taito-charts` directory:
 
     ```
-    taito package: my-chart
+    taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev
+    ```
+
+2. Increase chart version number in `Chart.yaml`
+
+3. Create a new package:
+
+    ```
+    taito package: full-stack
     ```
 
 3. Publish new chart version by pushing changes to git.

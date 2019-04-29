@@ -10,7 +10,7 @@ metadata:
 spec:
   secretName: {{ template "fullname" . }}-ssl
   issuerRef:
-    name: common-letsencrypt-issuer
+    name: letsencrypt-issuer
     kind: ClusterIssuer
   dnsNames:
     {{- range $domain := .Values.ingress.domains }}

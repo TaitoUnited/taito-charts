@@ -12,7 +12,7 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
-    ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/rewrite-target: /$1
     ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.maxBodySize | quote }}
     {{- if .Values.ingress.basicAuth.enabled }}
     ingress.kubernetes.io/auth-type: "basic"
@@ -49,7 +49,7 @@ spec:
           {{- range $serviceName, $service := $root.Values.services }}
           {{- with $service }}
           {{- if and (or (not (hasKey . "enabled")) (.enabled)) (.path) }}
-          - path: {{ .path | default $defaults.path | quote }}
+          - path: {{ .path | default $defaults.path }}/?(.*)
             backend:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
               servicePort: {{ .port | default $defaults.port }}
@@ -57,7 +57,7 @@ spec:
           {{- if and (or (not (hasKey . "enabled")) (.enabled)) (.sidecar) }}
           {{- if .sidecar.enabled }}
           {{- if .sidecar.path }}
-          - path: {{ .sidecar.path | quote }}
+          - path: {{ .sidecar.path }}/?(.*)
             backend:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
               servicePort: {{ .sidecar.port }}

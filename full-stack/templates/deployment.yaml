@@ -67,8 +67,8 @@ spec:
             {{- if .runAsUser }}
             runAsUser: {{ .runAsUser }}
             {{- end }}
-            {{- if .fsGroup }}
-            fsGroup: {{ .fsGroup }}
+            {{- if .runAsGroup }}
+            runAsGroup: {{ .runAsGroup }}
             {{- end }}
             allowPrivilegeEscalation: false
           {{- if .command }}
@@ -197,8 +197,8 @@ spec:
             {{- if .sidecar.runAsUser }}
             runAsUser: {{ .sidecar.runAsUser }}
             {{- end }}
-            {{- if .sidecar.fsGroup }}
-            fsGroup: {{ .sidecar.fsGroup }}
+            {{- if .sidecar.runAsGroup }}
+            runAsGroup: {{ .sidecar.runAsGroup }}
             {{- end }}
             allowPrivilegeEscalation: false
           {{- if .sidecar.command }}
@@ -293,7 +293,7 @@ spec:
           image: gcr.io/cloudsql-docker/gce-proxy:1.13
           securityContext:
             runAsUser: 2
-            fsGroup: 2
+            runAsGroup: 2
             allowPrivilegeEscalation: false
           command:
             - /cloud_sql_proxy

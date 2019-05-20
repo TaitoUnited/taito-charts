@@ -20,17 +20,16 @@ metadata:
     heritage: {{ $root.Release.Service }}
 spec:
   schedule: {{ $job.schedule | quote }}
+  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Allow" }}
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 1 }}
+  startingDeadlineSeconds: {{ $job.startingDeadlineSeconds | default nil }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 3 }}
+  suspend: {{ $job.suspend | default false }}
   jobTemplate:
     spec:
       template:
         spec:
           restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
-          concurrencyPolicy: {{ $job.concurrencyPolicy | default "Allow" }}
-          startingDeadlineSeconds: {{ $job.startingDeadlineSeconds | default nil }}
-          lastScheduleTime: {{ $job.lastScheduleTime | default nil }}
-          suspend: {{ $job.suspend | default false }}
-          successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 3 }}
-          failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 1 }}
           serviceAccountName: {{ template "fullname" $root }}
           automountServiceAccountToken: false
           containers:
@@ -45,8 +44,8 @@ spec:
                 {{- if $job.runAsUser }}
                 runAsUser: {{ $job.runAsUser }}
                 {{- end }}
-                {{- if $job.fsGroup }}
-                fsGroup: {{ $job.fsGroup }}
+                {{- if $job.runAsGroup }}
+                runAsGroup: {{ $job.runAsGroup }}
                 {{- end }}
                 allowPrivilegeEscalation: false
               {{- if $job.command }}

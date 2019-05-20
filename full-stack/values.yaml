@@ -35,7 +35,7 @@ serviceDefaults:
   livenessInitialDelay: 30
   # Security
   runAsUser:
-  fsGroup:
+  runAsGroup:
   # Resources
   cpuRequest: 2m
   cpuLimit: 100m

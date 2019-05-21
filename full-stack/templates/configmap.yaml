@@ -18,6 +18,7 @@ data:
   APPLICATION: {{ .Values.global.project.application | quote }}
   SUFFIX: {{ .Values.global.project.suffix | quote }}
   DOMAIN: {{ .Values.global.domain | quote }}
+  PUBLIC_PORT: {{ .Values.global.publicPort | quote }}
   URL: {{ .Values.global.url | quote }}
   VERSION: {{ .Values.global.build.version | quote }}
   COMMIT: {{ .Values.global.build.commit | quote }}

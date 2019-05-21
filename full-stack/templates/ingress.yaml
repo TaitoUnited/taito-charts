@@ -1,6 +1,7 @@
 {{- $root := . -}}
 {{- $defaults := .Values.serviceDefaults -}}
 
+# Master ingress
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -11,9 +12,15 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
+    nginx.org/mergeable-ingress-type: "master"
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
-    ingress.kubernetes.io/rewrite-target: {{ .Values.ingress.oldRewritePolicy | ternary "/" "/$1" }}
     ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.maxBodySize | quote }}
+    {{- if .limitRate }}
+    ingress.kubernetes.io/limit-rate: {{ .Values.ingress.limitRate | quote }}
+    {{- end }}
+    {{- if .limitRateAfter }}
+    ingress.kubernetes.io/limit-rate-after: {{ .Values.ingress.limitRateAfter | quote }}
+    {{- end }}
     {{- if .Values.ingress.basicAuth.enabled }}
     ingress.kubernetes.io/auth-type: "basic"
     ingress.kubernetes.io/auth-realm: {{ template "name" . }}
@@ -44,26 +51,113 @@ spec:
   rules:
     {{- range $domain := .Values.ingress.domains }}
     - host: {{ $domain.name }}
+    {{- end }}
+
+
+# Service ingresses
+{{- range $serviceName, $service := .Values.services }}
+{{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
+
+
+# Minion ingress for each service path
+{{- range $path := $service.paths }}
+{{- with $path }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+  annotations:
+    nginx.org/mergeable-ingress-type: "minion"
+    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- if not .rewriteTargetDisabled }}
+    ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
+    {{- end }}
+    {{- if .maxBodySize }}
+    ingress.kubernetes.io/proxy-body-size: {{ .maxBodySize | quote }}
+    {{- end }}
+    {{- if .limitRate }}
+    ingress.kubernetes.io/limit-rate: {{ .limitRate | quote }}
+    {{- end }}
+    {{- if .limitRateAfter }}
+    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | quote }}
+    {{- end }}
+spec:
+  rules:
+    {{- range $domain := $root.Values.ingress.domains }}
+    - host: {{ $domain.name }}
       http:
         paths:
-          {{- range $serviceName, $service := $root.Values.services }}
-          {{- with $service }}
-          {{- if and (or (not (hasKey . "enabled")) (.enabled)) (.path) }}
-          - path: {{ .path | default $defaults.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+          {{- if or .rewriteTargetDisabled .rewriteTarget }}
+          - path: {{ $path.path }}
+          {{- else }}
+          - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+          {{- end }}
             backend:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
-              servicePort: {{ .port | default $defaults.port }}
-          {{- end }}
-          {{- if and (or (not (hasKey . "enabled")) (.enabled)) (.sidecar) }}
-          {{- if .sidecar.enabled }}
-          {{- if .sidecar.path }}
-          - path: {{ .sidecar.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
-            backend:
-              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
-              servicePort: {{ .sidecar.port }}
-          {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- end }}
+              servicePort: {{ $service.port | default $defaults.port }}
     {{- end }}
+{{- end }}
+{{- end }}
+
+
+# Minion ingress for each service sidecar path
+# TODO: duplicate code with 'minion ingress for each service path'
+{{- if $service.sidecar }}
+{{- if $service.sidecar.enabled }}
+{{- range $path := $service.sidecar.paths }}
+{{- with $path }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+  annotations:
+    nginx.org/mergeable-ingress-type: "minion"
+    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- if not .rewriteTargetDisabled }}
+    ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
+    {{- end }}
+    {{- if .maxBodySize }}
+    ingress.kubernetes.io/proxy-body-size: {{ .maxBodySize | quote }}
+    {{- end }}
+    {{- if .limitRate }}
+    ingress.kubernetes.io/limit-rate: {{ .limitRate | quote }}
+    {{- end }}
+    {{- if .limitRateAfter }}
+    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | quote }}
+    {{- end }}
+spec:
+  rules:
+    {{- range $domain := $root.Values.ingress.domains }}
+    - host: {{ $domain.name }}
+      http:
+        paths:
+          {{- if or .rewriteTargetDisabled .rewriteTarget }}
+          - path: {{ $path.path }}
+          {{- else }}
+          - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+          {{- end }}
+            backend:
+              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              servicePort: {{ $service.sidecar.port | default $defaults.port }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+
+{{- end }}
+{{- end }}

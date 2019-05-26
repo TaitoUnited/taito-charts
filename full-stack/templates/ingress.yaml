@@ -14,27 +14,11 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "master"
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
-    # TODO: some of these need to set for minions?
-    ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.maxBodySize | quote }}
-    {{- if .limitRate }}
-    ingress.kubernetes.io/limit-rate: {{ .Values.ingress.limitRate | quote }}
-    {{- end }}
-    {{- if .limitRateAfter }}
-    ingress.kubernetes.io/limit-rate-after: {{ .Values.ingress.limitRateAfter | quote }}
-    {{- end }}
-    {{- if .Values.ingress.basicAuth.enabled }}
-    ingress.kubernetes.io/auth-type: "basic"
-    ingress.kubernetes.io/auth-realm: {{ template "name" . }}
-    ingress.kubernetes.io/auth-secret: {{ .Values.ingress.basicAuth.htpasswdSecret }}
-    {{- end }}
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/force-ssl-redirect: "true"
     {{- end }}
-    # NOTE: see https://github.com/kubernetes/ingress/blob/master/controllers/nginx/configuration.md
-    # TODO ingress.kubernetes.io/limit-connections
-    # TODO ingress.kubernetes.io/limit-rps
 spec:
   {{- if .Values.ingress.tls }}
   tls:
@@ -76,22 +60,22 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- if $root.Values.ingress.basicAuth.enabled }}
+    {{- if .basicAuthEnabled | default $defaults.basicAuthEnabled }}
     ingress.kubernetes.io/auth-type: "basic"
     ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
-    ingress.kubernetes.io/auth-secret: {{ $root.Values.ingress.basicAuth.htpasswdSecret }}
+    ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
     ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
     {{- end }}
-    {{- if .maxBodySize }}
-    ingress.kubernetes.io/proxy-body-size: {{ .maxBodySize | quote }}
+    {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
+    ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
-    {{- if .limitRate }}
-    ingress.kubernetes.io/limit-rate: {{ .limitRate | quote }}
+    {{- if .limitRate | default $defaults.limitRate }}
+    ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
-    {{- if .limitRateAfter }}
-    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | quote }}
+    {{- if .limitRateAfter | default $defaults.limitRateAfter }}
+    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
 spec:
   rules:
@@ -131,22 +115,22 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- if $root.Values.ingress.basicAuth.enabled }}
+    {{- if .basicAuthEnabled | default $defaults.basicAuthEnabled }}
     ingress.kubernetes.io/auth-type: "basic"
     ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
-    ingress.kubernetes.io/auth-secret: {{ $root.Values.ingress.basicAuth.htpasswdSecret }}
+    ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
     ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
     {{- end }}
-    {{- if .maxBodySize }}
-    ingress.kubernetes.io/proxy-body-size: {{ .maxBodySize | quote }}
+    {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
+    ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
-    {{- if .limitRate }}
-    ingress.kubernetes.io/limit-rate: {{ .limitRate | quote }}
+    {{- if .limitRate | default $defaults.limitRate }}
+    ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
-    {{- if .limitRateAfter }}
-    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | quote }}
+    {{- if .limitRateAfter | default $defaults.limitRateAfter }}
+    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
 spec:
   rules:

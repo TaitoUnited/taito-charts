@@ -14,6 +14,7 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "master"
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
+    # TODO: some of these need to set for minions?
     ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.maxBodySize | quote }}
     {{- if .limitRate }}
     ingress.kubernetes.io/limit-rate: {{ .Values.ingress.limitRate | quote }}
@@ -75,6 +76,11 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- if $root.Values.ingress.basicAuth.enabled }}
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    ingress.kubernetes.io/auth-secret: {{ $root.Values.ingress.basicAuth.htpasswdSecret }}
+    {{- end }}
     {{- if not .rewriteTargetDisabled }}
     ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
     {{- end }}
@@ -125,6 +131,11 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- if $root.Values.ingress.basicAuth.enabled }}
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    ingress.kubernetes.io/auth-secret: {{ $root.Values.ingress.basicAuth.htpasswdSecret }}
+    {{- end }}
     {{- if not .rewriteTargetDisabled }}
     ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
     {{- end }}

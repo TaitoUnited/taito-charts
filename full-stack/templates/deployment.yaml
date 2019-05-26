@@ -113,7 +113,7 @@ spec:
               configMapRef:
                 name: {{ template "fullname" $root }}-common
           env:
-            {{- if and (.serviceAccount) (eq $provider "gcloud") }}
+            {{- if and (.serviceAccount) (eq $provider "gcp") }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
             {{- end }}
@@ -178,7 +178,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-          {{- if and (.serviceAccount) (eq $provider "gcloud") }}
+          {{- if and (.serviceAccount) (eq $provider "gcp") }}
             - name: serviceaccount
               mountPath: /serviceaccount
               readOnly: true
@@ -236,7 +236,7 @@ spec:
               configMapRef:
                 name: {{ template "fullname" $root }}-common
           env:
-            {{- if and (.sidecar.serviceAccount) (eq $provider "gcloud") }}
+            {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
             {{- end }}
@@ -280,7 +280,7 @@ spec:
             - name: sidecar-volume
               mountPath: {{ .sidecar.sharedVolume.sidecarMountPath }}
           {{- end }}
-          {{- if and (.sidecar.serviceAccount) (eq $provider "gcloud") }}
+          {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
             - name: serviceaccount
               mountPath: /serviceaccount
               readOnly: true
@@ -288,7 +288,7 @@ spec:
         {{- end }}
         {{- end }}
 
-        {{- if and (.db) (ne $env "local") (eq $provider "gcloud") }}
+        {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.13
           securityContext:
@@ -359,7 +359,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if and (.db) (ne $env "local") (eq $provider "gcloud") }}
+        {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
         - name: cloudsql-instance-credentials
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .db.proxySecret "" }}
@@ -369,7 +369,7 @@ spec:
         - name: cloudsql
           emptyDir:
         {{- end }}
-        {{- if and (.serviceAccount) (eq $provider "gcloud") }}
+        {{- if and (.serviceAccount) (eq $provider "gcp") }}
         - name: serviceaccount
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .serviceAccount.secret "" }}

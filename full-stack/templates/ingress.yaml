@@ -71,6 +71,9 @@ metadata:
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
+    {{- if .readTimeout | default $defaults.readTimeout }}
+    ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
     ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
@@ -125,6 +128,9 @@ metadata:
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
+    {{- end }}
+    {{- if .readTimeout | default $defaults.readTimeout }}
+    ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
     ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}

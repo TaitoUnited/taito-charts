@@ -1,6 +1,46 @@
 {{- $root := . -}}
 {{- $defaults := .Values.serviceDefaults -}}
 
+# Alternate domain ingresses (redirect)
+{{- range $domain := .Values.ingress.domains }}
+{{- if $domain.altName }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" $root }}-ingress-alt
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+  annotations:
+    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- if not $root.Values.ingress.tls }}
+    ingress.kubernetes.io/permanent-redirect: http://{{ $domain.name }}
+    {{- end }}
+    {{- if $root.Values.ingress.tls }}
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/permanent-redirect: https://{{ $domain.name }}
+    {{- end }}
+spec:
+  {{- if $root.Values.ingress.tls }}
+  tls:
+  - hosts:
+    - {{ $domain.altName }}
+    {{- if not $domain.certSecret }}
+    secretName: {{ template "fullname" $root }}-ssl
+    {{- end }}
+    {{- if $domain.certSecret }}
+    secretName: {{ $domain.certSecret }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ $domain.altName }}
+---
+{{- end }}
+{{- end }}
+
 # Master ingress
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -37,6 +77,7 @@ spec:
     {{- range $domain := .Values.ingress.domains }}
     - host: {{ $domain.name }}
     {{- end }}
+---
 
 
 # Service ingresses
@@ -47,7 +88,6 @@ spec:
 # Minion ingress for each service path
 {{- range $path := $service.paths }}
 {{- with $path }}
----
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -95,6 +135,7 @@ spec:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.port | default $defaults.port }}
     {{- end }}
+---
 {{- end }}
 {{- end }}
 
@@ -105,7 +146,6 @@ spec:
 {{- if $service.sidecar.enabled }}
 {{- range $path := $service.sidecar.paths }}
 {{- with $path }}
----
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -153,6 +193,7 @@ spec:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.sidecar.port | default $defaults.port }}
     {{- end }}
+---
 {{- end }}
 {{- end }}
 {{- end }}

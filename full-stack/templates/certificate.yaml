@@ -18,6 +18,9 @@ spec:
     {{- range $domain := .Values.ingress.domains }}
     {{- if not $domain.certSecret }}
     - {{ $domain.name }}
+    {{- if $domain.altName }}
+    - {{ $domain.altName }}
+    {{- end }}
     {{- end }}
     {{- end }}
   acme:
@@ -28,6 +31,9 @@ spec:
         {{- range $domain := .Values.ingress.domains }}
         {{- if not $domain.certSecret }}
         - {{ $domain.name }}
+        {{- if $domain.altName }}
+        - {{ $domain.altName }}
+        {{- end }}
         {{- end }}
         {{- end }}
 

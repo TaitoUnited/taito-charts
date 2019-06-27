@@ -107,9 +107,11 @@ spec:
                   readOnly: true
               {{- end }}
               {{- if and (.serviceAccount) (eq $provider "gcp") }}
+              {{- if .serviceAccount.secret }}
                 - name: serviceaccount
                   mountPath: /serviceaccount
                   readOnly: true
+              {{- end }}
               {{- end }}
             {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
             - name: cloudsql-proxy

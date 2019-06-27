@@ -181,9 +181,11 @@ spec:
           {{- end }}
           {{- end }}
           {{- if and (.serviceAccount) (eq $provider "gcp") }}
+          {{- if .serviceAccount.secret }}
             - name: serviceaccount
               mountPath: /serviceaccount
               readOnly: true
+          {{- end }}
           {{- end }}
 
         {{- if .sidecar }}
@@ -239,9 +241,9 @@ spec:
                 name: {{ template "fullname" $root }}-common
           env:
             {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
-            {{- if .serviceAccount.secret }}
+            {{- if .sidecar.serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
+              value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .sidecar.serviceAccount.secret }}
             {{- end }}
             {{- end }}
             {{- range $name, $value := .sidecar.env }}
@@ -285,9 +287,11 @@ spec:
               mountPath: {{ .sidecar.sharedVolume.sidecarMountPath }}
           {{- end }}
           {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
+          {{- if .sidecar.serviceAccount.secret }}
             - name: serviceaccount
               mountPath: /serviceaccount
               readOnly: true
+          {{- end }}
           {{- end }}
         {{- end }}
         {{- end }}

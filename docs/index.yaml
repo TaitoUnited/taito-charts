@@ -3,7 +3,16 @@ entries:
   full-stack:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.4288227Z"
+    created: "2019-06-27T17:18:03.4336278Z"
+    description: A Helm chart for Kubernetes
+    digest: dc871cfa13c5de62ac4e5d09d6f20b77f9cbab5ac5aee0807dc5463c6ea9fdab
+    name: full-stack
+    urls:
+    - https://taitounited.github.io/taito-charts/full-stack-0.6.2.tgz
+    version: 0.6.2
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2019-06-27T17:18:03.4285672Z"
     description: A Helm chart for Kubernetes
     digest: c4f9eb170cfcb8da79fa3c81d01babcca1784005909165294e061914e8d13c70
     name: full-stack
@@ -12,7 +21,7 @@ entries:
     version: 0.6.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.422926Z"
+    created: "2019-06-27T17:18:03.423577Z"
     description: A Helm chart for Kubernetes
     digest: 9de378669c2728a710dba3d06371b2ded67aad9b53e625a2d7bc35e378d8e05b
     name: full-stack
@@ -21,7 +30,7 @@ entries:
     version: 0.6.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.4176422Z"
+    created: "2019-06-27T17:18:03.4154034Z"
     description: A Helm chart for Kubernetes
     digest: 9a597bdc599790b86245270c938cc9799848990b33d82b9d3edc931710128c35
     name: full-stack
@@ -30,7 +39,7 @@ entries:
     version: 0.5.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.4122429Z"
+    created: "2019-06-27T17:18:03.4088413Z"
     description: A Helm chart for Kubernetes
     digest: 17b69029ad3aaee6c516305acfda52995bdada71a8e2483cf27ed327352f0a53
     name: full-stack
@@ -39,7 +48,7 @@ entries:
     version: 0.5.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.4067373Z"
+    created: "2019-06-27T17:18:03.4032776Z"
     description: A Helm chart for Kubernetes
     digest: 0320b7fd5b5ff0ece2fdeaf6eafd4c0c5dacae9e3d34e8e835c48502573a8520
     name: full-stack
@@ -48,7 +57,7 @@ entries:
     version: 0.5.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.4016998Z"
+    created: "2019-06-27T17:18:03.397314Z"
     description: A Helm chart for Kubernetes
     digest: 0353db623f4403b9b0f5aedeb38170c144951f5dbeb4be0cde9a93b5522f4b15
     name: full-stack
@@ -57,7 +66,7 @@ entries:
     version: 0.4.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.395569Z"
+    created: "2019-06-27T17:18:03.3886246Z"
     description: A Helm chart for Kubernetes
     digest: e5dd486afc9971abc1d1d24212aef74766ad97aa323ecade472ce04fbbe4cc31
     name: full-stack
@@ -66,7 +75,7 @@ entries:
     version: 0.4.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3903759Z"
+    created: "2019-06-27T17:18:03.3705125Z"
     description: A Helm chart for Kubernetes
     digest: 106dc0aed0a09088e8dc1362920362213ade48a2605055e233892bfe5b129b4d
     name: full-stack
@@ -75,7 +84,7 @@ entries:
     version: 0.4.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3825618Z"
+    created: "2019-06-27T17:18:03.3647831Z"
     description: A Helm chart for Kubernetes
     digest: 3911b90849d8756c01514c712326cc6abaea1aef5b7a91886f52e0b7576e1b4b
     name: full-stack
@@ -84,7 +93,7 @@ entries:
     version: 0.4.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3776854Z"
+    created: "2019-06-27T17:18:03.3584023Z"
     description: A Helm chart for Kubernetes
     digest: d6250de14dabd562a4a8c6657115589c83f469b421aaf6058e6cdeae891b0ff7
     name: full-stack
@@ -93,7 +102,7 @@ entries:
     version: 0.3.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3729244Z"
+    created: "2019-06-27T17:18:03.3520616Z"
     description: A Helm chart for Kubernetes
     digest: 5f171a7d6ad983199a7eb5ba131f9411ed628f4fe483267f78bc3050bd435834
     name: full-stack
@@ -102,7 +111,7 @@ entries:
     version: 0.3.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3654611Z"
+    created: "2019-06-27T17:18:03.3452532Z"
     description: A Helm chart for Kubernetes
     digest: d1d84350ead2ff7081ff666157f94fce3d9ec57a69788f08cc91d5bbda481e07
     name: full-stack
@@ -111,7 +120,7 @@ entries:
     version: 0.3.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3610262Z"
+    created: "2019-06-27T17:18:03.3380503Z"
     description: A Helm chart for Kubernetes
     digest: 3e5853e77f3d90a7aa4de48b641a82b307c50dc1911251baa8cbd9cf47cd7f35
     name: full-stack
@@ -120,7 +129,7 @@ entries:
     version: 0.2.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3558713Z"
+    created: "2019-06-27T17:18:03.3300259Z"
     description: A Helm chart for Kubernetes
     digest: 633b5b6e32a8a3655a4e23d901855c48d365e32c653c6b7547c212137b155f6d
     name: full-stack
@@ -129,7 +138,7 @@ entries:
     version: 0.2.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3512986Z"
+    created: "2019-06-27T17:18:03.3209226Z"
     description: A Helm chart for Kubernetes
     digest: f215f30f96fd0d94dac3fdb3ccb1cdbb800187a432c27dd9ba78696bd9f15408
     name: full-stack
@@ -138,7 +147,7 @@ entries:
     version: 0.2.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.346331Z"
+    created: "2019-06-27T17:18:03.3150276Z"
     description: A Helm chart for Kubernetes
     digest: bb88b83b8faeaf4f2746c5a8af2a8fc00e0c4462b34f49c47d6f5578ff5d92ee
     name: full-stack
@@ -147,7 +156,7 @@ entries:
     version: 0.2.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3420481Z"
+    created: "2019-06-27T17:18:03.3091919Z"
     description: A Helm chart for Kubernetes
     digest: c550a326df7b5e6aa090e5676a8be57323c71a21cc7369cb11ba3a08d49fc003
     name: full-stack
@@ -156,7 +165,7 @@ entries:
     version: 0.1.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3372568Z"
+    created: "2019-06-27T17:18:03.3025065Z"
     description: A Helm chart for Kubernetes
     digest: b4f574fa7ea15cb8f02c35aabc5ae86af51eda7699959604c2bab034ba64c0cf
     name: full-stack
@@ -165,7 +174,7 @@ entries:
     version: 0.1.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3325883Z"
+    created: "2019-06-27T17:18:03.2952772Z"
     description: A Helm chart for Kubernetes
     digest: 5e499bb62aa41cd1edd202a15cb41b2422fe1680d5a9eb4300180ef0cf52a6ca
     name: full-stack
@@ -174,11 +183,11 @@ entries:
     version: 0.1.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-06-27T17:07:43.3279604Z"
+    created: "2019-06-27T17:18:03.2888327Z"
     description: A Helm chart for Kubernetes
     digest: ddbe9d23fe8580d5df920542ff019b23c58696ea0dee4278b1c8f96b8505f976
     name: full-stack
     urls:
     - https://taitounited.github.io/taito-charts/full-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2019-06-27T17:07:43.3205107Z"
+generated: "2019-06-27T17:18:03.2831141Z"

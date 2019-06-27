@@ -114,8 +114,10 @@ spec:
                 name: {{ template "fullname" $root }}-common
           env:
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
+            {{- if .serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
+            {{- end }}
             {{- end }}
             {{- range $name, $value := $defaults.env }}
             - name: {{ $name }}
@@ -237,8 +239,10 @@ spec:
                 name: {{ template "fullname" $root }}-common
           env:
             {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
+            {{- if .serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
+            {{- end }}
             {{- end }}
             {{- range $name, $value := .sidecar.env }}
             - name: {{ $name }}
@@ -370,9 +374,11 @@ spec:
           emptyDir:
         {{- end }}
         {{- if and (.serviceAccount) (eq $provider "gcp") }}
+        {{- if .serviceAccount.secret }}
         - name: serviceaccount
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .serviceAccount.secret "" }}
+        {{- end }}
         {{- end }}
 ---
 {{- end }}

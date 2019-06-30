@@ -93,20 +93,20 @@ spec:
               port: {{ coalesce .livenessPort .port $defaults.port }}
               scheme: HTTP
             initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay }}
-            periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 3
-            successThreshold: 1
+            periodSeconds: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
+            timeoutSeconds: {{ coalesce .livenessTimeout $defaults.livenessTimeout 3 }}
+            failureThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
+            successThreshold: {{ coalesce .livenessSuccessThreshold $defaults.livenessSuccessThreshold 1 }}
           readinessProbe:
             httpGet:
               path: {{ coalesce .readinessPath .livenessPath $defaults.livenessPath }}
               port: {{ coalesce .readinessPort .livenessPort .port $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: {{ coalesce .readinessInitialDelay 30 }}
-            periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: {{ coalesce .readinessFailureThreshold 6 }}
-            successThreshold: 1
+            initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 30 }}
+            periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 10 }}
+            timeoutSeconds: {{ coalesce .readinessTimeout $defaults.readinessTimeout 3 }}
+            failureThreshold: {{ coalesce .readinessFailureThreshold $defaults.readinessFailureThreshold 6 }}
+            successThreshold: {{ coalesce .readinessSuccessThreshold $defaults.readinessSuccessThreshold 1 }}
           {{- end }}
           envFrom:
             - prefix: COMMON_

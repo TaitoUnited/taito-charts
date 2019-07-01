@@ -111,11 +111,23 @@ metadata:
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
+    {{- if .bufferSize | default $defaults.bufferSize }}
+    ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    {{- end }}
+    {{- if .requestBuffering | default $defaults.requestBuffering }}
+    ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    {{- end }}
+    {{- if .connectTimeout | default $defaults.connectTimeout }}
+    ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
     ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
     ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    {{- end }}
+    {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
+    ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
     ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
@@ -172,11 +184,23 @@ metadata:
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
+    {{- if .bufferSize | default $defaults.bufferSize }}
+    ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    {{- end }}
+    {{- if .requestBuffering | default $defaults.requestBuffering }}
+    ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    {{- end }}
+    {{- if .connectTimeout | default $defaults.connectTimeout }}
+    ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
     ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
     ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    {{- end }}
+    {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
+    ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
     ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}

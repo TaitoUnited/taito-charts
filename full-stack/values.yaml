@@ -18,21 +18,46 @@ ingress:
   class: nginx
   oldRewritePolicy: false
   tls: true
-  maxBodySize: 1m
-  basicAuth:
-    enabled: true
-    htpasswdSecret:
   domains:
 
 serviceDefaults:
   # Basics
   image: # For 3rd party container image
   command:
-  path:
   port: 8080
   tier:
   livenessPath: /healthz
-  livenessInitialDelay: 30
+  livenessInitialDelay: 3
+  # Paths
+  paths:
+    # - path:
+    #   basicAuthEnabled:
+    #   basicAuthHtpasswdSecret:
+    #   clientMaxBodySize:
+    #   bufferSize:
+    #   requestBuffering:
+    #   connectTimeout:
+    #   sendTimeout:
+    #   readTimeout:
+    #   nextUpstreamTimeout:
+    #   limitRate:
+    #   limitRateAfter:
+    #   rewriteTarget:
+    #   rewriteTargetDisabled:
+  # Path defaults
+  basicAuthEnabled: ${taito_basic_auth_enabled}
+  basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth
+  # clientMaxBodySize: 1m
+  # bufferSize: 4k
+  # requestBuffering: on
+  # connectTimeout: 5
+  # sendTimeout: 60
+  # readTimeout: 60
+  # nextUpstreamTimeout: 0
+  limitRate:
+  limitRateAfter:
+  rewriteTarget:
+  rewriteTargetDisabled:
   # Security
   runAsUser:
   runAsGroup:
@@ -40,9 +65,9 @@ serviceDefaults:
   cpuRequest: 2m
   cpuLimit: 100m
   memoryRequest: 50Mi
-  memoryLimit: 256Mi
+  memoryLimit: 512Mi
   # Scaling
-  replicas: 1
+  replicas: 2
   autoscale: false
   minReplicas: 2
   maxReplicas: 5
@@ -67,6 +92,5 @@ serviceDefaults:
   secretEnv:
     # Secrets as environment variables (not recommended)
   env:
-    # Environment variables
 
 services:

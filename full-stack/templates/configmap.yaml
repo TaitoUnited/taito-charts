@@ -10,6 +10,7 @@ metadata:
 data:
   ENV: {{ .Values.global.env | quote }}
   DEBUG: {{ .Values.global.debug | quote }}
+  LOG_PROVIDER: {{ .Values.global.logProvider | quote }}
   LOG_FORMAT: {{ .Values.global.logFormat | quote }}
   LOG_LEVEL: {{ .Values.global.logLevel | quote }}
   PROJECT: {{ .Values.global.project.name | quote }}

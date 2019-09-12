@@ -20,7 +20,7 @@ metadata:
     heritage: {{ $root.Release.Service }}
 spec:
   schedule: {{ $job.schedule | quote }}
-  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Allow" }}
+  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Forbid" }}
   failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 1 }}
   startingDeadlineSeconds: {{ $job.startingDeadlineSeconds | default nil }}
   successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 3 }}

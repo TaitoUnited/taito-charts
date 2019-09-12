@@ -100,7 +100,7 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- if .basicAuthEnabled | default $defaults.basicAuthEnabled }}
+    {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     ingress.kubernetes.io/auth-type: "basic"
     ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
     ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
@@ -173,7 +173,7 @@ metadata:
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- if .basicAuthEnabled | default $defaults.basicAuthEnabled }}
+    {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     ingress.kubernetes.io/auth-type: "basic"
     ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
     ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}

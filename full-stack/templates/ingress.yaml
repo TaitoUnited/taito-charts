@@ -106,7 +106,7 @@ metadata:
     ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
+    ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
@@ -179,7 +179,7 @@ metadata:
     ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    ingress.kubernetes.io/rewrite-target: {{ default .rewriteTarget ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") }}
+    ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}

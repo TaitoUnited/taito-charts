@@ -37,6 +37,12 @@ spec:
   {{- end }}
   rules:
     - host: {{ $domain.altName }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: common-nginx-nginx-ingress-default-backend
+              servicePort: 80
 ---
 {{- end }}
 {{- end }}

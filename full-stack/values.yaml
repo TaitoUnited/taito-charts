@@ -61,6 +61,10 @@ serviceDefaults:
   # Security
   runAsUser:
   runAsGroup:
+  privileged: false
+  allowPrivilegeEscalation: false
+  capabilities:
+  # - NET_ADMIN (example)
   # Resources
   cpuRequest: 2m
   cpuLimit: 100m
@@ -85,6 +89,12 @@ serviceDefaults:
   persistentVolumeMounts:
     # - mountPath: /mnt/data
     #   volumePath: data
+    #   readOnly: false
+  # Devices
+  hostDevices:
+    # - name: dev-tun
+    #   path: /dev/net/tun
+    #   type: CharDevice
     #   readOnly: false
   # Env
   secrets:

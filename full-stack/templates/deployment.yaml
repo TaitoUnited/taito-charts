@@ -70,7 +70,15 @@ spec:
             {{- if .runAsGroup }}
             runAsGroup: {{ .runAsGroup }}
             {{- end }}
-            allowPrivilegeEscalation: false
+            privileged: {{ .privileged | default false }}
+            allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default false }}
+            capabilities:
+              add:
+                {{- if .capabilities }}
+                {{- range $cab := .capabilities }}
+                - {{ $cab }}
+                {{- end }}
+                {{- end }}
           {{- if .command }}
           command:
             {{- range .command }}
@@ -154,6 +162,13 @@ spec:
               subPath: {{ $name }}
               readOnly: true
           {{- end }}
+          {{- if .hostDevices }}
+          {{- range .hostDevices }}
+            - mountPath: {{ .path }}
+              name: {{ .name }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
           {{- if .temporaryVolumeMounts }}
           {{- range .temporaryVolumeMounts }}
             - mountPath: {{ .mountPath }}
@@ -204,7 +219,15 @@ spec:
             {{- if .sidecar.runAsGroup }}
             runAsGroup: {{ .sidecar.runAsGroup }}
             {{- end }}
-            allowPrivilegeEscalation: false
+            privileged: {{ .sidecar.privileged | default false }}
+            allowPrivilegeEscalation: {{ .sidecar.allowPrivilegeEscalation | default false }}
+            capabilities:
+              add:
+                {{- if .sidecar.capabilities }}
+                {{- range $cab := .sidecar.capabilities }}
+                - {{ $cab }}
+                {{- end }}
+                {{- end }}
           {{- if .sidecar.command }}
           command:
             {{- range .sidecar.command }}
@@ -302,6 +325,7 @@ spec:
           securityContext:
             runAsUser: 2
             runAsGroup: 2
+            privileged: false
             allowPrivilegeEscalation: false
           command:
             - /cloud_sql_proxy
@@ -320,6 +344,14 @@ spec:
               mountPath: /cloudsql
         {{- end }}
       volumes:
+        {{- if .hostDevices }}
+        {{- range .hostDevices }}
+        - hostPath:
+            path: {{ .path }}
+            type: {{ .type }}
+          name: {{ .name }}
+        {{- end }}
+        {{- end }}
         {{- range $name, $value := $defaults.secrets }}
         - name: default- {{- lower $name | replace "_" "-" }}
           secret:

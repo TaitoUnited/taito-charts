@@ -1,9 +1,19 @@
 apiVersion: v1
 entries:
+  cert-manager-crd:
+  - apiVersion: v1
+    appVersion: 0.11.0
+    created: "2019-11-03T09:42:05.120473018Z"
+    description: CustomResourceDefinition for cert-manager
+    digest: efcc9cffb4f636c77ae196aac849376233373ee495b67d8133582a7590e090ba
+    name: cert-manager-crd
+    urls:
+    - https://taitounited.github.io/taito-charts/cert-manager-crd-0.11.0.tgz
+    version: 0.11.0
   full-stack:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.6142551Z"
+    created: "2019-11-03T09:42:05.577682843Z"
     description: A Helm chart for Kubernetes
     digest: 46fe424aa52e17db373850b050efceb46d9f728fd02684a93098147a2b08efee
     name: full-stack
@@ -12,7 +22,7 @@ entries:
     version: 1.0.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.6096702Z"
+    created: "2019-11-03T09:42:05.572954232Z"
     description: A Helm chart for Kubernetes
     digest: ff22cb2a4de9cd4de15f35aad654f5b216b211f7dc5133fb681500b33b09977e
     name: full-stack
@@ -21,7 +31,7 @@ entries:
     version: 0.9.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.6055061Z"
+    created: "2019-11-03T09:42:05.530646615Z"
     description: A Helm chart for Kubernetes
     digest: 529c475d433b49b99b2e1c15844b2e93ca04486d8d08540b0880c11508114d2d
     name: full-stack
@@ -30,7 +40,7 @@ entries:
     version: 0.8.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.6010106Z"
+    created: "2019-11-03T09:42:05.52680851Z"
     description: A Helm chart for Kubernetes
     digest: f4c18e44909d7045f371cfbaa07cfe6480283b5292fa66934b66973f67c41fc1
     name: full-stack
@@ -39,7 +49,7 @@ entries:
     version: 0.8.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5963872Z"
+    created: "2019-11-03T09:42:05.521155246Z"
     description: A Helm chart for Kubernetes
     digest: 132ae4ee0a9249dfb8776e5e789131b3b73530efa7bdf5402e01d03bb2eb424e
     name: full-stack
@@ -48,7 +58,7 @@ entries:
     version: 0.8.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5916417Z"
+    created: "2019-11-03T09:42:05.483840424Z"
     description: A Helm chart for Kubernetes
     digest: e2b21564e9a40e8ef1d426f1fa23070993e04297697c22ad0199b4b0f3c6db4c
     name: full-stack
@@ -57,7 +67,7 @@ entries:
     version: 0.8.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5860655Z"
+    created: "2019-11-03T09:42:05.479512447Z"
     description: A Helm chart for Kubernetes
     digest: 255c575f6b80d6502c69eb790aab4a0fce7aa8e19d52d8a3e554e2d2b3b60e03
     name: full-stack
@@ -66,7 +76,7 @@ entries:
     version: 0.7.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5805014Z"
+    created: "2019-11-03T09:42:05.439938537Z"
     description: A Helm chart for Kubernetes
     digest: ae392ec997f7b88042d4a33d9577ad266f068f897ef31cbcd7a0813415df56ab
     name: full-stack
@@ -75,7 +85,7 @@ entries:
     version: 0.6.4
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5749372Z"
+    created: "2019-11-03T09:42:05.43545217Z"
     description: A Helm chart for Kubernetes
     digest: 93706ce3e55af4d41d630b63719508d6f2245bcbf452a1c6a1d4aa128d29815f
     name: full-stack
@@ -84,7 +94,7 @@ entries:
     version: 0.6.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5696919Z"
+    created: "2019-11-03T09:42:05.430669042Z"
     description: A Helm chart for Kubernetes
     digest: dc871cfa13c5de62ac4e5d09d6f20b77f9cbab5ac5aee0807dc5463c6ea9fdab
     name: full-stack
@@ -93,7 +103,7 @@ entries:
     version: 0.6.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5643906Z"
+    created: "2019-11-03T09:42:05.425935852Z"
     description: A Helm chart for Kubernetes
     digest: c4f9eb170cfcb8da79fa3c81d01babcca1784005909165294e061914e8d13c70
     name: full-stack
@@ -102,7 +112,7 @@ entries:
     version: 0.6.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5591809Z"
+    created: "2019-11-03T09:42:05.419178673Z"
     description: A Helm chart for Kubernetes
     digest: 9de378669c2728a710dba3d06371b2ded67aad9b53e625a2d7bc35e378d8e05b
     name: full-stack
@@ -111,7 +121,7 @@ entries:
     version: 0.6.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.553829Z"
+    created: "2019-11-03T09:42:05.413502128Z"
     description: A Helm chart for Kubernetes
     digest: 9a597bdc599790b86245270c938cc9799848990b33d82b9d3edc931710128c35
     name: full-stack
@@ -120,7 +130,7 @@ entries:
     version: 0.5.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5485938Z"
+    created: "2019-11-03T09:42:05.407660764Z"
     description: A Helm chart for Kubernetes
     digest: 17b69029ad3aaee6c516305acfda52995bdada71a8e2483cf27ed327352f0a53
     name: full-stack
@@ -129,7 +139,7 @@ entries:
     version: 0.5.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5430298Z"
+    created: "2019-11-03T09:42:05.402448399Z"
     description: A Helm chart for Kubernetes
     digest: 0320b7fd5b5ff0ece2fdeaf6eafd4c0c5dacae9e3d34e8e835c48502573a8520
     name: full-stack
@@ -138,7 +148,7 @@ entries:
     version: 0.5.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5372538Z"
+    created: "2019-11-03T09:42:05.396534625Z"
     description: A Helm chart for Kubernetes
     digest: 0353db623f4403b9b0f5aedeb38170c144951f5dbeb4be0cde9a93b5522f4b15
     name: full-stack
@@ -147,7 +157,7 @@ entries:
     version: 0.4.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5286945Z"
+    created: "2019-11-03T09:42:05.391047821Z"
     description: A Helm chart for Kubernetes
     digest: e5dd486afc9971abc1d1d24212aef74766ad97aa323ecade472ce04fbbe4cc31
     name: full-stack
@@ -156,7 +166,7 @@ entries:
     version: 0.4.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5235941Z"
+    created: "2019-11-03T09:42:05.384699172Z"
     description: A Helm chart for Kubernetes
     digest: 106dc0aed0a09088e8dc1362920362213ade48a2605055e233892bfe5b129b4d
     name: full-stack
@@ -165,7 +175,7 @@ entries:
     version: 0.4.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5179917Z"
+    created: "2019-11-03T09:42:05.337840236Z"
     description: A Helm chart for Kubernetes
     digest: 3911b90849d8756c01514c712326cc6abaea1aef5b7a91886f52e0b7576e1b4b
     name: full-stack
@@ -174,7 +184,7 @@ entries:
     version: 0.4.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5127697Z"
+    created: "2019-11-03T09:42:05.331414307Z"
     description: A Helm chart for Kubernetes
     digest: d6250de14dabd562a4a8c6657115589c83f469b421aaf6058e6cdeae891b0ff7
     name: full-stack
@@ -183,7 +193,7 @@ entries:
     version: 0.3.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.5048697Z"
+    created: "2019-11-03T09:42:05.290674579Z"
     description: A Helm chart for Kubernetes
     digest: 5f171a7d6ad983199a7eb5ba131f9411ed628f4fe483267f78bc3050bd435834
     name: full-stack
@@ -192,7 +202,7 @@ entries:
     version: 0.3.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4997801Z"
+    created: "2019-11-03T09:42:05.286213095Z"
     description: A Helm chart for Kubernetes
     digest: d1d84350ead2ff7081ff666157f94fce3d9ec57a69788f08cc91d5bbda481e07
     name: full-stack
@@ -201,7 +211,7 @@ entries:
     version: 0.3.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4947813Z"
+    created: "2019-11-03T09:42:05.279996235Z"
     description: A Helm chart for Kubernetes
     digest: 3e5853e77f3d90a7aa4de48b641a82b307c50dc1911251baa8cbd9cf47cd7f35
     name: full-stack
@@ -210,7 +220,7 @@ entries:
     version: 0.2.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4904367Z"
+    created: "2019-11-03T09:42:05.238269903Z"
     description: A Helm chart for Kubernetes
     digest: 633b5b6e32a8a3655a4e23d901855c48d365e32c653c6b7547c212137b155f6d
     name: full-stack
@@ -219,7 +229,7 @@ entries:
     version: 0.2.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4858619Z"
+    created: "2019-11-03T09:42:05.234045764Z"
     description: A Helm chart for Kubernetes
     digest: f215f30f96fd0d94dac3fdb3ccb1cdbb800187a432c27dd9ba78696bd9f15408
     name: full-stack
@@ -228,7 +238,7 @@ entries:
     version: 0.2.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.480932Z"
+    created: "2019-11-03T09:42:05.22951249Z"
     description: A Helm chart for Kubernetes
     digest: bb88b83b8faeaf4f2746c5a8af2a8fc00e0c4462b34f49c47d6f5578ff5d92ee
     name: full-stack
@@ -237,7 +247,7 @@ entries:
     version: 0.2.0
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.476188Z"
+    created: "2019-11-03T09:42:05.223955458Z"
     description: A Helm chart for Kubernetes
     digest: c550a326df7b5e6aa090e5676a8be57323c71a21cc7369cb11ba3a08d49fc003
     name: full-stack
@@ -246,7 +256,7 @@ entries:
     version: 0.1.3
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4718993Z"
+    created: "2019-11-03T09:42:05.182128671Z"
     description: A Helm chart for Kubernetes
     digest: b4f574fa7ea15cb8f02c35aabc5ae86af51eda7699959604c2bab034ba64c0cf
     name: full-stack
@@ -255,7 +265,7 @@ entries:
     version: 0.1.2
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4672488Z"
+    created: "2019-11-03T09:42:05.176959537Z"
     description: A Helm chart for Kubernetes
     digest: 5e499bb62aa41cd1edd202a15cb41b2422fe1680d5a9eb4300180ef0cf52a6ca
     name: full-stack
@@ -264,11 +274,11 @@ entries:
     version: 0.1.1
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2019-10-31T09:12:10.4603894Z"
+    created: "2019-11-03T09:42:05.17059346Z"
     description: A Helm chart for Kubernetes
     digest: ddbe9d23fe8580d5df920542ff019b23c58696ea0dee4278b1c8f96b8505f976
     name: full-stack
     urls:
     - https://taitounited.github.io/taito-charts/full-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2019-10-31T09:12:10.4553195Z"
+generated: "2019-11-03T09:42:05.111980528Z"

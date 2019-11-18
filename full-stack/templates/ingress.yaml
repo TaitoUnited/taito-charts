@@ -151,8 +151,8 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
-    {{- if $path.annotations }}
-    {{- range $annotationName, $annotationValue := $path.annotations }}
+    {{- if .annotations }}
+    {{- range $annotationName, $annotationValue := .annotations }}
     {{ $annotationName }}: {{ $annotationValue }}
     {{- end }}
     {{- end }}
@@ -229,8 +229,8 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
-    {{- if $path.annotations }}
-    {{- range $annotationName, $annotationValue := $path.annotations }}
+    {{- if .annotations }}
+    {{- range $annotationName, $annotationValue := .annotations }}
     {{ $annotationName }}: {{ $annotationValue }}
     {{- end }}
     {{- end }}

@@ -13,6 +13,7 @@ taito create: my-chart
     Edit `requirements.yaml` of a project:
 
     ```
+    version: N.N.N # Use the same chart version as in full-stack Chart.yaml
     repository: file:///taito-charts/full-stack
     ```
 

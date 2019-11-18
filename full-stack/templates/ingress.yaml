@@ -23,6 +23,11 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "false"
     ingress.kubernetes.io/permanent-redirect: https://{{ $domain.name }}
     {{- end }}
+    {{- if $domain.annotations }}
+    {{- range $annotationName, $annotationValue := $domain.annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
+    {{- end }}
 spec:
   {{- if $root.Values.ingress.tls }}
   tls:
@@ -64,6 +69,11 @@ metadata:
     kubernetes.io/tls-acme: "true"
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
     {{- end }}
 spec:
   {{- if .Values.ingress.tls }}
@@ -141,6 +151,11 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
+    {{- if .annotations }}
+    {{- range $annotationName, $annotationValue := .annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
+    {{- end }}
 spec:
   rules:
     {{- range $domain := $root.Values.ingress.domains }}
@@ -213,6 +228,11 @@ metadata:
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    {{- end }}
+    {{- if .annotations }}
+    {{- range $annotationName, $annotationValue := .annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
     {{- end }}
 spec:
   rules:

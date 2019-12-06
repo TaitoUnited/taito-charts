@@ -16,12 +16,12 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- if not $root.Values.ingress.tls }}
-    ingress.kubernetes.io/permanent-redirect: http://{{ $domain.name }}
+    nginx.ingress.kubernetes.io/permanent-redirect: http://{{ $domain.name }}
     {{- end }}
     {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
-    ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/permanent-redirect: https://{{ $domain.name }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/permanent-redirect: https://{{ $domain.name }}
     {{- end }}
     {{- if $domain.annotations }}
     {{- range $annotationName, $annotationValue := $domain.annotations }}
@@ -67,8 +67,8 @@ metadata:
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
-    ingress.kubernetes.io/ssl-redirect: "true"
-    ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
@@ -117,39 +117,39 @@ metadata:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
-    ingress.kubernetes.io/auth-type: "basic"
-    ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
-    ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    nginx.ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
+    nginx.ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
-    ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
     {{- if .bufferSize | default $defaults.bufferSize }}
-    ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
     {{- end }}
     {{- if .requestBuffering | default $defaults.requestBuffering }}
-    ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    nginx.ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
     {{- end }}
     {{- if .connectTimeout | default $defaults.connectTimeout }}
-    ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
     {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
-    ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
-    ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
     {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
-    ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
-    ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
+    nginx.ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
-    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    nginx.ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
@@ -195,39 +195,39 @@ metadata:
     nginx.org/mergeable-ingress-type: "minion"
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
-    ingress.kubernetes.io/auth-type: "basic"
-    ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
-    ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    nginx.ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
+    nginx.ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
-    ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
     {{- if .bufferSize | default $defaults.bufferSize }}
-    ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
     {{- end }}
     {{- if .requestBuffering | default $defaults.requestBuffering }}
-    ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    nginx.ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
     {{- end }}
     {{- if .connectTimeout | default $defaults.connectTimeout }}
-    ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
     {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
-    ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
-    ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
     {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
-    ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
-    ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
+    nginx.ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
-    ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    nginx.ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}

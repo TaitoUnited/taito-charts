@@ -319,7 +319,7 @@ spec:
         {{- end }}
         {{- end }}
 
-        {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
+        {{- if and (.db) (.db.useProxy) (eq $provider "gcp") }}
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.13
           securityContext:
@@ -399,7 +399,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
+        {{- if and (.db) (.db.useProxy) (eq $provider "gcp") }}
         - name: cloudsql-instance-credentials
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .db.proxySecret "" }}

@@ -16,7 +16,6 @@ persistence:
 
 ingress:
   class: nginx
-  oldRewritePolicy: false
   tls: true
   domains:
 

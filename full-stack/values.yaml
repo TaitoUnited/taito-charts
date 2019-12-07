@@ -69,9 +69,13 @@ serviceDefaults:
   cpuLimit: 100m
   memoryRequest: 50Mi
   memoryLimit: 512Mi
-  # Scaling
+  # Vertical scaling
+  verticalScaleUpdateMode: Off
+  # Horizontal autoscaling
   replicas: 2
   autoscale: false
+  autoscaleCpuPercentage: 70
+  autoscaleMemoryPercentage: 70
   minReplicas: 2
   maxReplicas: 5
   # TODO metrics:

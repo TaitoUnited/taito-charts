@@ -9,7 +9,7 @@
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- if not .type }}
 {{- if .autoscale }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}
@@ -25,7 +25,38 @@ spec:
     name: {{ template "name" $root }}-{{ $serviceName }}
   minReplicas: {{ .minReplicas | default $defaults.minReplicas }}
   maxReplicas: {{ .maxReplicas | default $defaults.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .targetCPUUtilizationPercentage | default $defaults.targetCPUUtilizationPercentage }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .autoscaleCpuPercentage | default $defaults.autoscaleCpuPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .autoscaleMemoryPercentage | default $defaults.autoscaleMemoryPercentage }}
+---
+{{- end }}
+{{- if .verticalScaleUpdateMode }}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ template "fullname" $root }}-{{ $serviceName }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: {{ template "name" $root }}-{{ $serviceName }}
+  updatePolicy:
+    updateMode: {{ .verticalScaleUpdateMode }}
 ---
 {{- end }}
 apiVersion: apps/v1

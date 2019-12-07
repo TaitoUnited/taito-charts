@@ -9,6 +9,25 @@
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- range $job := .cronJobs }}
 {{- with (index $root.Values.services $serviceName) }}
+{{- if .verticalScaleUpdateMode }}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: CronJob
+    name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+  updatePolicy:
+    updateMode: {{ .verticalScaleUpdateMode }}
+---
+{{- end }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:

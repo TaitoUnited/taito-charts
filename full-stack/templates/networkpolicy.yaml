@@ -1,0 +1,96 @@
+{{- $root := . -}}
+{{- $env := .Values.global.env -}}
+{{- $global := .Values.global -}}
+{{- $provider := .Values.global.zone.provider -}}
+{{- $defaults := .Values.serviceDefaults -}}
+
+# Default deny all for namespace
+{{- if not $global.disableNamespaceInit }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+{{- end }}
+
+{{- range $serviceName, $service := .Values.services }}
+{{- with $service }}
+{{- if or (not (hasKey . "enabled")) (.enabled) }}
+{{- if not .type }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "fullname" $root }}-{{ $serviceName }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "name" $root }}
+      release: {{ $root.Release.Name }}
+      tier: {{ .tier | default $defaults.tier }}
+      role: {{ $serviceName }}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access-{{ template "fullname" $root }}-{{ $serviceName }}: "true"
+  {{- if and .paths (len .paths > 0) }}
+  - from:
+    - podSelector:
+        matchLabels: {{ $root.Values.ingress.labels }}
+  {{- end }}
+  {{- range $ingress := .ingress }}
+  - from:
+    - podSelector:
+        matchLabels: {{ .ingress }}
+  {{- end }}
+  egress:
+  {{- range $egress := .egress }}
+  {{- if not egress.ip }}
+  - to:
+    - podSelector:
+        matchLabels: {{ .egress }}
+  {{- end }}
+  {{- if egress.ip }}
+  {{- if eq egress.ip "private" }}
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+  - to:
+    - ipBlock:
+        cidr: 172.16.0.0/12
+  - to:
+    - ipBlock:
+        cidr: 192.168.0.0/16
+  {{- else if eq egress.ip "public" }}
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+  {{- else if eq egress.ip "any" }}
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+  {{- else }}
+  - to:
+    - ipBlock:
+        cidr: {{ .egress.ip }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

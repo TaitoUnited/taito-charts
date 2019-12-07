@@ -68,6 +68,11 @@ metadata:
     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
     release: {{ $root.Release.Name }}
     heritage: {{ $root.Release.Service }}
+    {{- range $egress := .egress }}
+    {{- if egress.fullname }}
+    access-{{ egress.fullname }}: "true"
+    {{- end }}
+    {{- end }}
 spec:
   replicas: {{ .replicas | default $defaults.replicas }}
   selector:

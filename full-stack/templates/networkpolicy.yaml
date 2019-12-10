@@ -45,8 +45,9 @@ spec:
   {{- if .paths }}
   {{- if gt (len .paths) 0 }}
   - from:
-    - podSelector:
-        matchLabels: {{ $root.Values.ingress.labels }}
+    - namespaceSelector:
+        matchLabels:
+          name: {{ $root.Values.ingress.namespace }}
   {{- end }}
   {{- end }}
   {{- range $ingress := .ingress }}

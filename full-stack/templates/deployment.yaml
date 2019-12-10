@@ -69,8 +69,8 @@ metadata:
     release: {{ $root.Release.Name }}
     heritage: {{ $root.Release.Service }}
     {{- range $egress := .egress }}
-    {{- if egress.fullname }}
-    access-{{ egress.fullname }}: "true"
+    {{- if $egress.fullname }}
+    access-{{ $egress.fullname }}: "true"
     {{- end }}
     {{- end }}
 spec:
@@ -355,7 +355,8 @@ spec:
         {{- end }}
         {{- end }}
 
-        {{- if and (.db) (.db.useProxy) (eq $provider "gcp") }}
+        {{- if and (.db) (eq $provider "gcp") }}
+        {{- if .db.useProxy }}
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.13
           securityContext:
@@ -378,6 +379,7 @@ spec:
               mountPath: /etc/ssl/certs
             - name: cloudsql
               mountPath: /cloudsql
+        {{- end }}
         {{- end }}
       volumes:
         {{- if .hostDevices }}
@@ -435,7 +437,8 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if and (.db) (.db.useProxy) (eq $provider "gcp") }}
+        {{- if and (.db) (eq $provider "gcp") }}
+        {{- if .db.useProxy }}
         - name: cloudsql-instance-credentials
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .db.proxySecret "" }}
@@ -444,6 +447,7 @@ spec:
             path: /etc/ssl/certs
         - name: cloudsql
           emptyDir:
+        {{- end }}
         {{- end }}
         {{- if and (.serviceAccount) (eq $provider "gcp") }}
         {{- if .serviceAccount.secret }}

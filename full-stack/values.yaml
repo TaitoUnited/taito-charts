@@ -4,6 +4,8 @@ serviceAccount:
   create: true
 podSecurityPolicy:
   enabled: true
+networkPolicy:
+  enabled: true
 
 persistence:
   enabled: false

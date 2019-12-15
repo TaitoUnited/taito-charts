@@ -4,7 +4,7 @@
 {{- $provider := .Values.global.zone.provider -}}
 {{- $defaults := .Values.serviceDefaults -}}
 
-{{- if .Values.networkPolicy.enabled}}
+{{- if .Values.networkPolicyEnabled}}
 
 # Default deny all for namespace
 {{- if not $global.disableNamespaceInit }}

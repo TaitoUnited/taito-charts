@@ -1,11 +1,7 @@
-rbac:
-  create: true
-serviceAccount:
-  create: true
-podSecurityPolicy:
-  enabled: true
-networkPolicy:
-  enabled: true
+rbacCreate: true
+serviceAccountCreate: true
+podSecurityPolicyEnabled: true
+networkPolicyEnabled: true
 
 persistence:
   enabled: false

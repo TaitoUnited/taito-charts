@@ -187,16 +187,20 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
+          {{- if $value }}
             - name: default- {{- lower $name | replace "_" "-" }}
               mountPath: /run/secrets/ {{- $name }}
               subPath: {{ $name }}
               readOnly: true
           {{- end }}
+          {{- end }}
           {{- range $name, $value := .secrets }}
+          {{- if $value }}
             - name: {{ lower $name | replace "_" "-" }}
               mountPath: /run/secrets/ {{- $name }}
               subPath: {{ $name }}
               readOnly: true
+          {{- end }}
           {{- end }}
           {{- if .hostDevices }}
           {{- range .hostDevices }}
@@ -318,10 +322,12 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}
+          {{- if $value }}
             - name: sidecar- {{- lower $name | replace "_" "-" }}
               mountPath: /run/secrets/ {{- $name }}
               subPath: {{ $name }}
               readOnly: true
+          {{- end }}
           {{- end }}
           {{- if .sidecar.temporaryVolumeMounts }}
           {{- range .sidecar.temporaryVolumeMounts }}
@@ -391,6 +397,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- range $name, $value := $defaults.secrets }}
+        {{- if $value }}
         - name: default- {{- lower $name | replace "_" "-" }}
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
@@ -398,7 +405,9 @@ spec:
             - key: {{ regexFind "[a-zA-Z]*$" $value }}
               path: {{ $name }}
         {{- end }}
+        {{- end }}
         {{- range $name, $value := .secrets }}
+        {{- if $value }}
         - name: {{ lower $name | replace "_" "-" }}
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
@@ -406,15 +415,18 @@ spec:
             - key: {{ regexFind "[a-zA-Z]*$" $value }}
               path: {{ $name }}
         {{- end }}
+        {{- end }}
         {{- if .sidecar }}
         {{- if .sidecar.enabled }}
         {{- range $name, $value := .sidecar.secrets }}
+        {{- if $value }}
         - name: sidecar- {{- lower $name | replace "_" "-" }}
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
             items:
             - key: {{ regexFind "[a-zA-Z]*$" $value }}
               path: {{ $name }}
+        {{- end }}
         {{- end }}
         {{- end }}
         {{- end }}

@@ -110,7 +110,7 @@ spec:
           {{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
           {{- range $path := $service.paths }}
           {{- with $path }}
-          - path: {{ $path.path }}
+          - path: {{ default "/" $path.path }}
             backend:
               serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.port | default $defaults.port }}

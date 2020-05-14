@@ -93,7 +93,9 @@ spec:
         {{- end }}
         role: {{ $serviceName }}
     spec:
+      {{- if $root.Values.serviceAccountCreate -}}
       serviceAccountName: {{ template "fullname" $root }}
+      {{- end }}
       automountServiceAccountToken: false
       containers:
         - name: {{ template "name" $root }}-{{ $serviceName }}

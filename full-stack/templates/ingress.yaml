@@ -2,6 +2,8 @@
 {{- $defaults := .Values.serviceDefaults -}}
 
 # Alternate domain ingresses (redirect)
+# TODO: add non-nginx support
+{{- if contains "nginx" $root.Values.ingress.class }}
 {{- range $domain := .Values.ingress.domains }}
 {{- if $domain.altName }}
 apiVersion: extensions/v1beta1
@@ -53,6 +55,7 @@ spec:
 ---
 {{- end }}
 {{- end }}
+{{- end }}
 
 # Master ingress
 apiVersion: extensions/v1beta1
@@ -65,7 +68,9 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
+    {{- if contains "nginx" $root.Values.ingress.class }}
     nginx.org/mergeable-ingress-type: "master"
+    {{- end }}
     {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
     {{- end }}
@@ -96,9 +101,29 @@ spec:
   rules:
     {{- range $domain := .Values.ingress.domains }}
     - host: {{ $domain.name }}
+      # Include service paths on master ingress for non-nginx ingresses
+      # -> subpath specific settings not supported for non-nginx ingresses
+      {{- if not (contains "nginx" $root.Values.ingress.class) }}
+      http:
+        paths:
+          {{- range $serviceName, $service := $root.Values.services }}
+          {{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
+          {{- range $path := $service.paths }}
+          {{- with $path }}
+          - path: {{ $path.path }}
+            backend:
+              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              servicePort: {{ $service.port | default $defaults.port }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+      {{- end }}
+
     {{- end }}
 ---
 
+{{- if contains "nginx" $root.Values.ingress.class }}
 
 # Service ingresses
 {{- range $serviceName, $service := .Values.services }}
@@ -266,4 +291,6 @@ spec:
 
 
 {{- end }}
+{{- end }}
+
 {{- end }}

@@ -14,7 +14,9 @@ metadata:
     release: {{ $root.Release.Name }}
     heritage: {{ $root.Release.Service }}
   annotations:
+    {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- end }}
     {{- if not $root.Values.ingress.tls }}
     nginx.ingress.kubernetes.io/permanent-redirect: http://{{ $domain.name }}
     {{- end }}
@@ -64,7 +66,9 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     nginx.org/mergeable-ingress-type: "master"
+    {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
+    {{- end }}
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -115,7 +119,9 @@ metadata:
     heritage: {{ $root.Release.Service }}
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
+    {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     nginx.ingress.kubernetes.io/auth-type: "basic"
     nginx.ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
@@ -193,7 +199,9 @@ metadata:
     heritage: {{ $root.Release.Service }}
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
+    {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
+    {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     nginx.ingress.kubernetes.io/auth-type: "basic"
     nginx.ingress.kubernetes.io/auth-realm: {{ template "name" $root }}

@@ -37,7 +37,9 @@ spec:
     matchLabels:
       app: {{ template "name" $root }}
       release: {{ $root.Release.Name }}
-      tier: {{ .tier | default $defaults.tier }}
+      {{- if default .tier $defaults.tier }}
+      tier: {{ default .tier $defaults.tier }}
+      {{- end }}
       role: {{ $serviceName }}
   ingress:
   - from:

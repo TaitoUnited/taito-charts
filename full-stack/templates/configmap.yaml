@@ -8,20 +8,20 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  ENV: {{ .Values.global.env | quote }}
-  DEBUG: {{ .Values.global.debug | quote }}
-  LOG_PROVIDER: {{ .Values.global.logProvider | quote }}
-  LOG_FORMAT: {{ .Values.global.logFormat | quote }}
-  LOG_LEVEL: {{ .Values.global.logLevel | quote }}
-  PROJECT: {{ .Values.global.project.name | quote }}
-  COMPANY: {{ .Values.global.project.company | quote }}
-  FAMILY: {{ .Values.global.project.family | quote }}
-  APPLICATION: {{ .Values.global.project.application | quote }}
-  SUFFIX: {{ .Values.global.project.suffix | quote }}
+  ENV: {{ .Values.global.env | default "" | quote }}
+  DEBUG: {{ .Values.global.debug | default "" | quote }}
+  LOG_PROVIDER: {{ .Values.global.logProvider | default "" | quote }}
+  LOG_FORMAT: {{ .Values.global.logFormat | default "" | quote }}
+  LOG_LEVEL: {{ .Values.global.logLevel | default "" | quote }}
+  PROJECT: {{ .Values.global.project.name | default "" | quote }}
+  COMPANY: {{ .Values.global.project.company | default "" | quote }}
+  FAMILY: {{ .Values.global.project.family | default "" | quote }}
+  APPLICATION: {{ .Values.global.project.application | default "" | quote }}
+  SUFFIX: {{ .Values.global.project.suffix | default "" | quote }}
   DOMAIN: {{ .Values.global.domain | quote }}
-  PUBLIC_PORT: {{ .Values.global.publicPort | quote }}
-  URL: {{ .Values.global.url | quote }}
-  VERSION: {{ .Values.global.build.version | quote }}
-  COMMIT: {{ .Values.global.build.commit | quote }}
-  IMAGE_TAG: {{ .Values.global.build.imageTag | quote }}
+  PUBLIC_PORT: {{ .Values.global.publicPort | default "" | quote }}
+  URL: {{ .Values.global.url | default "" | quote }}
+  VERSION: {{ .Values.global.build.version | default "" | quote }}
+  COMMIT: {{ .Values.global.build.commit | default "" | quote }}
+  IMAGE_TAG: {{ .Values.global.build.imageTag | default "" | quote }}
   DEPLOY_TIME: {{ now | htmlDate }}

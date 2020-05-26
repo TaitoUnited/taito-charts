@@ -100,6 +100,10 @@ spec:
                 - name: {{ $name }}
                   value: {{ $value | quote }}
                 {{- end }}
+                {{- range $name, $value := $job.env }}
+                - name: {{ $name }}
+                  value: {{ $value | quote }}
+                {{- end }}
                 {{- range $name, $value := $defaults.secretEnv }}
                 - name: {{ $name }}
                   valueFrom:
@@ -114,6 +118,13 @@ spec:
                       name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
                       key: {{ regexFind "[a-zA-Z]*$" $value }}
                 {{- end }}
+                {{- range $name, $value := $job.secretEnv }}
+                - name: {{ $name }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                      key: {{ regexFind "[a-zA-Z]*$" $value }}
+                {{- end }}
               volumeMounts:
               {{- range $name, $value := $defaults.secrets }}
                 - name: default- {{- lower $name | replace "_" "-" }}
@@ -122,6 +133,12 @@ spec:
                   readOnly: true
               {{- end }}
               {{- range $name, $value := .secrets }}
+                - name: {{ lower $name | replace "_" "-" }}
+                  mountPath: /run/secrets/ {{- $name }}
+                  subPath: {{ $name }}
+                  readOnly: true
+              {{- end }}
+              {{- range $name, $value := $job.secrets }}
                 - name: {{ lower $name | replace "_" "-" }}
                   mountPath: /run/secrets/ {{- $name }}
                   subPath: {{ $name }}
@@ -163,6 +180,14 @@ spec:
                   path: {{ $name }}
             {{- end }}
             {{- range $name, $value := .secrets }}
+            - name: {{ lower $name | replace "_" "-" }}
+              secret:
+                secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+                items:
+                - key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  path: {{ $name }}
+            {{- end }}
+            {{- range $name, $value := $job.secrets }}
             - name: {{ lower $name | replace "_" "-" }}
               secret:
                 secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}

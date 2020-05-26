@@ -138,20 +138,36 @@ spec:
               memory: {{ .memoryLimit | default $defaults.memoryLimit }}
           {{- if not .livenessDisabled }}
           livenessProbe:
+            {{- if .livenessCommand }}
+            exec:
+              command:
+              {{- range .livenessCommand }}
+              - {{ . }}
+              {{- end }}
+            {{- else }}
             httpGet:
               path: {{ coalesce .livenessPath $defaults.livenessPath }}
               port: {{ coalesce .livenessPort .port $defaults.port }}
               scheme: HTTP
+            {{- end }}
             initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay }}
             periodSeconds: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
             timeoutSeconds: {{ coalesce .livenessTimeout $defaults.livenessTimeout 3 }}
             failureThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
             successThreshold: {{ coalesce .livenessSuccessThreshold $defaults.livenessSuccessThreshold 1 }}
           readinessProbe:
+            {{- if .livenessCommand }}
+            exec:
+              command:
+              {{- range .livenessCommand }}
+              - {{ . }}
+              {{- end }}
+            {{- else }}
             httpGet:
               path: {{ coalesce .readinessPath .livenessPath $defaults.livenessPath }}
               port: {{ coalesce .readinessPort .livenessPort .port $defaults.port }}
               scheme: HTTP
+            {{- end }}
             initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 30 }}
             periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 10 }}
             timeoutSeconds: {{ coalesce .readinessTimeout $defaults.readinessTimeout 3 }}

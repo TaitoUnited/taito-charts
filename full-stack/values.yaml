@@ -25,6 +25,7 @@ serviceDefaults:
   port: 8080
   tier:
   livenessPath: /healthz
+  # livenessCommand:
   livenessInitialDelay: 3
   # Paths
   paths:

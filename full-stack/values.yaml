@@ -69,6 +69,8 @@ serviceDefaults:
   cpuLimit: 100m
   memoryRequest: 50Mi
   memoryLimit: 512Mi
+  # Strategy
+  strategyType: RollingUpdate
   # Vertical scaling
   verticalScaleUpdateMode: Off
   # Horizontal autoscaling

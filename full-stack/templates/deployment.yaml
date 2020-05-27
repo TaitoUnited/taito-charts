@@ -79,17 +79,21 @@ spec:
     matchLabels:
       app: {{ template "name" $root }}
       release: {{ $root.Release.Name }}
-      {{- if default .tier $defaults.tier }}
-      tier: {{ default .tier $defaults.tier }}
+      {{- if default $defaults.tier .tier }}
+      tier: {{ default $defaults.tier .tier }}
       {{- end }}
       role: {{ $serviceName }}
+  {{- if default $defaults.strategyType .strategyType }}
+  strategy:
+    type: {{ default $defaults.strategyType .strategyType }}
+  {{- end }}
   template:
     metadata:
       labels:
         app: {{ template "name" $root }}
         release: {{ $root.Release.Name }}
-        {{- if default .tier $defaults.tier }}
-        tier: {{ default .tier $defaults.tier }}
+        {{- if default $defaults.tier .tier }}
+        tier: {{ default $defaults.tier .tier }}
         {{- end }}
         role: {{ $serviceName }}
     spec:

@@ -86,6 +86,9 @@ spec:
   {{- if default $defaults.strategyType .strategyType }}
   strategy:
     type: {{ default $defaults.strategyType .strategyType }}
+    {{- if eq (default $defaults.strategyType .strategyType) "Recreate" }}
+    rollingUpdate: null
+    {{- end }}
   {{- end }}
   template:
     metadata:

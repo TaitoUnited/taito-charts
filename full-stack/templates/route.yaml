@@ -9,8 +9,7 @@
 {{- with $path }}
 
 # OpenShift route
-# NOTE: disabled because of UPGRADE FAILED: unable to recognize "": no matches for kind "Route" in version "v1"
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}{{ $path.path | default "-root" | replace "/" "-" }}
@@ -30,7 +29,6 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
   {{- end }}
-  # path: {{ default "/" $path.path }}
   path: {{ $path.path }}
   port:
     targetPort: service

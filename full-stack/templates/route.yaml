@@ -9,29 +9,37 @@
 {{- with $path }}
 
 # OpenShift route
-# apiVersion: v1
-# kind: Route
-# metadata:
-#   name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}-{{ $path.path | default "-root" | replace "/" "-" }}
-#   labels:
-#     app: {{ template "name" $root }}
-#     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-#     release: {{ $root.Release.Name }}
-#     heritage: {{ $root.Release.Service }}
-#   {{- if $root.Values.ingress.tls }}
-#   kubernetes.io/tls-acme: "true"
-#   {{- end }}
-# spec:
-#   host: {{ $domain.name }}
-#   # path: {{ default "/" $path.path }}
-#   path: {{ $path.path }}
-#   port:
-#     targetPort: {{ $service.port | default $defaults.port }}
-#   to:
-#     kind: Service
-#     name: {{ template "fullname" $root }}-{{ $serviceName }}
-#     weight: 100
-# ---
+# NOTE: disabled because of UPGRADE FAILED: unable to recognize "": no matches for kind "Route" in version "v1"
+apiVersion: v1
+kind: Route
+metadata:
+  name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}{{ $path.path | default "-root" | replace "/" "-" }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+  annotations:
+  {{- if $root.Values.ingress.tls }}
+    kubernetes.io/tls-acme: "true"
+  {{- end }}
+spec:
+  host: {{ $domain.name }}
+  {{- if $root.Values.ingress.tls }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  {{- end }}
+  # path: {{ default "/" $path.path }}
+  path: {{ $path.path }}
+  port:
+    targetPort: service
+  to:
+    kind: Service
+    name: {{ template "fullname" $root }}-{{ $serviceName }}
+    weight: 100
+  wildcardPolicy: None
+---
 
 {{- end }}
 {{- end }}

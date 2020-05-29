@@ -1,0 +1,41 @@
+{{- $root := . -}}
+{{- $defaults := $root.Values.serviceDefaults -}}
+
+{{- if contains "openshift" $root.Values.ingress.class }}
+{{- range $domain := $root.Values.ingress.domains }}
+{{- range $serviceName, $service := $root.Values.services }}
+{{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
+{{- range $path := $service.paths }}
+{{- with $path }}
+
+# OpenShift route
+# apiVersion: v1
+# kind: Route
+# metadata:
+#   name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}-{{ $path.path | default "-root" | replace "/" "-" }}
+#   labels:
+#     app: {{ template "name" $root }}
+#     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+#     release: {{ $root.Release.Name }}
+#     heritage: {{ $root.Release.Service }}
+#   {{- if $root.Values.ingress.tls }}
+#   kubernetes.io/tls-acme: "true"
+#   {{- end }}
+# spec:
+#   host: {{ $domain.name }}
+#   # path: {{ default "/" $path.path }}
+#   path: {{ $path.path }}
+#   port:
+#     targetPort: {{ $service.port | default $defaults.port }}
+#   to:
+#     kind: Service
+#     name: {{ template "fullname" $root }}-{{ $serviceName }}
+#     weight: 100
+# ---
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

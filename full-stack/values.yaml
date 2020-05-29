@@ -16,6 +16,7 @@ ingress:
   class: ''
   oldRewritePolicy: false
   tls: true
+  certManagerEnabled: true
   domains:
 
 serviceDefaults:

@@ -1,6 +1,7 @@
 {{- $root := . -}}
 {{- $defaults := $root.Values.serviceDefaults -}}
 
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
 {{- if contains "openshift" $root.Values.ingress.class }}
 {{- range $domain := $root.Values.ingress.domains }}
 {{- range $serviceName, $service := $root.Values.services }}
@@ -39,6 +40,7 @@ spec:
   wildcardPolicy: None
 ---
 
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

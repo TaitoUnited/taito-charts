@@ -2,6 +2,7 @@
 {{- $defaults := .Values.serviceDefaults -}}
 {{- $annoPrefix := .Values.ingress.oldRewritePolicy | ternary "" "nginx." -}}
 
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
 {{- if not (contains "openshift" $root.Values.ingress.class) }}
 
 # Alternate domain ingresses (redirect)
@@ -301,4 +302,5 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- end }}
 {{- end }}

@@ -1,3 +1,5 @@
+# TODO: If configmap is changed, the pods are not restarted if image tag
+# does not change --> they keep using the old values
 apiVersion: v1
 kind: ConfigMap
 metadata:

@@ -22,7 +22,8 @@ spec:
 {{- range $serviceName, $service := .Values.services }}
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
-{{- if not .type }}
+{{- $type := default "service" .type -}}
+{{- if not (eq "job" $type) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

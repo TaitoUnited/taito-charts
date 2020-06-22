@@ -4,7 +4,8 @@
 {{- range $serviceName, $service := .Values.services }}
 {{- with $service }}
 {{- if (or (not (hasKey . "enabled")) (.enabled)) }}
-{{- if not .type }}
+{{- $type := default "service" .type -}}
+{{- if not (eq "job" $type) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,15 +28,35 @@ spec:
   ports:
     - name: service
       port: {{ .port | default $defaults.port }}
+      {{- if .targetPort }}
+      targetPort: {{ .targetPort }}
+      {{- end }}
+    {{- range $p := .ports }}
+    - port: {{ $p.port }}
+      {{- if $p.targetPort }}
+      targetPort: {{ $p.targetPort }}
+      {{- end }}
+    {{- end }}
     {{- if .sidecar }}
     {{- if .sidecar.enabled }}
     {{- if .sidecar.port }}
     - name: sidecar
-      port: {{ .sidecar.port}}
+      port: {{ .sidecar.port }}
+      {{- if .sidecar.targetPort }}
+      targetPort: {{ .sidecar.targetPort }}
+      {{- end }}
+    {{- range $p := .sidecar.ports }}
+    - port: {{ $p.port }}
+      {{- if $p.targetPort }}
+      targetPort: {{ $p.targetPort }}
+      {{- end }}
     {{- end }}
     {{- end }}
     {{- end }}
-
+    {{- end }}
+  {{- if eq $type "external" }}
+  type: LoadBalancer
+  {{- end }}
 ---
 {{- end }}
 {{- end }}

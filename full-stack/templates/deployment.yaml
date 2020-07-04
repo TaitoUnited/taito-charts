@@ -203,10 +203,6 @@ spec:
                 name: {{ template "fullname" $root }}-common
           env:
             {{- if $httpProxy.enabled }}
-            - name: HTTP_PROXY
-              value: http://{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
-            - name: HTTPS_PROXY
-              value: http://{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
             - name: DOMAIN_PROXY
               value: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
             {{- end }}

@@ -64,6 +64,8 @@ serviceDefaults:
   privileged: false
   allowPrivilegeEscalation: false
   capabilities:
+  # Network
+  httpProxyImage: taitounited/squid:4.12
   # - NET_ADMIN (example)
   # Resources
   cpuRequest: 2m

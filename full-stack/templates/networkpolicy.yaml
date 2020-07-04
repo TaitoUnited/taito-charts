@@ -19,11 +19,20 @@ spec:
   - Egress
 {{- end }}
 
+{{- /* TODO: network policies for cronjobs also */ -}}
 {{- range $serviceName, $service := .Values.services }}
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- $type := default "service" .type -}}
 {{- if not (eq "job" $type) }}
+
+{{- $httpProxy := dict "enabled" false -}}
+{{- range $egress := .egress }}
+{{- if $egress.domain }}
+{{ $dummy := set $httpProxy "enabled" true }}
+{{- end }}
+{{- end }}
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -61,8 +70,14 @@ spec:
         matchLabels: {{ $ingress }}
   {{- end }}
   egress:
+  {{- if $httpProxy.enabled }}
+  - to:
+    - podSelector:
+        matchLabels:
+          fullname: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy
+  {{- end }}
   {{- range $egress := .egress }}
-  {{- if not $egress.ip }}
+  {{- if and (not $egress.ip) (not $egress.domain) }}
   - to:
     - podSelector:
         matchLabels: {{ $egress }}
@@ -98,6 +113,36 @@ spec:
   {{- end }}
   {{- end }}
 ---
+{{- if $httpProxy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "name" $root }}
+      release: {{ $root.Release.Name }}
+      tier: proxy
+      role: {{ $serviceName }}-http-proxy
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access-{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy: "true"
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+---
+{{- end }}
+
+
 {{- end }}
 {{- end }}
 {{- end }}

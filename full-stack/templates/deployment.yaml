@@ -60,6 +60,16 @@ spec:
     updateMode: {{ .verticalScaleUpdateMode }}
 ---
 {{- end }}
+
+{{- $httpProxy := dict "enabled" false -}}
+{{- if $root.Values.networkPolicyEnabled}}
+{{- range $egress := .egress }}
+{{- if $egress.domain }}
+{{- $dummy := set $httpProxy "enabled" true -}}
+{{- end }}
+{{- end }}
+{{- end }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -69,9 +79,14 @@ metadata:
     chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
     release: {{ $root.Release.Name }}
     heritage: {{ $root.Release.Service }}
+    {{- if $root.Values.networkPolicyEnabled}}
     {{- range $egress := .egress }}
     {{- if $egress.fullname }}
     access-{{ $egress.fullname }}: "true"
+    {{- end }}
+    {{- end }}
+    {{- if $httpProxy.enabled }}
+    access-{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy: "true"
     {{- end }}
     {{- end }}
 spec:
@@ -187,6 +202,14 @@ spec:
               configMapRef:
                 name: {{ template "fullname" $root }}-common
           env:
+            {{- if $httpProxy.enabled }}
+            - name: HTTP_PROXY
+              value: http://{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
+            - name: HTTPS_PROXY
+              value: http://{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
+            - name: DOMAIN_PROXY
+              value: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
+            {{- end }}
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
             {{- if .serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -499,6 +522,53 @@ spec:
         {{- end }}
         {{- end }}
 ---
+{{- if $httpProxy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  replicas: {{ $defaults.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ template "name" $root }}
+      release: {{ $root.Release.Name }}
+      tier: proxy
+      role: {{ $serviceName }}-http-proxy
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" $root }}
+        release: {{ $root.Release.Name }}
+        tier: proxy
+        role: {{ $serviceName }}-http-proxy
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: {{ template "name" $root }}-{{ $serviceName }}-http-proxy
+          image: {{ .httpProxyImage | default $defaults.httpProxyImage }}
+          imagePullPolicy: {{ $global.imagePullPolicy | quote }}
+          ports:
+            - containerPort: 3128
+          resources:
+            requests:
+              cpu: 2m
+              memory: 2Mi
+            limits:
+              cpu: 50m
+              memory: 100Mi
+          # TODO: liveness and readiness probe (squid returns HTTP 400)
+          env:
+            - name: SITES_WHITELIST
+              value: {{ range $egress := .egress }}{{ if $egress.domain }}{{ $egress.domain }} {{ end }}{{ end }}
+---
+{{- end }}
+
 {{- end }}
 {{- end }}
 {{- end }}

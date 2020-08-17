@@ -154,7 +154,7 @@ spec:
               {{- end }}
             {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
             - name: cloudsql-proxy
-              image: gcr.io/cloudsql-docker/gce-proxy:1.13
+              image: gcr.io/cloudsql-docker/gce-proxy:1.17
               command:
                 - /cloud_sql_proxy
                 - -verbose=false

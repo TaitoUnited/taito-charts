@@ -131,6 +131,31 @@ spec:
         {{ $name }}: {{ $value | quote }}
       {{- end }}
       {{- end }}
+      initContainers:
+      {{- if .initCommand }}
+        - name: {{ template "name" $root }}-{{ $serviceName }}-init
+          image: busybox
+          command: ['sh', '-c', {{ .initCommand | quote }}]
+          volumeMounts:
+          {{- if .temporaryVolumeMounts }}
+          {{- range .temporaryVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: temporary-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- if $root.Values.persistence.enabled }}
+          {{- if .persistentVolumeMounts }}
+          {{- range .persistentVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: persistent-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: {{ template "name" $root }}-{{ $serviceName }}
           {{- if .image }}
@@ -141,10 +166,13 @@ spec:
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
             {{- if .runAsUser }}
-            runAsUser: {{ .runAsUser }}
+            runAsUser: {{ .runAsUser | quote }}
             {{- end }}
             {{- if .runAsGroup }}
-            runAsGroup: {{ .runAsGroup }}
+            runAsGroup: {{ .runAsGroup | quote }}
+            {{- end }}
+            {{- if .fsGroup }}
+            fsGroup: {{ .fsGroup | quote }}
             {{- end }}
             privileged: {{ .privileged | default false }}
             allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default false }}
@@ -314,10 +342,13 @@ spec:
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
             {{- if .sidecar.runAsUser }}
-            runAsUser: {{ .sidecar.runAsUser }}
+            runAsUser: {{ .sidecar.runAsUser | quote }}
             {{- end }}
             {{- if .sidecar.runAsGroup }}
-            runAsGroup: {{ .sidecar.runAsGroup }}
+            runAsGroup: {{ .sidecar.runAsGroup | quote }}
+            {{- end }}
+            {{- if .sidecar.fsGroup }}
+            fsGroup: {{ .sidecar.fsGroup | quote }}
             {{- end }}
             privileged: {{ .sidecar.privileged | default false }}
             allowPrivilegeEscalation: {{ .sidecar.allowPrivilegeEscalation | default false }}

@@ -23,6 +23,7 @@ serviceDefaults:
   # Basics
   image: # For 3rd party container image
   command:
+  initCommand:
   port: 8080
   tier:
   livenessPath: /healthz
@@ -61,6 +62,7 @@ serviceDefaults:
   # Security
   runAsUser:
   runAsGroup:
+  fsGroup:
   privileged: false
   allowPrivilegeEscalation: false
   capabilities:

@@ -120,6 +120,17 @@ spec:
       serviceAccountName: {{ template "fullname" $root }}
       {{- end }}
       automountServiceAccountToken: false
+      {{- if .nodeSelector }}
+      nodeSelector:
+      {{- range $name, $value := .nodeSelector }}
+        {{ $name }}: {{ $value | quote }}
+      {{- end }}
+      {{- else if $defaults.nodeSelector }}
+      nodeSelector:
+      {{- range $name, $value := $defaults.nodeSelector }}
+        {{ $name }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
       containers:
         - name: {{ template "name" $root }}-{{ $serviceName }}
           {{- if .image }}
@@ -545,6 +556,17 @@ spec:
         role: {{ $serviceName }}-http-proxy
     spec:
       automountServiceAccountToken: false
+      {{- if .nodeSelector }}
+      nodeSelector:
+      {{- range $name, $value := .nodeSelector }}
+        {{ $name }}: {{ $value | quote }}
+      {{- end }}
+      {{- else if $defaults.nodeSelector }}
+      nodeSelector:
+      {{- range $name, $value := $defaults.nodeSelector }}
+        {{ $name }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
       containers:
         - name: {{ template "name" $root }}-{{ $serviceName }}-http-proxy
           image: {{ .httpProxyImage | default $defaults.httpProxyImage }}

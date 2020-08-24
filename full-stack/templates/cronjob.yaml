@@ -54,6 +54,17 @@ spec:
           serviceAccountName: {{ template "fullname" $root }}
           {{- end }}
           automountServiceAccountToken: false
+          {{- if .nodeSelector }}
+          nodeSelector:
+          {{- range $name, $value := .nodeSelector }}
+            {{ $name }}: {{ $value | quote }}
+          {{- end }}
+          {{- else if $defaults.nodeSelector }}
+          nodeSelector:
+          {{- range $name, $value := $defaults.nodeSelector }}
+            {{ $name }}: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
           containers:
             - name: {{ template "name" $root }}-{{ $job.name }}
               {{- if .image }}

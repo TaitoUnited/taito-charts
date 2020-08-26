@@ -96,6 +96,7 @@ spec:
                 - {{ . }}
                 {{- end }}
               {{- end }}
+              # TODO: resource requests and limits
               envFrom:
                 - prefix: COMMON_
                   configMapRef:

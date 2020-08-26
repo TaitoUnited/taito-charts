@@ -198,6 +198,9 @@ spec:
             limits:
               cpu: {{ .cpuLimit | default $defaults.cpuLimit }}
               memory: {{ .memoryLimit | default $defaults.memoryLimit }}
+              {{- if .gpuLimit }}
+              nvidia.com/gpu: {{ .gpuLimit }}
+              {{- end }}
           {{- if not .livenessDisabled }}
           livenessProbe:
             {{- if .livenessCommand }}

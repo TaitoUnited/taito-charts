@@ -1,6 +1,14 @@
 {{- if .Values.ingress.tls }}
 {{- if .Values.ingress.certManagerEnabled }}
 
+{{- $cert := dict "required" false -}}
+{{- range $domain := .Values.ingress.domains }}
+{{- if not $domain.certSecret }}
+{{- $dummy := set $cert "required" true -}}
+{{- end }}
+{{- end }}
+{{- if $cert.required }}
+
 {{- if .Values.ingress.oldRewritePolicy }}
 apiVersion: certmanager.k8s.io/v1alpha1
 {{- else }}
@@ -41,6 +49,8 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
+
+{{- end }}
 
 {{- end }}
 {{- end }}

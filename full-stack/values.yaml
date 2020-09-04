@@ -70,10 +70,10 @@ serviceDefaults:
   httpProxyImage: taitounited/squid:4.12
   # - NET_ADMIN (example)
   # Resources
-  cpuRequest: 2m
+  cpuRequest: 20m
   cpuLimit: 100m
-  memoryRequest: 50Mi
-  memoryLimit: 512Mi
+  memoryRequest: 70Mi
+  memoryLimit: 256Mi
   gpuLimit:
   # Strategy
   strategyType: RollingUpdate

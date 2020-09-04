@@ -264,11 +264,63 @@ metadata:
     {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
     {{ $annoPrefix }}ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
+    {{- if .limitConnections | default $defaults.limitConnections }}
+    {{ $annoPrefix }}ingress.kubernetes.io/limit-connections: {{ .limitConnections | default $defaults.limitConnections | quote }}
+    {{- end }}
+    {{- if .limitRpm | default $defaults.limitRpm }}
+    {{ $annoPrefix }}ingress.kubernetes.io/limit-rpm: {{ .limitRpm | default $defaults.limitRpm | quote }}
+    {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    {{- end }}
+    {{- if .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
+    {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
+      {{- range .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}{{ . }},{{ end }}
+    {{- end }}
+    {{- if .modsecurityEnabled | default $defaults.modsecurityEnabled }}
+    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "true"
+    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
+    {{- if .modsecurityRules | default $defaults.modsecurityRules }}
+    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-snippet: {{ .modsecurityRules | default $defaults.modsecurityRules }}
+    {{- else }}
+    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "true"
+    {{- end }}
+    {{- else }}
+    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "false"
+    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    {{- end }}
+    {{- if .allowedCountries | default $defaults.allowedCountries }}
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      map $geoip2_city_country_code $allowed_country {
+        default no;
+        {{- range .allowedCountries | default $defaults.allowedCountries }}
+        {{ . }} yes;
+        {{- end }}
+      }
+    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+      if ($allowed_country = no) {
+        return 444;
+      }
+    {{- else if .blockedCountries | default $defaults.blockedCountries }}
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      map $geoip2_city_country_code $blocked_country {
+        default yes;
+        {{- range .blockedCountries | default $defaults.blockedCountries }}
+        {{ . }} no;
+        {{- end }}
+      }
+    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+      if ($blocked_country) {
+        return 444;
+      }
+    {{- end }}
+    {{- if .allowedCidrs | default $defaults.allowedCidrs }}
+    {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
+      {{- range .allowedCidrs | default $defaults.allowedCidrs }}{{ . }},{{ end }}
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}

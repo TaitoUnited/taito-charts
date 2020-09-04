@@ -29,7 +29,8 @@ metadata:
     {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/permanent-redirect: https://{{ $domain.name }}
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      return 308 https://{{ $domain.name }}$request_uri;
     {{- end }}
     {{- if $domain.annotations }}
     {{- range $annotationName, $annotationValue := $domain.annotations }}

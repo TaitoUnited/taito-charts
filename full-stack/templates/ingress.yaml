@@ -30,7 +30,7 @@ metadata:
     kubernetes.io/tls-acme: "true"
     {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "false"
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      return 308 https://{{ $domain.name }}$request_uri;
+      return 301 https://{{ $domain.name }}$request_uri;
     {{- end }}
     {{- if $domain.annotations }}
     {{- range $annotationName, $annotationValue := $domain.annotations }}

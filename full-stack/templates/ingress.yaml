@@ -9,7 +9,8 @@
 # TODO: add non-nginx support
 {{- if contains "nginx" $root.Values.ingress.class }}
 {{- range $domain := .Values.ingress.domains }}
-{{- if $domain.altName }}
+{{- if $domain.altDomains }}
+{{- if (get (first $domain.altDomains) "name") }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -41,23 +42,24 @@ spec:
   {{- if $root.Values.ingress.tls }}
   tls:
   - hosts:
-    - {{ $domain.altName }}
-    {{- if not $domain.certSecret }}
-    secretName: {{ template "fullname" $root }}-ssl
+    {{- range $altDomain := $domain.altDomains }}
+    - {{ $altDomain.name }}
     {{- end }}
-    {{- if $domain.certSecret }}
-    secretName: {{ $domain.certSecret }}
-    {{- end }}
+    secretName: {{ template "fullname" $root }}-ssl-alt
   {{- end }}
   rules:
-    - host: {{ $domain.altName }}
+    {{- range $altDomain := $domain.altDomains }}
+    - host: {{ $altDomain.name }}
       http:
         paths:
           - path: /
             backend:
+              # TODO: Remove hardcoded default backend name
               serviceName: common-nginx-nginx-ingress-default-backend
               servicePort: 80
+    {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

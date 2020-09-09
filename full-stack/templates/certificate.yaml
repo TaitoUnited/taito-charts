@@ -31,8 +31,10 @@ spec:
     {{- range $domain := .Values.ingress.domains }}
     {{- if not $domain.certSecret }}
     - {{ $domain.name }}
-    {{- if $domain.altName }}
-    - {{ $domain.altName }}
+    {{- range $altDomain := $domain.altDomains }}
+    {{- if $altDomain.name }}
+    - {{ $altDomain.name }}
+    {{- end }}
     {{- end }}
     {{- end }}
     {{- end }}
@@ -44,8 +46,10 @@ spec:
         {{- range $domain := .Values.ingress.domains }}
         {{- if not $domain.certSecret }}
         - {{ $domain.name }}
-        {{- if $domain.altName }}
-        - {{ $domain.altName }}
+        {{- range $altDomain := $domain.altDomains }}
+        {{- if $altDomain.name }}
+        - {{ $altDomain.name }}
+        {{- end }}
         {{- end }}
         {{- end }}
         {{- end }}

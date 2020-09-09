@@ -75,10 +75,10 @@ spec:
               imagePullPolicy: {{ $global.imagePullPolicy | quote }}
               securityContext:
                 {{- if $job.runAsUser }}
-                runAsUser: {{ $job.runAsUser | quote }}
+                runAsUser: {{ $job.runAsUser }}
                 {{- end }}
                 {{- if $job.runAsGroup }}
-                runAsGroup: {{ $job.runAsGroup | quote }}
+                runAsGroup: {{ $job.runAsGroup }}
                 {{- end }}
                 {{- if $job.fsGroup }}
                 fsGroup: {{ $job.fsGroup | quote }}

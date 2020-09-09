@@ -166,10 +166,10 @@ spec:
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
             {{- if .runAsUser }}
-            runAsUser: {{ .runAsUser | quote }}
+            runAsUser: {{ .runAsUser }}
             {{- end }}
             {{- if .runAsGroup }}
-            runAsGroup: {{ .runAsGroup | quote }}
+            runAsGroup: {{ .runAsGroup }}
             {{- end }}
             {{- if .fsGroup }}
             fsGroup: {{ .fsGroup | quote }}
@@ -345,10 +345,10 @@ spec:
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
             {{- if .sidecar.runAsUser }}
-            runAsUser: {{ .sidecar.runAsUser | quote }}
+            runAsUser: {{ .sidecar.runAsUser }}
             {{- end }}
             {{- if .sidecar.runAsGroup }}
-            runAsGroup: {{ .sidecar.runAsGroup | quote }}
+            runAsGroup: {{ .sidecar.runAsGroup }}
             {{- end }}
             {{- if .sidecar.fsGroup }}
             fsGroup: {{ .sidecar.fsGroup | quote }}

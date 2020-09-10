@@ -1,3 +1,5 @@
+{{- $root := . -}}
+
 {{- if .Values.rbacCreate -}}
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -16,4 +18,26 @@ subjects:
   - kind: ServiceAccount
     name: {{ template "fullname" . }}
     namespace: {{ .Release.Namespace }}
+---
 {{- end -}}
+
+{{- range $role := .Values.serviceDefaults.serviceAccountRoles }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{ template "fullname" $root }}-{{ $role }}
+  labels:
+    app: {{ template "name" $root }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $role }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "fullname" $root }}
+    namespace: {{ $root.Release.Namespace }}
+---
+{{- end }}

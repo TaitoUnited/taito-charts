@@ -117,7 +117,7 @@ spec:
         role: {{ $serviceName }}
     spec:
       {{- if default $defaults.serviceAccountName .serviceAccountName }}
-      serviceAccountName: {{ default $defaults.serviceAccountName $job.serviceAccountName }}
+      serviceAccountName: {{ default $defaults.serviceAccountName .serviceAccountName }}
       {{- else }}
       serviceAccountName: {{ template "fullname" $root }}
       {{- end }}

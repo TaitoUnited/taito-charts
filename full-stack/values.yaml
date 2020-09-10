@@ -1,6 +1,6 @@
-rbacCreate: true
 serviceAccountCreate: true
-podSecurityPolicyCreate: true
+rbacCreate: true
+podSecurityPolicyCreate: false
 networkPolicyEnabled: true
 
 persistence:
@@ -45,9 +45,12 @@ serviceDefaults:
     #   limitRateAfter:
     #   rewriteTarget:
     #   rewriteTargetDisabled:
-  # Path defaults
+  # Security
+  modsecurityEnabled: true
+  serviceAccountRoles: []
   basicAuthEnabled: ${taito_basic_auth_enabled}
   basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth
+  # Path defaults
   # clientMaxBodySize: 1m
   # bufferSize: 4k
   # requestBuffering: on

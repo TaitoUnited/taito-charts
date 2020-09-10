@@ -1,4 +1,4 @@
-{{- if .Values.podSecurityPolicyEnabled}}
+{{- if .Values.podSecurityPolicyCreate}}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:

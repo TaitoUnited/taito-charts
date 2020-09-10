@@ -50,7 +50,9 @@ spec:
       template:
         spec:
           restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
-          {{- if $root.Values.serviceAccountCreate }}
+          {{- if default $defaults.serviceAccountName $job.serviceAccountName }}
+          serviceAccountName: {{ default $defaults.serviceAccountName $job.serviceAccountName }}
+          {{- else }}
           serviceAccountName: {{ template "fullname" $root }}
           {{- end }}
           automountServiceAccountToken: false

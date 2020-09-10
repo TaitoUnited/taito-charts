@@ -1,6 +1,6 @@
 rbacCreate: true
 serviceAccountCreate: true
-podSecurityPolicyEnabled: true
+podSecurityPolicyCreate: true
 networkPolicyEnabled: true
 
 persistence:
@@ -60,6 +60,7 @@ serviceDefaults:
   rewriteTarget:
   rewriteTargetDisabled:
   # Security
+  serviceAccountName:
   runAsUser:
   runAsGroup:
   fsGroup:

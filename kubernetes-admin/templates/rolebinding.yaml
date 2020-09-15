@@ -1,0 +1,45 @@
+{{- if .Values.permissions.namespaces }}
+{{- range $namespace := .Values.permissions.namespaces }}
+{{- range $role := $namespace.clusterRoles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $role.name }}
+  namespace: {{ $namespace }}
+subjects:
+{{- range $name := $role.subjects }}
+{{- if eq (split ":" $name)._0 "domain" }}
+- kind: Group
+  name: allusers@split(",", $name)[1]
+{{- else if eq (split ":" $name)._0 "group" }}
+- kind: Group
+  name: (split ":" $name)._1
+{{- else }}
+- kind: User
+  name: (split ":" $name)._1
+{{- end }}
+{{- end }}
+roleRef:
+  kind: ClusterRole
+  name: {{ $role.name }}
+  apiGroup: rbac.authorization.k8s.io
+---
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.cicd.testingServiceAccount }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cicd-testing-db-proxy
+  namespace: {{ .Values.dbProxyNamespace }}
+subjects:
+- kind: User
+  name: {{ .Values.cicd.testingServiceAccount }}
+roleRef:
+  kind: ClusterRole
+  name: taito-pod-portforwarder
+  apiGroup: rbac.authorization.k8s.io
+---
+{{- end }}

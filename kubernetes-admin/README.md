@@ -4,10 +4,6 @@ Example values.yaml:
 
 ```
 provider: gcp
-dbProxyNamespace: db-proxy
-cicd:
-  deployServiceAccount: serviceAccount:0123456789@cloudbuild.gserviceaccount.com
-  testingServiceAccount: serviceAccount:cicd-tester@gcloud-temp1.iam.gserviceaccount.com
 permissions:
   clusterRoles:
     - name: taito-iam-admin

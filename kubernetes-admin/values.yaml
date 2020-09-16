@@ -2,7 +2,3 @@ provider:
 permissions:
   clusterRoles:
   namespaces:
-dbProxyNamespace:
-cicd:
-  deployServiceAccount:
-  testingServiceAccount:

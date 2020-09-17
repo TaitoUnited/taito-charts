@@ -151,6 +151,10 @@ metadata:
     heritage: {{ $root.Release.Service }}
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
+    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- end }}
@@ -233,6 +237,10 @@ metadata:
     heritage: {{ $root.Release.Service }}
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
+    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- end }}

@@ -78,7 +78,7 @@ serviceDefaults:
   basicAuthEnabled: ${taito_basic_auth_enabled}
   basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth
   # Path defaults
-  # clientMaxBodySize: 1m
+  # clientMaxBodySize: 1k
   # bufferSize: 4k
   # requestBuffering: on
   # connectTimeout: 5

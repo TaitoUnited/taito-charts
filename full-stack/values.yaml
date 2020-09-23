@@ -2,22 +2,22 @@
 global:
   # These are given as command line parameters during build
   zone:
-    name:
-    provider:
-    providerRegion:
-    providerZone:
-    namespace:
-    resourceNamespace:
+    name: asdf
+    provider: adsf
+    providerRegion: asdf
+    providerZone: asdf
+    namespace: asdf
+    resourceNamespace: adsf
   project:
-    name:
-    company:
-    family:
-    application:
-    suffix:
+    name: asdf
+    company: asdf
+    family: asdf
+    application: asdf
+    suffix: asdf
   build:
-    version:
-    commit:
-    imageTag:
+    version: asdf
+    commit: asdf
+    imageTag: adsf
   # Common settings
   logFormat: stackdriver
   logLevel: info # trace, debug, info, warn, error, fatal

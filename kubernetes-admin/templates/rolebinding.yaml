@@ -5,7 +5,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ $role.name }}
-  namespace: {{ $namespace }}
+  namespace: {{ $namespace.name }}
 subjects:
 {{- range $name := $role.subjects }}
 {{- if eq (split ":" $name)._0 "domain" }}

@@ -165,7 +165,7 @@ metadata:
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
     # TODO: remove oldRewritePolicy --> {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
-    ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
@@ -251,7 +251,7 @@ metadata:
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
     # TODO: remove oldRewritePolicy --> {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/$1" .rewriteTarget }}
-    ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$1") .rewriteTarget }}
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}

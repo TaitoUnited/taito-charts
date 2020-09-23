@@ -11,6 +11,8 @@
 
 {{- if .Values.ingress.oldRewritePolicy }}
 apiVersion: certmanager.k8s.io/v1alpha1
+{{- else if .Values.ingress.oldAcmeCertificate }}
+apiVersion: cert-manager.io/v1alpha2
 {{- else }}
 apiVersion: cert-manager.io/v1
 {{- end }}
@@ -38,7 +40,7 @@ spec:
     {{- end }}
     {{- end }}
     {{- end }}
-  {{- if .Values.ingress.oldRewritePolicy }}
+  {{- if or .Values.ingress.oldRewritePolicy .Values.ingress.oldAcmeCertificate }}
   acme:
     config:
     - http01:

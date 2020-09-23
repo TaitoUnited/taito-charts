@@ -11,7 +11,7 @@
 {{- range $domain := .Values.ingress.domains }}
 {{- if $domain.altDomains }}
 {{- if (get (first $domain.altDomains) "name") }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-alt
@@ -65,7 +65,7 @@ spec:
 {{- end }}
 
 # Master ingress
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" . }}-ingress
@@ -140,7 +140,7 @@ spec:
 # Minion ingress for each service path
 {{- range $path := $service.paths }}
 {{- with $path }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
@@ -226,7 +226,7 @@ spec:
 {{- if $service.sidecar.enabled }}
 {{- range $path := $service.sidecar.paths }}
 {{- with $path }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}

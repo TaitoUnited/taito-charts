@@ -26,9 +26,8 @@ global:
   debug: false
 
 serviceAccountCreate: true
-rbacCreate: true
-podSecurityPolicyCreate: false
 networkPolicyEnabled: true
+podSecurityPolicyCreate: false
 
 persistence:
   enabled: false

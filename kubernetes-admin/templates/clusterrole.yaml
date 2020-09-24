@@ -35,9 +35,20 @@ rules: []
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: taito-proxyer
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      taito.dev/aggregate-to-proxyers: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: taito-secret-viewer
   labels:
     taito.dev/aggregate-to-developers: "true"
+    taito.dev/aggregate-to-proxyers: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["secrets"]
@@ -61,6 +72,7 @@ metadata:
   name: taito-pod-executer
   labels:
     taito.dev/aggregate-to-developers: "true"
+    taito.dev/aggregate-to-proxyers: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["pods"]

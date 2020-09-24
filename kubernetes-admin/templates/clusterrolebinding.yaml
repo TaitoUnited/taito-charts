@@ -8,13 +8,13 @@ subjects:
 {{- range $name := $role.subjects }}
 {{- if eq (split ":" $name)._0 "domain" }}
 - kind: Group
-  name: allusers@split(",", $name)[1]
+  name: allusers@{{ (split "," $name)._1 }}
 {{- else if eq (split ":" $name)._0 "group" }}
 - kind: Group
-  name: (split ":" $name)._1
+  name: {{ (split ":" $name)._1 | quote }}
 {{- else }}
 - kind: User
-  name: (split ":" $name)._1
+  name: {{ (split ":" $name)._1 | quote }}
 {{- end }}
 {{- end }}
 roleRef:

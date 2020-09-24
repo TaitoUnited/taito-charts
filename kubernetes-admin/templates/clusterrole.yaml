@@ -123,11 +123,11 @@ kind: ClusterRole
 metadata:
   name: taito-privileged-deployer
   labels:
-    taito.dev/aggregate-to-privileged-deployers: "true"
+    taito.dev/aggregate-to-developers: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      taito.dev/aggregate-to-developers: "true"
+      taito.dev/aggregate-to-privileged-deployers: "true"
 rules:
 # Write permissions for critical auth and networking resouces (privileged)
 - apiGroups: ["rbac.authorization.k8s.io"]

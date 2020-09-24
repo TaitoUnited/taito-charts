@@ -133,6 +133,21 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: taito-privileged-resources
+  labels:
+    taito.dev/aggregate-to-privileged-deployers: "true"
+rules:
+# Write permissions for critical auth and networking resouces (privileged)
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["rolebindings"]
+  verbs: ["create", "delete", "deletecollection","patch","update","get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses","networkpolicies"]
+  verbs: ["create", "delete", "deletecollection","patch","update","get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: taito-privileged-deployer
   labels:
     taito.dev/aggregate-to-developers: "true"
@@ -140,14 +155,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       taito.dev/aggregate-to-privileged-deployers: "true"
-rules:
-# Write permissions for critical auth and networking resouces (privileged)
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["rolebindings"]
-  verbs: ["create", "delete", "deletecollection","patch","update"]
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses","networkpolicies"]
-  verbs: ["create", "delete", "deletecollection","patch","update"]
+rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

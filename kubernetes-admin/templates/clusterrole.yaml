@@ -102,6 +102,10 @@ metadata:
   labels:
     taito.dev/aggregate-to-privileged-deployers: "true"
 rules:
+# Read permissions for status check
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
 # Write permissions for basic resources
 - apiGroups: ["", "extensions", "apps"]
   resources: [

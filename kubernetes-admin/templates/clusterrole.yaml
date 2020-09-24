@@ -72,7 +72,6 @@ metadata:
   name: taito-pod-executer
   labels:
     taito.dev/aggregate-to-developers: "true"
-    taito.dev/aggregate-to-proxyers: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["pods"]
@@ -87,6 +86,7 @@ metadata:
   name: taito-pod-portforwarder
   labels:
     taito.dev/aggregate-to-developers: "true"
+    taito.dev/aggregate-to-proxyers: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["pods"]

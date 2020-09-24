@@ -22,7 +22,7 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["rolebindings"]
   verbs: ["get", "watch", "list"]
 ---
@@ -99,6 +99,6 @@ kind: ClusterRole
 metadata:
   name: taito-iam-admin
 rules:
-- apiGroups: [""]
+- apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["roles", "rolebindings"]
   verbs: ["*"]

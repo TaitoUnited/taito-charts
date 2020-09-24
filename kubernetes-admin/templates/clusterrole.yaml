@@ -5,7 +5,7 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "extensions", "apps"]
   resources: ["pods", "pods/log", "ingresses", "ingresses/status"]
   verbs: ["get", "list", "watch"]
 - apiGroups: ["batch"]
@@ -28,7 +28,7 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "extensions", "apps"]
   resources: ["secrets"]
   verbs: ["get", "list", "watch"]
 ---
@@ -39,9 +39,9 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "extensions", "apps"]
   resources: ["pods"]
-  verbs: ["delete"]
+  verbs: ["delete", "get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -50,7 +50,10 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["", "extensions", "apps"]
   resources: ["pods/exec"]
   verbs: ["create"]
 ---
@@ -61,7 +64,10 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["", "extensions", "apps"]
   resources: ["pods/portforward"]
   verbs: ["get", "list", "create"]
 ---

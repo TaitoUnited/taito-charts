@@ -10,7 +10,17 @@
 {{- if contains "nginx" $root.Values.ingress.class }}
 {{- range $domain := .Values.ingress.domains }}
 {{- if $domain.altDomains }}
-{{- if (get (first $domain.altDomains) "name") }}
+
+# TODO: temporary fix for Helm v2 backwards compatibility
+# -> for Helm v3 was: {{- if (get (first $domain.altDomains) "name") }}
+{{- $altDomainSettings := dict "enabled" false -}}
+{{- range $altDomain := $domain.altDomains }}
+{{- if $altDomain.name }}
+{{- $altDomainSettings := set $altDomainSettings "enabled" true -}}
+{{- end }}
+{{- end }}
+
+{{- if $altDomainSettings.enabled }}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:

@@ -252,9 +252,10 @@ metadata:
         return 444;
       }
     {{- end }}
-    {{- if .allowedCidrs | default $defaults.allowedCidrs }}
+    {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
+    {{- if $cidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
-      {{- range .allowedCidrs | default $defaults.allowedCidrs }}{{ . }},{{ end }}
+      {{ range $i, $cidr := $cidrs }}{{ $cidr }}{{ if lt $i (sub (len $cidrs) 1) }},{{ end }}{{ end }}
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
@@ -390,9 +391,10 @@ metadata:
         return 444;
       }
     {{- end }}
-    {{- if .allowedCidrs | default $defaults.allowedCidrs }}
+    {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
+    {{- if $cidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
-      {{- range .allowedCidrs | default $defaults.allowedCidrs }}{{ . }},{{ end }}
+      {{ range $i, $cidr := $cidrs }}{{ $cidr }}{{ if lt $i (sub (len $cidrs) 1) }},{{ end }}{{ end }}
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}

@@ -210,9 +210,10 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
-    {{- if .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
+    {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
+    {{- if $limitWhitelistCidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
-      {{- range .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}{{ . }},{{ end }}
+      {{ range $limitWhitelistCidrs }}{{ . }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .modsecurityEnabled | default $defaults.modsecurityEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "true"
@@ -255,7 +256,7 @@ metadata:
     {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
     {{- if $cidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
-      {{ range $i, $cidr := $cidrs }}{{ $cidr }}{{ if lt $i (sub (len $cidrs) 1) }},{{ end }}{{ end }}
+      {{ range $i, $cidr := $cidrs }}{{ $cidr }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
@@ -349,9 +350,10 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
-    {{- if .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
+    {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
+    {{- if $limitWhitelistCidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
-      {{- range .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}{{ . }},{{ end }}
+      {{ range $limitWhitelistCidrs }}{{ . }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .modsecurityEnabled | default $defaults.modsecurityEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "true"
@@ -394,7 +396,7 @@ metadata:
     {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
     {{- if $cidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
-      {{ range $i, $cidr := $cidrs }}{{ $cidr }}{{ if lt $i (sub (len $cidrs) 1) }},{{ end }}{{ end }}
+      {{ range $i, $cidr := $cidrs }}{{ $cidr }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}

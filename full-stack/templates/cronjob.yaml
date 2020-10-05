@@ -98,6 +98,16 @@ spec:
                 - {{ . }}
                 {{- end }}
               {{- end }}
+              resources:
+                requests:
+                  cpu: {{ coalesce $job.cpuRequest .cpuRequest $defaults.cpuRequest }}
+                  memory: {{ coalesce $job.memoryRequest .memoryRequest $defaults.memoryRequest }}
+                limits:
+                  cpu: {{ coalesce $job.cpuLimit .cpuLimit $defaults.cpuLimit }}
+                  memory: {{ coalesce $job.memoryLimit .memoryLimit $defaults.memoryLimit }}
+                  {{- if coalesce $job.gpuLimit .gpuLimit }}
+                  nvidia.com/gpu: {{ coalesce $job.gpuLimit .gpuLimit }}
+                  {{- end }}
               # TODO: resource requests and limits
               envFrom:
                 - prefix: COMMON_

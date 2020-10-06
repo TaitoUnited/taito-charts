@@ -55,7 +55,7 @@ spec:
     {{- range $altDomain := $domain.altDomains }}
     - {{ $altDomain.name }}
     {{- end }}
-    secretName: {{ template "fullname" $root }}-ssl-alt
+    secretName: {{ template "fullname" $root }}-ssl
   {{- end }}
   rules:
     {{- range $altDomain := $domain.altDomains }}

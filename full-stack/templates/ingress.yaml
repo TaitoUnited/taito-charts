@@ -206,6 +206,9 @@ metadata:
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
+    {{- if coalesce .limitRate $defaults.limitRate .limitRateAfter $defaults.limitRateAfter }}
+    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffering: "on"
+    {{- end }}
     {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
     {{- if $limitWhitelistCidrs }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
@@ -344,6 +347,9 @@ metadata:
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
     {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    {{- end }}
+    {{- if coalesce .limitRate $defaults.limitRate .limitRateAfter $defaults.limitRateAfter }}
+    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffering: "on"
     {{- end }}
     {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
     {{- if $limitWhitelistCidrs }}

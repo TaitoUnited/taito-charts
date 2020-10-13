@@ -67,7 +67,7 @@ spec:
   {{- range $ingress := .ingress }}
   - from:
     - podSelector:
-        matchLabels: {{ mustToJson $ingress }}
+        matchLabels: {{ toJson $ingress }}
   {{- end }}
   egress:
   {{- if $httpProxy.enabled }}
@@ -80,7 +80,7 @@ spec:
   {{- if and (not $egress.ip) (not $egress.domain) }}
   - to:
     - podSelector:
-        matchLabels: {{ mustToJson $egress }}
+        matchLabels: {{ toJson $egress }}
   {{- end }}
   {{- if $egress.ip }}
   {{- if eq $egress.ip "private" }}

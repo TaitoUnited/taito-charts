@@ -35,13 +35,18 @@ metadata:
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- end }}
     {{- if not $root.Values.ingress.tls }}
-    {{ $annoPrefix }}ingress.kubernetes.io/permanent-redirect: http://{{ $domain.name }}
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      if ($request_uri !~ ^/\.well-known/.*$) {
+        return 301 http://{{ $domain.name }}$request_uri;
+      }
     {{- end }}
     {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "false"
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      return 301 https://{{ $domain.name }}$request_uri;
+      if ($request_uri !~ ^/\.well-known/.*$) {
+        return 301 https://{{ $domain.name }}$request_uri;
+      }
     {{- end }}
     {{- if $domain.annotations }}
     {{- range $annotationName, $annotationValue := $domain.annotations }}

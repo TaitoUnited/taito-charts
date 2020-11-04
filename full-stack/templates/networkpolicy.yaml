@@ -37,11 +37,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
 spec:
   podSelector:
     matchLabels:
@@ -118,11 +113,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
 spec:
   podSelector:
     matchLabels:

@@ -14,11 +14,6 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}{{ $path.path | default "-root" | replace "/" "-" }}
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
   annotations:
   {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"

@@ -25,11 +25,6 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-alt
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
   annotations:
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
@@ -84,11 +79,6 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" . }}-ingress
-  labels:
-    app: {{ template "name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
   annotations:
     {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
@@ -163,11 +153,6 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
@@ -305,11 +290,6 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";

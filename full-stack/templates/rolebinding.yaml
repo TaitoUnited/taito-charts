@@ -5,11 +5,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: {{ template "fullname" . }}
-  labels:
-    app: {{ template "name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -26,11 +21,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: {{ template "fullname" $root }}-{{ $role }}
-  labels:
-    app: {{ template "name" $root }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

@@ -224,28 +224,16 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "false"
     {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
     {{- end }}
-    {{- if .allowedCountries | default $defaults.allowedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      map $geoip2_city_country_code $allowed_country {
-        default no;
-        {{- range .allowedCountries | default $defaults.allowedCountries }}
-        {{ . }} yes;
-        {{- end }}
-      }
+    {{- $allowedCountries := .allowedCountries | default $defaults.allowedCountries }}
+    {{- $blockedCountries := .blockedCountries | default $defaults.blockedCountries }}
+    {{- if $allowedCountries }}
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      if ($allowed_country = no) {
+      if ($geoip2_city_country_code !~ ^({{ range $allowedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
-    {{- else if .blockedCountries | default $defaults.blockedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      map $geoip2_city_country_code $blocked_country {
-        default yes;
-        {{- range .blockedCountries | default $defaults.blockedCountries }}
-        {{ . }} no;
-        {{- end }}
-      }
+    {{- else if $blockedCountries }}
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      if ($blocked_country) {
+      if ($geoip2_city_country_code ~ ^({{ range $blockedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- end }}
@@ -361,28 +349,16 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "false"
     {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
     {{- end }}
-    {{- if .allowedCountries | default $defaults.allowedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      map $geoip2_city_country_code $allowed_country {
-        default no;
-        {{- range .allowedCountries | default $defaults.allowedCountries }}
-        {{ . }} yes;
-        {{- end }}
-      }
+    {{- $allowedCountries := .allowedCountries | default $defaults.allowedCountries }}
+    {{- $blockedCountries := .blockedCountries | default $defaults.blockedCountries }}
+    {{- if $allowedCountries }}
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      if ($allowed_country = no) {
+      if ($geoip2_city_country_code !~ ^({{ range $allowedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
-    {{- else if .blockedCountries | default $defaults.blockedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      map $geoip2_city_country_code $blocked_country {
-        default yes;
-        {{- range .blockedCountries | default $defaults.blockedCountries }}
-        {{ . }} no;
-        {{- end }}
-      }
+    {{- else if $blockedCountries }}
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      if ($blocked_country) {
+      if ($geoip2_city_country_code ~ ^({{ range $blockedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- end }}

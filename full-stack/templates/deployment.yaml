@@ -102,6 +102,10 @@ spec:
         {{- end }}
         role: {{ $serviceName }}
     spec:
+      securityContext:
+        {{- if quote .fsGroup }}
+        fsGroup: {{ .fsGroup }}
+        {{- end }}
       {{- if default $defaults.serviceAccountName .serviceAccountName }}
       serviceAccountName: {{ default $defaults.serviceAccountName .serviceAccountName }}
       {{- else }}
@@ -153,14 +157,11 @@ spec:
           {{- end }}
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
-            {{- if .runAsUser }}
+            {{- if quote .runAsUser }}
             runAsUser: {{ .runAsUser }}
             {{- end }}
-            {{- if .runAsGroup }}
+            {{- if quote .runAsGroup }}
             runAsGroup: {{ .runAsGroup }}
-            {{- end }}
-            {{- if .fsGroup }}
-            fsGroup: {{ .fsGroup | quote }}
             {{- end }}
             privileged: {{ .privileged | default false }}
             allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default false }}
@@ -332,14 +333,11 @@ spec:
           {{- end }}
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
-            {{- if .sidecar.runAsUser }}
+            {{- if quote .sidecar.runAsUser }}
             runAsUser: {{ .sidecar.runAsUser }}
             {{- end }}
-            {{- if .sidecar.runAsGroup }}
+            {{- if quote .sidecar.runAsGroup }}
             runAsGroup: {{ .sidecar.runAsGroup }}
-            {{- end }}
-            {{- if .sidecar.fsGroup }}
-            fsGroup: {{ .sidecar.fsGroup | quote }}
             {{- end }}
             privileged: {{ .sidecar.privileged | default false }}
             allowPrivilegeEscalation: {{ .sidecar.allowPrivilegeEscalation | default false }}

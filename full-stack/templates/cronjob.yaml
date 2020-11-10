@@ -40,6 +40,10 @@ spec:
       template:
         spec:
           restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
+          securityContext:
+            {{- if quote $job.fsGroup }}
+            fsGroup: {{ $job.fsGroup }}
+            {{- end }}
           {{- if default $defaults.serviceAccountName $job.serviceAccountName }}
           serviceAccountName: {{ default $defaults.serviceAccountName $job.serviceAccountName }}
           {{- else }}
@@ -66,14 +70,11 @@ spec:
               {{- end }}
               imagePullPolicy: {{ $global.imagePullPolicy | quote }}
               securityContext:
-                {{- if $job.runAsUser }}
+                {{- if quote $job.runAsUser }}
                 runAsUser: {{ $job.runAsUser }}
                 {{- end }}
-                {{- if $job.runAsGroup }}
+                {{- if quote $job.runAsGroup }}
                 runAsGroup: {{ $job.runAsGroup }}
-                {{- end }}
-                {{- if $job.fsGroup }}
-                fsGroup: {{ $job.fsGroup | quote }}
                 {{- end }}
                 allowPrivilegeEscalation: false
               {{- if $job.command }}

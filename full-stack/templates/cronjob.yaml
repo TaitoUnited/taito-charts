@@ -171,15 +171,22 @@ spec:
               {{- end }}
               {{- end }}
             {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
+                - mountPath: /tmp/pod
+                  name: tmp-pod
             - name: cloudsql-proxy
-              image: gcr.io/cloudsql-docker/gce-proxy:1.17
-              command:
-                - /cloud_sql_proxy
-                - -verbose=false
-                - -log_debug_stdout=true
-                - --dir=/cloudsql
-                - -instances={{ .db.instance }}=tcp:{{ .db.port }}
-                - -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z]*$" .db.proxySecret }}
+              image: gcr.io/cloudsql-docker/gce-proxy:1.18.0-alpine
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  # Start cloud sql proxy in background
+                  /cloud_sql_proxy -verbose=false -log_debug_stdout=true --dir=/cloudsql -instances={{ .db.instance }}=tcp:{{ .db.port }} -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z]*$" .db.proxySecret }} & CHILD_PID=$!
+
+                  # Kill cloud sql proxy if file /tmp/pod/terminated exists
+                  (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
+
+                  # Exit
+                  wait $CHILD_PID
+                  if [[ -f "/tmp/pod/terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
               volumeMounts:
                 - name: cloudsql-instance-credentials
                   mountPath: /secrets/cloudsql
@@ -188,8 +195,15 @@ spec:
                   mountPath: /etc/ssl/certs
                 - name: cloudsql
                   mountPath: /cloudsql
+                - mountPath: /tmp/pod
+                  name: tmp-pod
+                  readOnly: true
             {{- end }}
           volumes:
+            {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
+            - name: tmp-pod
+              emptyDir: {}
+            {{- end }}
             {{- range $name, $value := $defaults.secrets }}
             - name: default- {{- lower $name | replace "_" "-" }}
               secret:

@@ -444,7 +444,7 @@ spec:
         {{- if and (.db) (eq $provider "gcp") }}
         {{- if .db.useProxy }}
         - name: cloudsql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.17
+          image: gcr.io/cloudsql-docker/gce-proxy:1.18.0-alpine
           securityContext:
             runAsUser: 2
             runAsGroup: 2

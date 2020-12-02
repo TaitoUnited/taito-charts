@@ -155,9 +155,11 @@ metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+      {{- if not .defaultCSPDisabled }}
+      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
+      {{- end }}
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- end }}
@@ -280,9 +282,11 @@ metadata:
   name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+      {{- if not .defaultCSPDisabled }}
+      more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
+      {{- end }}
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
     {{- end }}

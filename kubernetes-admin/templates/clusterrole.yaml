@@ -48,7 +48,6 @@ metadata:
   name: taito-secret-viewer
   labels:
     taito.dev/aggregate-to-developers: "true"
-    taito.dev/aggregate-to-proxyers: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["secrets"]

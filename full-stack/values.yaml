@@ -118,6 +118,8 @@ serviceDefaults:
   autoscaleMemoryPercentage: 70
   minReplicas: 2
   maxReplicas: 5
+  # Placement
+  placementSameAs:
   # TODO metrics:
   # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
   # TODO vertical autoscaling:

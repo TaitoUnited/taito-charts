@@ -123,6 +123,22 @@ spec:
         {{ $name }}: {{ $value | quote }}
       {{- end }}
       {{- end }}
+      {{- if .placementSameAs }}
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: "release"
+                operator: In
+                values:
+                - {{ $root.Release.Name }}
+              - key: "role"
+                operator: In
+                values:
+                - {{ .placementSameAs }}
+            topologyKey: "kubernetes.io/hostname"
+      {{- end }}
       initContainers:
       {{- if .initCommand }}
         - name: {{ template "name" $root }}-{{ $serviceName }}-init

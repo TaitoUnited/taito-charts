@@ -120,6 +120,7 @@ serviceDefaults:
   maxReplicas: 5
   # Placement
   placementSameAs:
+  placementPreferSameAs:
   # TODO metrics:
   # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
   # TODO vertical autoscaling:

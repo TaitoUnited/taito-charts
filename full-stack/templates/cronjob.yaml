@@ -61,9 +61,9 @@ spec:
             {{ $name }}: {{ $value | quote }}
           {{- end }}
           {{- end }}
-          {{- if .placementSameAs }}
           affinity:
             podAffinity:
+              {{- if .placementSameAs }}
               requiredDuringSchedulingIgnoredDuringExecution:
               - labelSelector:
                   matchExpressions:
@@ -76,7 +76,21 @@ spec:
                     values:
                     - {{ .placementSameAs }}
                 topologyKey: "kubernetes.io/hostname"
-          {{- end }}          
+              {{- end }}
+              {{- if .placementPreferSameAs }}
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: "release"
+                    operator: In
+                    values:
+                    - {{ $root.Release.Name }}
+                  - key: "role"
+                    operator: In
+                    values:
+                    - {{ .placementPreferSameAs }}
+                topologyKey: "kubernetes.io/hostname"
+              {{- end }}
           containers:
             - name: {{ template "name" $root }}-{{ $job.name }}
               {{- if .image }}

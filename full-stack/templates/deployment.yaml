@@ -141,17 +141,19 @@ spec:
           {{- end }}
           {{- if .placementPreferSameAs }}
           preferredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: "release"
-                operator: In
-                values:
-                - {{ $root.Release.Name }}
-              - key: "role"
-                operator: In
-                values:
-                - {{ .placementPreferSameAs }}
-            topologyKey: "kubernetes.io/hostname"
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "release"
+                  operator: In
+                  values:
+                  - {{ $root.Release.Name }}
+                - key: "role"
+                  operator: In
+                  values:
+                  - {{ .placementPreferSameAs }}
+              topologyKey: "kubernetes.io/hostname"
           {{- end }}
       initContainers:
       {{- if .initCommand }}

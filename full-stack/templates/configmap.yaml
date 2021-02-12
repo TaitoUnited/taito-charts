@@ -6,7 +6,7 @@ metadata:
   name: {{ template "fullname" . }}-common
 data:
   ENV: {{ .Values.global.env | default "" | quote }}
-  DEBUG: {{ .Values.global.debug | default "" | quote }}
+  DEBUG: {{ .Values.global.debug | default "false" | quote }}
   LOG_PROVIDER: {{ .Values.global.logProvider | default "" | quote }}
   LOG_FORMAT: {{ .Values.global.logFormat | default "" | quote }}
   LOG_LEVEL: {{ .Values.global.logLevel | default "" | quote }}

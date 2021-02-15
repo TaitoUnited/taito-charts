@@ -210,6 +210,12 @@ spec:
             - {{ . }}
             {{- end }}
           {{- end }}
+          {{- if .stdin }}
+          stdin: {{ .stdin }}
+          {{- end }}
+          {{- if .tty }}
+          tty: {{ .tty }}
+          {{- end }}
           ports:
             - containerPort: {{ .port | default $defaults.port }}
           resources:

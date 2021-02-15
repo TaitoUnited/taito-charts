@@ -113,6 +113,12 @@ spec:
                 - {{ . }}
                 {{- end }}
               {{- end }}
+              {{- if $job.stdin }}
+              stdin: {{ $job.stdin }}
+              {{- end }}
+              {{- if $job.tty }}
+              tty: {{ $job.tty }}
+              {{- end }}
               {{- if $job.args }}
               args:
                 {{- range $job.args }}

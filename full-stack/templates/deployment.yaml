@@ -207,7 +207,7 @@ spec:
           {{- if .command }}
           command:
             {{- range .command }}
-            - {{ . }}
+            - {{ . | quote }}
             {{- end }}
           {{- end }}
           {{- if .stdin }}
@@ -392,7 +392,7 @@ spec:
           {{- if .sidecar.command }}
           command:
             {{- range .sidecar.command }}
-            - {{ . }}
+            - {{ . | quote }}
             {{- end }}
           {{- end }}
           ports:

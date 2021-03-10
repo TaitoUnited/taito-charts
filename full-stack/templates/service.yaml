@@ -27,7 +27,8 @@ spec:
       targetPort: {{ .targetPort }}
       {{- end }}
     {{- range $p := .ports }}
-    - port: {{ $p.port }}
+    - name: {{ $p.port | quote }}
+      port: {{ $p.port }}
       {{- if $p.targetPort }}
       targetPort: {{ $p.targetPort }}
       {{- end }}
@@ -41,7 +42,8 @@ spec:
       targetPort: {{ .sidecar.targetPort }}
       {{- end }}
     {{- range $p := .sidecar.ports }}
-    - port: {{ $p.port }}
+    - name: {{ $p.port | quote }}
+      port: {{ $p.port }}
       {{- if $p.targetPort }}
       targetPort: {{ $p.targetPort }}
       {{- end }}

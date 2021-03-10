@@ -217,7 +217,10 @@ spec:
           tty: {{ .tty }}
           {{- end }}
           ports:
-            - containerPort: {{ .port | default $defaults.port }}
+            - containerPort: {{ .targetPort | default .port | default $defaults.port }}
+            {{- range $p := .ports }}
+            - containerPort: {{ $p.targetPort | default $p.port }}
+            {{- end }}
           resources:
             requests:
               cpu: {{ .cpuRequest | default $defaults.cpuRequest }}
@@ -393,7 +396,10 @@ spec:
             {{- end }}
           {{- end }}
           ports:
-            - containerPort: {{ .sidecar.port | default $defaults.port }}
+            - containerPort: {{ .sidecar.targetPort | default .sidecar.port | default $defaults.port }}
+            {{- range $p := .sidecar.ports }}
+            - containerPort: {{ $p.targetPort | default $p.port }}
+            {{- end }}
           {{- if not .sidecar.livenessDisabled }}
           livenessProbe:
             httpGet:

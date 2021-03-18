@@ -107,9 +107,7 @@ spec:
         fsGroup: {{ .fsGroup }}
         {{- end }}
         {{- if .sysctls }}
-        {{- range $sysctl := .sysctls }}
-        - {{ mustToPrettyJson $sysctl }}
-        {{- end }}
+        sysctls: {{ mustToPrettyJson .sysctls }}
         {{- end }}
       {{- if default $defaults.serviceAccountName .serviceAccountName }}
       serviceAccountName: {{ default $defaults.serviceAccountName .serviceAccountName }}

@@ -108,7 +108,7 @@ spec:
         {{- end }}
         {{- if .sysctls }}
         {{- range $sysctl := .sysctls }}
-        - {{ $sysctl }}
+        - {{ mustToPrettyJson $sysctl }}
         {{- end }}
         {{- end }}
       {{- if default $defaults.serviceAccountName .serviceAccountName }}

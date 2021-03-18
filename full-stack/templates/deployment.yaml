@@ -301,15 +301,15 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
             {{- end }}
             {{- range $name, $value := .secretEnv }}
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
             {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
@@ -446,8 +446,8 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "[a-zA-Z]*$" $value }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}
@@ -529,9 +529,9 @@ spec:
         {{- if $value }}
         - name: default- {{- lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
             items:
-            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}
@@ -539,9 +539,9 @@ spec:
         {{- if $value }}
         - name: {{ lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
             items:
-            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}
@@ -551,9 +551,9 @@ spec:
         {{- if $value }}
         - name: sidecar- {{- lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
             items:
-            - key: {{ regexFind "[a-zA-Z]*$" $value }}
+            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}

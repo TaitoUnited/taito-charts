@@ -7,7 +7,7 @@ metadata:
     taito.dev/aggregate-to-booters: "true"
 rules:
 - apiGroups: ["", "extensions", "apps"]
-  resources: ["pods", "pods/log", "ingresses", "ingresses/status"]
+  resources: ["pods", "pods/log", "ingresses", "ingresses/status","statefulsets","statefulsets/status"]
   verbs: ["get", "list", "watch"]
 - apiGroups: ["batch"]
   resources: ["cronjobs", "cronjobs/status", "jobs", "jobs/status"]
@@ -108,8 +108,10 @@ rules:
 # Write permissions for basic resources
 - apiGroups: ["", "extensions", "apps"]
   resources: [
-    "daemonsets","deployments","deployments/rollback",
-    "deployments/scale","replicasets","replicasets/scale","replicationcontrollers/scale"
+    "daemonsets",
+    "deployments","deployments/rollback","deployments/scale",
+    "statefulsets","statefulsets/rollback","statefulsets/scale",
+    "replicasets","replicasets/scale","replicationcontrollers/scale"
   ]
   verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
 - apiGroups: ["", "extensions", "apps"]
@@ -152,6 +154,10 @@ metadata:
   labels:
     taito.dev/aggregate-to-privileged-deployers: "true"
 rules:
+# Allow creation of new namespaces
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["create"]
 # Write permissions for critical auth and networking resouces (privileged)
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["rolebindings"]

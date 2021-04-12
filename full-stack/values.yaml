@@ -28,7 +28,7 @@ global:
 serviceAccountCreate: true
 networkPolicyEnabled: true
 networkPolicyProvider: CALICO
-podSecurityPolicyCreate: false
+podSecurityPolicyCreate: false # DEPRECATED
 
 persistence:
   enabled: false

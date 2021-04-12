@@ -9,7 +9,6 @@ serviceAccounts:
 roles:
   - name: taito-restricted-pod # Pod Security Policy
     subjects:
-      - sa:default
       - sa:my-service-account
   - name: taito-developer
     subjects:

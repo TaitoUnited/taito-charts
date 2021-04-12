@@ -25,7 +25,7 @@ global:
   imagePullPolicy: ''
   debug: 'false'
 
-serviceAccountCreate: true
+serviceAccountCreate: false # DEPRECATED
 networkPolicyEnabled: true
 networkPolicyProvider: CALICO
 podSecurityPolicyCreate: false # DEPRECATED
@@ -75,7 +75,7 @@ serviceDefaults:
     #   rewriteTargetDisabled:
   # Security
   modsecurityEnabled: true
-  serviceAccountRoles: []
+  serviceAccountRoles: [] # DEPRECATED
   basicAuthEnabled: ${taito_basic_auth_enabled}
   basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth
   # Path defaults
@@ -91,7 +91,7 @@ serviceDefaults:
   rewriteTarget:
   rewriteTargetDisabled:
   # Security
-  serviceAccountName:
+  serviceAccountName: default
   runAsUser:
   runAsGroup:
   fsGroup:

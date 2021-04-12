@@ -13,4 +13,8 @@ roles:
   - name: taito-developer
     subjects:
       - user:jane.doe@mydomain.com
+  - name: taito-secret-viewer
+    namespace: common
+    subjects:
+      - user:jane.doe@mydomain.com
 ```

@@ -14,6 +14,7 @@ roles:
     subjects:
       - user:jane.doe@mydomain.com
   - name: taito-secret-viewer
+    id: taito-secret-viewers-for-project-x
     namespace: common
     subjects:
       - user:jane.doe@mydomain.com

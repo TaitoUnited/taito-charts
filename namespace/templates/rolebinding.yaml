@@ -1,0 +1,27 @@
+{{- range $role := .Values.roles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $role.name }}
+subjects:
+{{- range $name := $role.subjects }}
+{{- if eq (split ":" $name)._0 "domain" }}
+- kind: Group
+  name: allusers@{{ (split ":" $name)._1 }}
+{{- else if eq (split ":" $name)._0 "group" }}
+- kind: Group
+  name: {{ (split ":" $name)._1 | quote }}
+{{- else if eq (split ":" $name)._0 "sa" }}
+- kind: ServiceAccount
+  name: {{ (split ":" $name)._1 | quote }}
+{{- else }}
+- kind: User
+  name: {{ (split ":" $name)._1 | quote }}
+{{- end }}
+{{- end }}
+roleRef:
+  kind: ClusterRole
+  name: {{ $role.name }}
+  apiGroup: rbac.authorization.k8s.io
+---
+{{- end }}

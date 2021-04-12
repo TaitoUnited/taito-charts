@@ -1,4 +1,4 @@
-# Kubernetes basic definitions and access management
+# Basic definitions and access management for Kubernetes cluster
 
 Example values.yaml:
 

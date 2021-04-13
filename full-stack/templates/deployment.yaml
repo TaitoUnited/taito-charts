@@ -284,7 +284,7 @@ spec:
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
             {{- if .serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .serviceAccount.secret }}
+              value: /serviceaccount/{{ regexFind "[a-zA-Z0-9]*$" .serviceAccount.secret }}
             {{- end }}
             {{- end }}
             {{- range $name, $value := $defaults.env }}
@@ -299,15 +299,15 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
             {{- end }}
             {{- range $name, $value := .secretEnv }}
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
             {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
@@ -433,7 +433,7 @@ spec:
             {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
             {{- if .sidecar.serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /serviceaccount/{{ regexFind "[a-zA-Z]*$" .sidecar.serviceAccount.secret }}
+              value: /serviceaccount/{{ regexFind "[a-zA-Z0-9]*$" .sidecar.serviceAccount.secret }}
             {{- end }}
             {{- end }}
             {{- range $name, $value := .sidecar.env }}
@@ -444,8 +444,8 @@ spec:
             - name: {{ $name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
-                  key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+                  name: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
+                  key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}
@@ -503,7 +503,7 @@ spec:
             - -log_debug_stdout=true
             - --dir=/cloudsql
             - -instances={{ .db.instance }}=tcp:{{ .db.port }}
-            - -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z]*$" .db.proxySecret }}
+            - -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }}
           volumeMounts:
             - name: cloudsql-instance-credentials
               mountPath: /secrets/cloudsql
@@ -527,9 +527,9 @@ spec:
         {{- if $value }}
         - name: default- {{- lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
             items:
-            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}
@@ -537,9 +537,9 @@ spec:
         {{- if $value }}
         - name: {{ lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
             items:
-            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}
@@ -549,9 +549,9 @@ spec:
         {{- if $value }}
         - name: sidecar- {{- lower $name | replace "_" "-" }}
           secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z]*$" $value "" }}
+            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
             items:
-            - key: {{ regexFind "\\.[.a-zA-Z]*$" $value | substr 1 -1 }}
+            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
               path: {{ $name }}
         {{- end }}
         {{- end }}
@@ -580,7 +580,7 @@ spec:
         {{- if .db.useProxy }}
         - name: cloudsql-instance-credentials
           secret:
-            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .db.proxySecret "" }}
+            secretName: {{ regexReplaceAll "\\.[a-zA-Z0-9]*$" .db.proxySecret "" }}
         - name: ssl-certs
           hostPath:
             path: /etc/ssl/certs
@@ -592,7 +592,7 @@ spec:
         {{- if .serviceAccount.secret }}
         - name: serviceaccount
           secret:
-            secretName: {{ regexReplaceAll "\\.[a-zA-Z]*$" .serviceAccount.secret "" }}
+            secretName: {{ regexReplaceAll "\\.[a-zA-Z0-9]*$" .serviceAccount.secret "" }}
         {{- end }}
         {{- end }}
 ---

@@ -65,6 +65,13 @@ spec:
         matchLabels: {{ toJson $ingress }}
   {{- end }}
   egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          networking/namespace: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
   {{- if $httpProxy.enabled }}
   - to:
     - podSelector:

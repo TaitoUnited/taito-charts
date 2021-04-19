@@ -64,18 +64,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}
-  labels:
-    fullname: {{ template "fullname" $root }}-{{ $serviceName }}
-    {{- if $root.Values.networkPolicyEnabled}}
-    {{- range $egress := .egress }}
-    {{- if $egress.fullname }}
-    access-{{ $egress.fullname }}: "true"
-    {{- end }}
-    {{- end }}
-    {{- if $httpProxy.enabled }}
-    access-{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy: "true"
-    {{- end }}
-    {{- end }}
 spec:
   replicas: {{ .replicas | default $defaults.replicas }}
   selector:
@@ -96,12 +84,23 @@ spec:
   template:
     metadata:
       labels:
+        fullname: {{ template "fullname" $root }}-{{ $serviceName }}
         app: {{ template "name" $root }}
         release: {{ $root.Release.Name }}
         {{- if default $defaults.tier .tier }}
         tier: {{ default $defaults.tier .tier }}
         {{- end }}
         role: {{ $serviceName }}
+        {{- if $root.Values.networkPolicyEnabled}}
+        {{- range $egress := .egress }}
+        {{- if $egress.fullname }}
+        access-{{ $egress.fullname }}: "true"
+        {{- end }}
+        {{- end }}
+        {{- if $httpProxy.enabled }}
+        access-{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy: "true"
+        {{- end }}
+        {{- end }}
     spec:
       securityContext:
         {{- if quote .fsGroup }}

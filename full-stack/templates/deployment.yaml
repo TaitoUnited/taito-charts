@@ -65,6 +65,7 @@ kind: Deployment
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}
   labels:
+    fullname: {{ template "fullname" $root }}-{{ $serviceName }}
     {{- if $root.Values.networkPolicyEnabled}}
     {{- range $egress := .egress }}
     {{- if $egress.fullname }}

@@ -27,7 +27,9 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
-  # TODO: access labels for cronjobs also
+  labels:
+    fullname: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+    # TODO: access labels for cronjobs also
 spec:
   schedule: {{ $job.schedule | quote }}
   concurrencyPolicy: {{ $job.concurrencyPolicy | default "Forbid" }}

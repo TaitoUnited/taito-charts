@@ -2,7 +2,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ template "fullname" . }}-restricted
+  name: {{ template "myfullname" . }}-restricted
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default'
     apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/default'

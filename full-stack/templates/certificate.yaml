@@ -18,9 +18,9 @@ apiVersion: cert-manager.io/v1
 {{- end }}
 kind: Certificate
 metadata:
-  name: {{ template "fullname" . }}-certificate
+  name: {{ template "myfullname" . }}-certificate
 spec:
-  secretName: {{ template "fullname" . }}-ssl
+  secretName: {{ template "myfullname" . }}-ssl
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer

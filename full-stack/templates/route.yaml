@@ -13,7 +13,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "fullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}{{ $path.path | default "-root" | replace "/" "-" }}
+  name: {{ template "myfullname" $root }}-{{ (split "." $domain.name)._0 }}-{{ $serviceName }}{{ $path.path | default "-root" | replace "/" "-" }}
   annotations:
   {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
@@ -30,7 +30,7 @@ spec:
     targetPort: service
   to:
     kind: Service
-    name: {{ template "fullname" $root }}-{{ $serviceName }}
+    name: {{ template "myfullname" $root }}-{{ $serviceName }}
     weight: 100
   wildcardPolicy: None
 ---

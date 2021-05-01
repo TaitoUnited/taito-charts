@@ -24,7 +24,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "fullname" $root }}-ingress-alt
+  name: {{ template "myfullname" $root }}-ingress-alt
   annotations:
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
@@ -55,7 +55,7 @@ spec:
     {{- range $altDomain := $domain.altDomains }}
     - {{ $altDomain.name }}
     {{- end }}
-    secretName: {{ template "fullname" $root }}-ssl
+    secretName: {{ template "myfullname" $root }}-ssl
   {{- end }}
   rules:
     {{- range $altDomain := $domain.altDomains }}
@@ -78,7 +78,7 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "fullname" . }}-ingress
+  name: {{ template "myfullname" . }}-ingress
   annotations:
     {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
@@ -107,7 +107,7 @@ spec:
   - hosts:
     - {{ $domain.name }}
     {{- if not $domain.certSecret }}
-    secretName: {{ template "fullname" $root }}-ssl
+    secretName: {{ template "myfullname" $root }}-ssl
     {{- end }}
     {{- if $domain.certSecret }}
     secretName: {{ $domain.certSecret }}
@@ -128,7 +128,7 @@ spec:
           {{- with $path }}
           - path: {{ default "/" $path.path }}
             backend:
-              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.port | default $defaults.port }}
           {{- end }}
           {{- end }}
@@ -152,7 +152,7 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
@@ -165,7 +165,7 @@ metadata:
     {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
@@ -262,7 +262,7 @@ spec:
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
           {{- end }}
             backend:
-              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.port | default $defaults.port }}
     {{- end }}
 ---
@@ -279,7 +279,7 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
@@ -292,7 +292,7 @@ metadata:
     {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
+    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
@@ -389,7 +389,7 @@ spec:
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
           {{- end }}
             backend:
-              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
               servicePort: {{ $service.sidecar.port | default $defaults.port }}
     {{- end }}
 ---

@@ -13,12 +13,12 @@
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}-{{ $job.name }}
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: CronJob
-    name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+    name: {{ template "myfullname" $root }}-{{ $serviceName }}-{{ $job.name }}
   updatePolicy:
     updateMode: {{ .verticalScaleUpdateMode }}
 ---
@@ -26,7 +26,7 @@ spec:
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}-{{ $job.name }}
 spec:
   schedule: {{ $job.schedule | quote }}
   concurrencyPolicy: {{ $job.concurrencyPolicy | default "Forbid" }}
@@ -39,8 +39,8 @@ spec:
       template:
         metadata:
           labels:
-            fullname: {{ template "fullname" $root }}-{{ $serviceName }}-{{ $job.name }}
-            app: {{ template "name" $root }}
+            fullname: {{ template "myfullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+            app: {{ template "myname" $root }}
             release: {{ $root.Release.Name }}
             {{- if default $defaults.tier .tier }}
             tier: {{ default $defaults.tier .tier }}
@@ -56,7 +56,7 @@ spec:
           {{- if default $defaults.serviceAccountName $job.serviceAccountName }}
           serviceAccountName: {{ default $defaults.serviceAccountName $job.serviceAccountName }}
           {{- else }}
-          serviceAccountName: {{ template "fullname" $root }}
+          serviceAccountName: {{ template "myfullname" $root }}
           {{- end }}
           automountServiceAccountToken: false
           {{- if .nodeSelector }}
@@ -101,7 +101,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
               {{- end }}
           containers:
-            - name: {{ template "name" $root }}-{{ $job.name }}
+            - name: {{ template "myname" $root }}-{{ $job.name }}
               {{- if .image }}
               image: {{ .image }}
               {{- else }}
@@ -148,7 +148,7 @@ spec:
               envFrom:
                 - prefix: COMMON_
                   configMapRef:
-                    name: {{ template "fullname" $root }}-common
+                    name: {{ template "myfullname" $root }}-common
               env:
                 {{- if and (.serviceAccount) (eq $provider "gcp") }}
                 {{- if .serviceAccount.secret }}

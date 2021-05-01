@@ -2,10 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "myfullname" . }}
 rules:
   - apiGroups:      ['policy']
     resources:      ['podsecuritypolicies']
     verbs:          ['use']
-    resourceNames:  [{{ template "fullname" . }}]
+    resourceNames:  [{{ template "myfullname" . }}]
 {{- end -}}

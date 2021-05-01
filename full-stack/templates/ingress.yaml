@@ -21,7 +21,7 @@
 {{- end }}
 
 {{- if $altDomainSettings.enabled }}
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-alt
@@ -63,10 +63,13 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
               # TODO: Remove hardcoded default backend name
-              serviceName: common-nginx-nginx-ingress-default-backend
-              servicePort: 80
+              service:
+                name: common-nginx-nginx-ingress-default-backend
+                port:
+                  number: 80
     {{- end }}
 ---
 {{- end }}
@@ -75,7 +78,7 @@ spec:
 {{- end }}
 
 # Master ingress
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "myfullname" . }}-ingress
@@ -127,9 +130,12 @@ spec:
           {{- range $path := $service.paths }}
           {{- with $path }}
           - path: {{ default "/" $path.path }}
+            pathType: Prefix
             backend:
-              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
-              servicePort: {{ $service.port | default $defaults.port }}
+              service:
+                name: {{ template "myfullname" $root }}-{{ $serviceName }}
+                port:
+                  number: {{ $service.port | default $defaults.port }}
           {{- end }}
           {{- end }}
           {{- end }}
@@ -149,7 +155,7 @@ spec:
 # Minion ingress for each service path
 {{- range $path := $service.paths }}
 {{- with $path }}
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
@@ -257,13 +263,17 @@ spec:
         paths:
           {{- if or .rewriteTargetDisabled .rewriteTarget }}
           - path: {{ $path.path }}
+            pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+            pathType: Prefix
           {{- end }}
             backend:
-              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
-              servicePort: {{ $service.port | default $defaults.port }}
+              service:
+                name: {{ template "myfullname" $root }}-{{ $serviceName }}
+                port:
+                  number: {{ $service.port | default $defaults.port }}
     {{- end }}
 ---
 {{- end }}
@@ -276,7 +286,7 @@ spec:
 {{- if $service.sidecar.enabled }}
 {{- range $path := $service.sidecar.paths }}
 {{- with $path }}
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
@@ -384,13 +394,17 @@ spec:
         paths:
           {{- if or .rewriteTargetDisabled .rewriteTarget }}
           - path: {{ $path.path }}
+            pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+            pathType: Prefix
           {{- end }}
             backend:
-              serviceName: {{ template "myfullname" $root }}-{{ $serviceName }}
-              servicePort: {{ $service.sidecar.port | default $defaults.port }}
+              service:
+                name: {{ template "myfullname" $root }}-{{ $serviceName }}
+                port:
+                  number: {{ $service.sidecar.port | default $defaults.port }}
     {{- end }}
 ---
 {{- end }}

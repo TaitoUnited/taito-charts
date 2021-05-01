@@ -8,7 +8,7 @@
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- $type := default "service" .type -}}
-{{- if not (eq "job" $type) }}
+{{- if eq "service" $type }}
 {{- if .autoscale }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler

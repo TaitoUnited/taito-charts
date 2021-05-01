@@ -24,7 +24,7 @@ spec:
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- $type := default "service" .type -}}
-{{- if not (eq "job" $type) }}
+{{- if eq "service" $type }}
 
 {{- $httpProxy := dict "enabled" false -}}
 {{- range $egress := .egress }}

@@ -103,6 +103,11 @@ metadata:
         log_not_found off;
         return 404;
       }
+    # TODO: make forbidden paths configurable
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      location ~* ^/xmlrpc.php$ {
+        return 403;
+      }
 spec:
   {{- if .Values.ingress.tls }}
   tls:

@@ -49,6 +49,15 @@ entries:
     version: 3.16.0
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2021-08-15T10:03:30.2218397Z"
+    description: A Helm chart for Kubernetes
+    digest: bc18725623dca309f157e5e198b54a089709cb124b883b87524e8149b314c83d
+    name: full-stack
+    urls:
+    - https://taitounited.github.io/taito-charts/full-stack-3.15.4.tgz
+    version: 3.15.4
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2021-08-15T09:55:29.5234297Z"
     description: A Helm chart for Kubernetes
     digest: 35caf9663648fad08ca9f607c387bf54f684e1f25e3677b0428f51bf8f88c3ac

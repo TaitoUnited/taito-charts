@@ -165,6 +165,13 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
   annotations:
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      location ~ /\.(?!well-known).* {
+        deny all;
+        access_log off;
+        log_not_found off;
+        return 404;
+      }
     # TODO: make forbidden paths configurable
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
@@ -301,6 +308,13 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
   annotations:
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      location ~ /\.(?!well-known).* {
+        deny all;
+        access_log off;
+        log_not_found off;
+        return 404;
+      }
     # TODO: make forbidden paths configurable
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {

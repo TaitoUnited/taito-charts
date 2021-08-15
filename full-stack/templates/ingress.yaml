@@ -165,6 +165,11 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
   annotations:
+    # TODO: make forbidden paths configurable
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      location ~* ^/xmlrpc.php$ {
+        return 403;
+      }
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
@@ -296,6 +301,11 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
   annotations:
+    # TODO: make forbidden paths configurable
+    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+      location ~* ^/xmlrpc.php$ {
+        return 403;
+      }
     {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";

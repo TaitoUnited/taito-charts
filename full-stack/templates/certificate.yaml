@@ -18,9 +18,9 @@ apiVersion: cert-manager.io/v1
 {{- end }}
 kind: Certificate
 metadata:
-  name: {{ template "myfullname" . }}-certificate
+  name: {{ template "fullname" . }}-certificate
 spec:
-  secretName: {{ template "myfullname" . }}-ssl
+  secretName: {{ template "fullname" . }}-ssl
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -36,6 +36,7 @@ spec:
     {{- end }}
     {{- end }}
   {{- if or .Values.ingress.oldRewritePolicy .Values.ingress.oldAcmeCertificate }}
+  {{- if not .Values.ingress.oldAcmeCertificateSkip }}
   acme:
     config:
     - http01:
@@ -51,6 +52,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
+  {{- end }}
   {{- end }}
 
 {{- end }}

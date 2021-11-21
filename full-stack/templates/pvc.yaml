@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "myfullname" . }}
+  name: {{ template "fullname" . }}
 spec:
   accessModes:
     - {{ .Values.persistence.accessMode | quote }}

@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "myfullname" . }}-common
+  name: {{ template "fullname" . }}-common
 data:
   ENV: {{ .Values.global.env | default "" | quote }}
   DEBUG: {{ .Values.global.debug | default "false" | quote }}

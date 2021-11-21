@@ -21,10 +21,10 @@
 {{- end }}
 
 {{- if $altDomainSettings.enabled }}
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" $root }}-ingress-alt
+  name: {{ template "fullname" $root }}-ingress-alt
   annotations:
     {{- if $root.Values.ingress.class }}
     kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
@@ -55,7 +55,7 @@ spec:
     {{- range $altDomain := $domain.altDomains }}
     - {{ $altDomain.name }}
     {{- end }}
-    secretName: {{ template "myfullname" $root }}-ssl
+    secretName: {{ template "fullname" $root }}-ssl
   {{- end }}
   rules:
     {{- range $altDomain := $domain.altDomains }}
@@ -63,13 +63,10 @@ spec:
       http:
         paths:
           - path: /
-            pathType: Prefix
             backend:
               # TODO: Remove hardcoded default backend name
-              service:
-                name: common-nginx-nginx-ingress-default-backend
-                port:
-                  number: 80
+              serviceName: common-nginx-nginx-ingress-default-backend
+              servicePort: 80
     {{- end }}
 ---
 {{- end }}
@@ -78,10 +75,10 @@ spec:
 {{- end }}
 
 # Master ingress
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" . }}-ingress
+  name: {{ template "fullname" . }}-ingress
   annotations:
     {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
@@ -115,7 +112,7 @@ spec:
   - hosts:
     - {{ $domain.name }}
     {{- if not $domain.certSecret }}
-    secretName: {{ template "myfullname" $root }}-ssl
+    secretName: {{ template "fullname" $root }}-ssl
     {{- end }}
     {{- if $domain.certSecret }}
     secretName: {{ $domain.certSecret }}
@@ -135,12 +132,9 @@ spec:
           {{- range $path := $service.paths }}
           {{- with $path }}
           - path: {{ default "/" $path.path }}
-            pathType: Prefix
             backend:
-              service:
-                name: {{ template "myfullname" $root }}-{{ $serviceName }}
-                port:
-                  number: {{ $service.port | default $defaults.port }}
+              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              servicePort: {{ $service.port | default $defaults.port }}
           {{- end }}
           {{- end }}
           {{- end }}
@@ -160,18 +154,11 @@ spec:
 # Minion ingress for each service path
 {{- range $path := $service.paths }}
 {{- with $path }}
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
   annotations:
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      location ~ /\.(?!well-known).* {
-        deny all;
-        access_log off;
-        log_not_found off;
-        return 404;
-      }
     # TODO: make forbidden paths configurable
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
@@ -188,7 +175,7 @@ metadata:
     {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
+    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
@@ -280,17 +267,13 @@ spec:
         paths:
           {{- if or .rewriteTargetDisabled .rewriteTarget }}
           - path: {{ $path.path }}
-            pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
-            pathType: Prefix
           {{- end }}
             backend:
-              service:
-                name: {{ template "myfullname" $root }}-{{ $serviceName }}
-                port:
-                  number: {{ $service.port | default $defaults.port }}
+              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              servicePort: {{ $service.port | default $defaults.port }}
     {{- end }}
 ---
 {{- end }}
@@ -303,18 +286,11 @@ spec:
 {{- if $service.sidecar.enabled }}
 {{- range $path := $service.sidecar.paths }}
 {{- with $path }}
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "fullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
   annotations:
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
-      location ~ /\.(?!well-known).* {
-        deny all;
-        access_log off;
-        log_not_found off;
-        return 404;
-      }
     # TODO: make forbidden paths configurable
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
@@ -331,7 +307,7 @@ metadata:
     {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
+    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "name" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
@@ -423,17 +399,13 @@ spec:
         paths:
           {{- if or .rewriteTargetDisabled .rewriteTarget }}
           - path: {{ $path.path }}
-            pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
           - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
-            pathType: Prefix
           {{- end }}
             backend:
-              service:
-                name: {{ template "myfullname" $root }}-{{ $serviceName }}
-                port:
-                  number: {{ $service.sidecar.port | default $defaults.port }}
+              serviceName: {{ template "fullname" $root }}-{{ $serviceName }}
+              servicePort: {{ $service.sidecar.port | default $defaults.port }}
     {{- end }}
 ---
 {{- end }}

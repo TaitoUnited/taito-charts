@@ -4,14 +4,14 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: {{ template "myfullname" . }}
+  name: {{ template "fullname" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "myfullname" . }}
+  name: {{ template "fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "myfullname" . }}
+    name: {{ template "fullname" . }}
     namespace: {{ .Release.Namespace }}
 ---
 {{- end -}}
@@ -20,14 +20,14 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: {{ template "myfullname" $root }}-{{ $role }}
+  name: {{ template "fullname" $root }}-{{ $role }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ $role }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "myfullname" $root }}
+    name: {{ template "fullname" $root }}
     namespace: {{ $root.Release.Namespace }}
 ---
 {{- end }}

@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "myname" -}}
+{{- define "name" -}}
 {{- default .Values.global.project.name .Values.nameOverride | trunc 53 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -10,7 +10,7 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "myfullname" -}}
+{{- define "fullname" -}}
 {{- $name := default .Values.global.project.name .Values.nameOverride -}}
 {{- printf "%s" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

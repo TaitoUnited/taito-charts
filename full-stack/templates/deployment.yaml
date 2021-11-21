@@ -8,17 +8,17 @@
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
 {{- $type := default "service" .type -}}
-{{- if eq "service" $type }}
+{{- if not (eq "job" $type) }}
 {{- if .autoscale }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+  name: {{ template "fullname" $root }}-{{ $serviceName }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ template "myname" $root }}-{{ $serviceName }}
+    name: {{ template "name" $root }}-{{ $serviceName }}
   minReplicas: {{ .minReplicas | default $defaults.minReplicas }}
   maxReplicas: {{ .maxReplicas | default $defaults.maxReplicas }}
   metrics:
@@ -40,12 +40,12 @@ spec:
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+  name: {{ template "fullname" $root }}-{{ $serviceName }}
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
-    name: {{ template "myname" $root }}-{{ $serviceName }}
+    name: {{ template "name" $root }}-{{ $serviceName }}
   updatePolicy:
     updateMode: {{ .verticalScaleUpdateMode }}
 ---
@@ -63,12 +63,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+  name: {{ template "fullname" $root }}-{{ $serviceName }}
 spec:
   replicas: {{ .replicas | default $defaults.replicas }}
   selector:
     matchLabels:
-      app: {{ template "myname" $root }}
+      app: {{ template "name" $root }}
       release: {{ $root.Release.Name }}
       {{- if default $defaults.tier .tier }}
       tier: {{ default $defaults.tier .tier }}
@@ -84,8 +84,8 @@ spec:
   template:
     metadata:
       labels:
-        fullname: {{ template "myfullname" $root }}-{{ $serviceName }}
-        app: {{ template "myname" $root }}
+        fullname: {{ template "fullname" $root }}-{{ $serviceName }}
+        app: {{ template "name" $root }}
         release: {{ $root.Release.Name }}
         {{- if default $defaults.tier .tier }}
         tier: {{ default $defaults.tier .tier }}
@@ -98,7 +98,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- if $httpProxy.enabled }}
-        access-{{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy: "true"
+        access-{{ template "fullname" $root }}-{{ $serviceName }}-http-proxy: "true"
         {{- end }}
         {{- end }}
     spec:
@@ -107,12 +107,12 @@ spec:
         fsGroup: {{ .fsGroup }}
         {{- end }}
         {{- if .sysctls }}
-        sysctls: {{ mustToPrettyJson .sysctls }}
+        sysctls: {{ toJson .sysctls }}
         {{- end }}
       {{- if default $defaults.serviceAccountName .serviceAccountName }}
       serviceAccountName: {{ default $defaults.serviceAccountName .serviceAccountName }}
       {{- else }}
-      serviceAccountName: {{ template "myfullname" $root }}
+      serviceAccountName: {{ template "fullname" $root }}
       {{- end }}
       automountServiceAccountToken: false
       {{- if .nodeSelector }}
@@ -160,7 +160,7 @@ spec:
           {{- end }}
       initContainers:
       {{- if .initCommand }}
-        - name: {{ template "myname" $root }}-{{ $serviceName }}-init
+        - name: {{ template "name" $root }}-{{ $serviceName }}-init
           image: busybox
           command: ['sh', '-c', {{ .initCommand | quote }}]
           volumeMounts:
@@ -184,7 +184,7 @@ spec:
           {{- end }}
       {{- end }}
       containers:
-        - name: {{ template "myname" $root }}-{{ $serviceName }}
+        - name: {{ template "name" $root }}-{{ $serviceName }}
           {{- if .image }}
           image: {{ .image }}
           {{- else }}
@@ -275,11 +275,11 @@ spec:
           envFrom:
             - prefix: COMMON_
               configMapRef:
-                name: {{ template "myfullname" $root }}-common
+                name: {{ template "fullname" $root }}-common
           env:
             {{- if $httpProxy.enabled }}
             - name: DOMAIN_PROXY
-              value: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy:3128
+              value: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy:3128
             {{- end }}
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
             {{- if .serviceAccount.secret }}
@@ -369,7 +369,7 @@ spec:
 
         {{- if .sidecar }}
         {{- if .sidecar.enabled }}
-        - name: {{ template "myname" $root }}-{{ .sidecar.name }}
+        - name: {{ template "name" $root }}-{{ .sidecar.name }}
           {{- if .sidecar.image }}
           image: {{ .sidecar.image }}
           {{- else }}
@@ -428,7 +428,7 @@ spec:
           envFrom:
             - prefix: COMMON_
               configMapRef:
-                name: {{ template "myfullname" $root }}-common
+                name: {{ template "fullname" $root }}-common
           env:
             {{- if and (.sidecar.serviceAccount) (eq $provider "gcp") }}
             {{- if .sidecar.serviceAccount.secret }}
@@ -600,19 +600,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy
+  name: {{ template "fullname" $root }}-{{ $serviceName }}-http-proxy
 spec:
   replicas: {{ $defaults.replicas | default 1 }}
   selector:
     matchLabels:
-      app: {{ template "myname" $root }}
+      app: {{ template "name" $root }}
       release: {{ $root.Release.Name }}
       tier: proxy
       role: {{ $serviceName }}-http-proxy
   template:
     metadata:
       labels:
-        app: {{ template "myname" $root }}
+        app: {{ template "name" $root }}
         release: {{ $root.Release.Name }}
         tier: proxy
         role: {{ $serviceName }}-http-proxy
@@ -630,7 +630,7 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-        - name: {{ template "myname" $root }}-{{ $serviceName }}-http-proxy
+        - name: {{ template "name" $root }}-{{ $serviceName }}-http-proxy
           image: {{ .httpProxyImage | default $defaults.httpProxyImage }}
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           ports:

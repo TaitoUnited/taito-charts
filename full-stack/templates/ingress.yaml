@@ -278,7 +278,7 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if or .rewriteTargetDisabled .rewriteTarget }}
+          {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}
@@ -421,7 +421,7 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if or .rewriteTargetDisabled .rewriteTarget }}
+          {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}

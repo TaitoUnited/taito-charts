@@ -9,9 +9,7 @@
 {{- end }}
 {{- if $cert.required }}
 
-{{- if .Values.ingress.oldRewritePolicy }}
-apiVersion: certmanager.k8s.io/v1alpha1
-{{- else if .Values.ingress.oldAcmeCertificate }}
+{{- if .Values.ingress.oldAcmeCertificate }}
 apiVersion: cert-manager.io/v1alpha2
 {{- else }}
 apiVersion: cert-manager.io/v1
@@ -35,7 +33,7 @@ spec:
     {{- end }}
     {{- end }}
     {{- end }}
-  {{- if or .Values.ingress.oldRewritePolicy .Values.ingress.oldAcmeCertificate }}
+  {{- if .Values.ingress.oldAcmeCertificate }}
   {{- if not .Values.ingress.oldAcmeCertificateSkip }}
   acme:
     config:

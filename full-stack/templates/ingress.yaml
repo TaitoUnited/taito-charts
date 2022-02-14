@@ -163,7 +163,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | trimSuffix "/" | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~ /\.(?!well-known).* {
@@ -306,7 +306,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | default "-root" | replace "/" "-" }}
+  name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | trimSuffix "/" | default "-root" | replace "/" "-" }}
   annotations:
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       location ~ /\.(?!well-known).* {

@@ -565,7 +565,7 @@ spec:
         {{- if .persistentVolumeMounts }}
         - name: persistent-volume
           persistentVolumeClaim:
-            claimName: {{ .persistentVolumeClaim | default $root.Values.persistence.existingClaim | default (include "fullname" $root) }}
+            claimName: {{ .persistentVolumeClaim | default $root.Values.persistence.existingClaim | default (include "myfullname" $root) }}
         {{- end }}
         {{- end }}
         {{- if .sidecar }}

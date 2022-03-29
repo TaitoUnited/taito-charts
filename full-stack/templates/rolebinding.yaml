@@ -1,7 +1,7 @@
 {{- $root := . -}}
 
 {{- if .Values.podSecurityPolicyCreate -}}
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ template "myfullname" . }}
@@ -17,7 +17,7 @@ subjects:
 {{- end -}}
 
 {{- range $role := .Values.serviceDefaults.serviceAccountRoles }}
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ template "myfullname" $root }}-{{ $role }}

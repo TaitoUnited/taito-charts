@@ -279,11 +279,11 @@ spec:
       http:
         paths:
           {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
-          - path: {{ $path.path }}
+          - path: {{ default "/" $path.path }}
             pathType: Prefix
           {{- else }}
-          # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
-          - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+          # TODO: remove oldRewritePolicy
+          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "?(.*)" }}
             pathType: Prefix
           {{- end }}
             backend:
@@ -422,11 +422,11 @@ spec:
       http:
         paths:
           {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
-          - path: {{ $path.path }}
+          - path: {{ default "/" $path.path }}
             pathType: Prefix
           {{- else }}
-          # TODO: remove oldRewritePolicy --> - path: {{ $path.path }}{{ "/?(.*)" }}
-          - path: {{ $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "/?(.*)" }}
+          # TODO: remove oldRewritePolicy
+          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "?(.*)" }}
             pathType: Prefix
           {{- end }}
             backend:

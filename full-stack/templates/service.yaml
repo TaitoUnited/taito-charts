@@ -5,7 +5,7 @@
 {{- with $service }}
 {{- if (or (not (hasKey . "enabled")) (.enabled)) }}
 {{- $type := default "service" .type -}}
-{{- if eq "service" $type }}
+{{- if or (eq "service" $type) (eq "external" $type) }}
 apiVersion: v1
 kind: Service
 metadata:

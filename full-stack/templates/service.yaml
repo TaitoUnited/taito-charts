@@ -53,6 +53,7 @@ spec:
     {{- end }}
   {{- if eq $type "external" }}
   type: LoadBalancer
+  loadBalancerIP: {{ .externalIP }}
   {{- end }}
 ---
 {{- end }}

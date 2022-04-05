@@ -10,34 +10,34 @@ taito create: my-chart
 
 1. Make some changes to the chart. You can test the changes locally by referencing the chart directly.
 
-    Edit `requirements.yaml` of a project:
+   Edit `requirements.yaml` of a project:
 
-    ```
-    version: N.N.N # Use the same chart version as in full-stack Chart.yaml
-    repository: file:///taito-charts/full-stack
-    ```
+   ```
+   version: N.N.N # Use the same chart version as in full-stack Chart.yaml
+   repository: file:///taito-charts/full-stack
+   ```
 
-    Run dry-run deployment with a mounted `/taito-charts` directory:
+   Run dry-run deployment with a mounted `/taito-charts` directory:
 
-    ```
-    taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev --dry-run
-    ```
+   ```
+   taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev --dry-run
+   ```
 
-    Run real deployment with a mounted `/taito-charts` directory:
+   Run real deployment with a mounted `/taito-charts` directory:
 
-    ```
-    taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev
-    ```
+   ```
+   taito -m ~/projects/taito-charts:/taito-charts deployment deploy:dev
+   ```
 
 2. Increase chart version number in `Chart.yaml`
 
 3. Create a new package:
 
-    ```
-    taito package: full-stack
-    ```
+   ```
+   taito package: full-stack
+   ```
 
-3. Publish new chart version by pushing changes to git.
+4. Publish new chart version by pushing changes to git.
 
 ## Conventions
 

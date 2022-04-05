@@ -134,7 +134,7 @@ spec:
           {{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
           {{- range $path := $service.paths }}
           {{- with $path }}
-          - path: {{ default "/" $path.path }}
+          - path: {{ $path.path }}
             pathType: Prefix
             backend:
               service:
@@ -192,8 +192,11 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    # TODO: remove oldRewritePolicy --> {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/$2" .rewriteTarget }}
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$2") .rewriteTarget }}
+    {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
+    {{- else }} # TODO: -- remove oldRewritePolicy
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
+    {{- end }} # TODO: -- remove oldRewritePolicy
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
@@ -278,14 +281,18 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
-          - path: {{ default "/" $path.path }}
+          {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
+          - path: {{ $path.path }}
+            pathType: Prefix
+          {{- else }} # TODO: -- remove oldRewritePolicy
+          {{- if or $path.rewriteTargetDisabled }}
+          - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}
-          # TODO: remove oldRewritePolicy
-          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "(/|$)(.*)" }}
+          - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
             pathType: Prefix
           {{- end }}
+          {{- end }} # TODO: -- remove oldRewritePolicy
             backend:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}
@@ -335,8 +342,11 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if not .rewriteTargetDisabled }}
-    # TODO: remove oldRewritePolicy --> {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/$2" .rewriteTarget }}
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default ($root.Values.ingress.oldRewritePolicy | ternary "/" "/$2") .rewriteTarget }}
+    {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
+    {{- else }} # TODO: -- remove oldRewritePolicy
+    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
+    {{- end }} # TODO: -- remove oldRewritePolicy
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
     {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
@@ -421,14 +431,18 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if or $path.rewriteTargetDisabled $path.rewriteTarget }}
-          - path: {{ default "/" $path.path }}
+          {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
+          - path: {{ $path.path }}
+            pathType: Prefix
+          {{- else }} # TODO: -- remove oldRewritePolicy                    
+          {{- if or $path.rewriteTargetDisabled }}
+          - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}
-          # TODO: remove oldRewritePolicy
-          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "(/|$)(.*)" }}
+          - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
             pathType: Prefix
           {{- end }}
+          {{- end }} # TODO: -- remove oldRewritePolicy
             backend:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}

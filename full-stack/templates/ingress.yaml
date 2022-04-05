@@ -283,7 +283,7 @@ spec:
             pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy
-          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "?(.*)" }}
+          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "(.*)" }}
             pathType: Prefix
           {{- end }}
             backend:
@@ -426,7 +426,7 @@ spec:
             pathType: Prefix
           {{- else }}
           # TODO: remove oldRewritePolicy
-          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "?(.*)" }}
+          - path: {{ default "/" $path.path }}{{ $root.Values.ingress.oldRewritePolicy | ternary "" "(.*)" }}
             pathType: Prefix
           {{- end }}
             backend:

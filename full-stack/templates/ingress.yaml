@@ -26,9 +26,6 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-alt
   annotations:
-    {{- if $root.Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- end }}
     {{- if not $root.Values.ingress.tls }}
     {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
       if ($request_uri !~ ^/\.well-known/.*$) {
@@ -49,6 +46,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if $root.Values.ingress.class }}
+  ingressClassName: {{ $root.Values.ingress.class | quote }}
+  {{- end }}
   {{- if $root.Values.ingress.tls }}
   tls:
   - hosts:
@@ -83,9 +83,6 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" . }}-ingress
   annotations:
-    {{- if .Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ .Values.ingress.class | quote }}
-    {{- end }}
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "true"
@@ -109,6 +106,9 @@ metadata:
         return 403;
       }
 spec:
+  {{- if .Values.ingress.class }}
+  ingressClassName: {{ .Values.ingress.class | quote }}
+  {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
   {{- range $domain := .Values.ingress.domains }}
@@ -183,9 +183,6 @@ metadata:
       {{- if not .defaultCSPDisabled }}
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       {{- end }}
-    {{- if $root.Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
     {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
@@ -276,6 +273,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if $root.Values.ingress.class }}
+  ingressClassName: {{ $root.Values.ingress.class | quote }}
+  {{- end }}
   rules:
     {{- range $domain := $root.Values.ingress.domains }}
     - host: {{ $domain.name }}
@@ -333,9 +333,6 @@ metadata:
       {{- if not .defaultCSPDisabled }}
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       {{- end }}
-    {{- if $root.Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ $root.Values.ingress.class | quote }}
-    {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
     {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
@@ -426,6 +423,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if $root.Values.ingress.class }}
+  ingressClassName: {{ $root.Values.ingress.class | quote }}
+  {{- end }}
   rules:
     {{- range $domain := $root.Values.ingress.domains }}
     - host: {{ $domain.name }}

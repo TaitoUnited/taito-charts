@@ -22,8 +22,8 @@ global:
   logFormat: stackdriver
   logLevel: info # trace, debug, info, warn, error, fatal
   registry:
-  imagePullPolicy: ''
-  debug: 'false'
+  imagePullPolicy: ""
+  debug: "false"
 
 serviceAccountCreate: false # DEPRECATED
 networkPolicyEnabled: true
@@ -40,7 +40,7 @@ persistence:
   size: 8Gi
 
 ingress:
-  class: ''
+  class: ""
   oldRewritePolicy: false
   oldAcmeCertificate: false
   tls: true
@@ -74,7 +74,7 @@ serviceDefaults:
     #   rewriteTarget:
     #   rewriteTargetDisabled:
   # Security
-  modsecurityEnabled: true
+  modsecurityEnabled: false
   serviceAccountRoles: [] # DEPRECATED
   basicAuthEnabled: ${taito_basic_auth_enabled}
   basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth

@@ -181,6 +181,14 @@ spec:
               readOnly: {{ .readOnly }}
           {{- end }}
           {{- end }}
+          {{- if and (dig "sidecar" "enabled" "" .) (dig "sidecar" "persistentVolumeMounts" "" .) }}
+          {{- range .sidecar.persistentVolumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: persistent-volume
+              subPath: {{ .volumePath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- end }}
           {{- end }}
       {{- end }}
       containers:
@@ -351,13 +359,9 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-          {{- if .sidecar }}
-          {{- if .sidecar.enabled }}
-          {{- if .sidecar.sharedVolume }}
+          {{- if and (dig "sidecar" "enabled" "" .) (dig "sidecar" "sharedVolume" "" .) }}
             - name: sidecar-volume
               mountPath: {{ .sidecar.sharedVolume.mountPath }}
-          {{- end }}
-          {{- end }}
           {{- end }}
           {{- if and (.serviceAccount) (eq $provider "gcp") }}
           {{- if .serviceAccount.secret }}
@@ -373,7 +377,7 @@ spec:
           {{- if .sidecar.image }}
           image: {{ .sidecar.image }}
           {{- else }}
-          image: {{ $global.registry -}} / {{- .sidecar.name -}} : {{- $global.build.imageTag }}
+          image: {{ $global.registry -}} / {{- $serviceName -}} : {{- $global.build.imageTag }}
           {{- end }}
           imagePullPolicy: {{ $global.imagePullPolicy | quote }}
           securityContext:
@@ -543,8 +547,7 @@ spec:
               path: {{ $name }}
         {{- end }}
         {{- end }}
-        {{- if .sidecar }}
-        {{- if .sidecar.enabled }}
+        {{- if dig "sidecar" "enabled" "" . }}
         {{- range $name, $value := .sidecar.secrets }}
         {{- if $value }}
         - name: sidecar- {{- lower $name | replace "_" "-" }}
@@ -556,25 +559,20 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- end }}
         {{- if .temporaryVolumeMounts }}
         - name: temporary-volume
           emptyDir:
         {{- end }}
-        {{- if $root.Values.persistence.enabled }}
-        {{- if .persistentVolumeMounts }}
+        {{- if $root.Values.persistence.enabled }} 
+        {{- if or .persistentVolumeMounts (and (dig "sidecar" "enabled" "" .) (dig "sidecar" "persistentVolumeMounts" "" .)) }}
         - name: persistent-volume
           persistentVolumeClaim:
             claimName: {{ .persistentVolumeClaim | default $root.Values.persistence.existingClaim | default (include "myfullname" $root) }}
         {{- end }}
         {{- end }}
-        {{- if .sidecar }}
-        {{- if .sidecar.enabled }}
-        {{- if .sidecar.sharedVolume }}
+        {{- if and (dig "sidecar" "enabled" "" .) (dig "sidecar" "sharedVolume" "" .) }}
         - name: sidecar-volume
           emptyDir:
-        {{- end }}
-        {{- end }}
         {{- end }}
         {{- if and (.db) (eq $provider "gcp") }}
         {{- if .db.useProxy }}

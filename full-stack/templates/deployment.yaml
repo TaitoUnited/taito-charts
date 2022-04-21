@@ -159,7 +159,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
           {{- end }}
         podAntiAffinity:
-          {{- if not (or .placementSameAs .placementPreferSameAs) }}
+          {{- if not (eq 1 (default $defaults.replicas .replicas | int)) }}
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 80
             podAffinityTerm:

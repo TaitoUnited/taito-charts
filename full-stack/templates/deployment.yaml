@@ -159,7 +159,6 @@ spec:
               topologyKey: "kubernetes.io/hostname"
           {{- end }}
         podAntiAffinity:
-          {{- if not (eq 1 (default $defaults.replicas .replicas | int)) }}
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 80
             podAffinityTerm:
@@ -174,7 +173,6 @@ spec:
                   values:
                   - {{ $serviceName }}
               topologyKey: kubernetes.io/hostname        
-          {{- end }}
       initContainers:
       {{- if .initCommand }}
         - name: {{ template "myname" $root }}-{{ $serviceName }}-init

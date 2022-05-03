@@ -188,7 +188,8 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
-    {{- if not .rewriteTargetDisabled }}
+    {{- if or .rewriteTargetDisabled (eq .path "/") }}
+    {{- else }}
     {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
     {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
     {{- else }} # TODO: -- remove oldRewritePolicy
@@ -285,7 +286,7 @@ spec:
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }} # TODO: -- remove oldRewritePolicy
-          {{- if or $path.rewriteTargetDisabled }}
+          {{- if or $path.rewriteTargetDisabled (eq $path.path "/") }}
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}
@@ -338,7 +339,8 @@ metadata:
     {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
     {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
-    {{- if not .rewriteTargetDisabled }}
+    {{- if or .rewriteTargetDisabled (eq .path "/") }}
+    {{- else }}
     {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
     {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
     {{- else }} # TODO: -- remove oldRewritePolicy
@@ -435,7 +437,7 @@ spec:
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }} # TODO: -- remove oldRewritePolicy                    
-          {{- if or $path.rewriteTargetDisabled }}
+          {{- if or $path.rewriteTargetDisabled (eq $path.path "/") }}
           - path: {{ $path.path }}
             pathType: Prefix
           {{- else }}

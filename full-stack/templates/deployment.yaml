@@ -270,6 +270,9 @@ spec:
               path: {{ coalesce .livenessPath $defaults.livenessPath }}
               port: {{ coalesce .livenessPort .port $defaults.port }}
               scheme: HTTP
+              httpHeaders:
+                - name: Host
+                  value: {{ $root.Values.global.domain | quote }}
             {{- end }}
             initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay }}
             periodSeconds: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
@@ -288,6 +291,9 @@ spec:
               path: {{ coalesce .readinessPath .livenessPath $defaults.livenessPath }}
               port: {{ coalesce .readinessPort .livenessPort .port $defaults.port }}
               scheme: HTTP
+              httpHeaders:
+                - name: Host
+                  value: {{ $root.Values.global.domain | quote }}
             {{- end }}
             initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 30 }}
             periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 10 }}

@@ -1,0 +1,66 @@
+{{- $root := . -}}
+{{- $defaults := .Values.serviceDefaults -}}
+
+{{- if eq "azure/application-gateway" $root.Values.ingress.class }}
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "myfullname" . }}-ingress
+  annotations:
+    {{- if .Values.ingress.tls }}
+    kubernetes.io/tls-acme: "true"
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+    {{- if $defaults.readTimeout }}
+    appgw.ingress.kubernetes.io/request-timeout: {{ $defaults.readTimeout | quote }}
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.class }}
+  ingressClassName: {{ .Values.ingress.class | quote }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+  {{- range $domain := .Values.ingress.domains }}
+  - hosts:
+    - {{ $domain.name }}
+    {{- if not $domain.certSecret }}
+    secretName: {{ template "myfullname" $root }}-ssl
+    {{- end }}
+    {{- if $domain.certSecret }}
+    secretName: {{ $domain.certSecret }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  rules:
+    {{- range $domain := .Values.ingress.domains }}
+    - host: {{ $domain.name }}
+      http:
+        paths:
+          {{- range $serviceName, $service := $root.Values.services }}
+          {{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
+          {{- range $path := $service.paths }}
+          {{- with $path }}
+          - path: {{ $path.path }}*
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "myfullname" $root }}-{{ $serviceName }}
+                port:
+                  number: {{ $service.port | default $defaults.port }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+
+    {{- end }}
+
+{{- end }}
+{{- end }}

@@ -9,6 +9,8 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" . }}-ingress
   annotations:
+    # https://github.com/cert-manager/cert-manager/issues/4547
+    kubernetes.io/ingress.class: azure/application-gateway
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
@@ -23,9 +25,7 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
-  {{- if .Values.ingress.class }}
-  ingressClassName: {{ .Values.ingress.class | quote }}
-  {{- end }}
+  # ingressClassName: azure/application-gateway
   {{- if .Values.ingress.tls }}
   tls:
   {{- range $domain := .Values.ingress.domains }}

@@ -1,9 +1,8 @@
 {{- $root := . -}}
 {{- $defaults := .Values.serviceDefaults -}}
-{{- $annoPrefix := .Values.ingress.oldRewritePolicy | ternary "" "nginx." -}}
 
+{{- if contains "nginx" $root.Values.ingress.class }}
 {{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
-{{- if not (contains "openshift" $root.Values.ingress.class) }}
 
 # Alternate domain ingresses (redirect)
 # TODO: add non-nginx support
@@ -27,15 +26,15 @@ metadata:
   name: {{ template "myfullname" $root }}-ingress-alt
   annotations:
     {{- if not $root.Values.ingress.tls }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       if ($request_uri !~ ^/\.well-known/.*$) {
         return 301 http://{{ $domain.name }}$request_uri;
       }
     {{- end }}
     {{- if $root.Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
-    {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/server-snippet: |
       if ($request_uri !~ ^/\.well-known/.*$) {
         return 301 https://{{ $domain.name }}$request_uri;
       }
@@ -85,15 +84,15 @@ metadata:
   annotations:
     {{- if .Values.ingress.tls }}
     kubernetes.io/tls-acme: "true"
-    {{ $annoPrefix }}ingress.kubernetes.io/ssl-redirect: "true"
-    {{ $annoPrefix }}ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
     {{ $annotationName }}: {{ $annotationValue }}
     {{- end }}
     {{- end }}
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~ /\.(?!well-known).* {
         deny all;
         access_log off;
@@ -101,7 +100,7 @@ metadata:
         return 404;
       }
     # TODO: make forbidden paths configurable
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
         return 403;
       }
@@ -165,7 +164,7 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}{{ .path | trimSuffix "/" | default "-root" | replace "/" "-" }}
   annotations:
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~ /\.(?!well-known).* {
         deny all;
         access_log off;
@@ -173,99 +172,95 @@ metadata:
         return 404;
       }
     # TODO: make forbidden paths configurable
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
         return 403;
       }
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
       {{- if not .defaultCSPDisabled }}
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
+    nginx.ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if or .rewriteTargetDisabled (eq .path "/") }}
     {{- else }}
-    {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
-    {{- else }} # TODO: -- remove oldRewritePolicy
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
-    {{- end }} # TODO: -- remove oldRewritePolicy
+    nginx.ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
     {{- if .bufferSize | default $defaults.bufferSize }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
     {{- end }}
     {{- if .requestBuffering | default $defaults.requestBuffering }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    nginx.ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
     {{- end }}
     {{- if .connectTimeout | default $defaults.connectTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
     {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
     {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitConnections | default $defaults.limitConnections }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-connections: {{ .limitConnections | default $defaults.limitConnections | quote }}
+    nginx.ingress.kubernetes.io/limit-connections: {{ .limitConnections | default $defaults.limitConnections | quote }}
     {{- end }}
     {{- if .limitRpm | default $defaults.limitRpm }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rpm: {{ .limitRpm | default $defaults.limitRpm | quote }}
+    nginx.ingress.kubernetes.io/limit-rpm: {{ .limitRpm | default $defaults.limitRpm | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
+    nginx.ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    nginx.ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
     {{- if coalesce .limitRate $defaults.limitRate .limitRateAfter $defaults.limitRateAfter }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
     {{- end }}
     {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
     {{- if $limitWhitelistCidrs }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
+    nginx.ingress.kubernetes.io/limit-whitelist: |
       {{ range $limitWhitelistCidrs }}{{ . }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .modsecurityEnabled | default $defaults.modsecurityEnabled }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "true"
-    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
     {{- if .modsecurityRules | default $defaults.modsecurityRules }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-snippet: {{ .modsecurityRules | default $defaults.modsecurityRules }}
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: {{ .modsecurityRules | default $defaults.modsecurityRules }}
     {{- else }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "true"
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
     {{- end }}
     {{- else }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "false"
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "false"
     {{- end }}
     {{- $allowedCountries := .allowedCountries | default $defaults.allowedCountries }}
     {{- $blockedCountries := .blockedCountries | default $defaults.blockedCountries }}
     {{- if $allowedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($geoip2_city_country_code !~ ^({{ range $allowedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- else if $blockedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($geoip2_city_country_code ~ ^({{ range $blockedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- end }}
     {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
     {{- if $cidrs }}
-    {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
+    nginx.ingress.kubernetes.io/whitelist-source-range: |
       {{ range $i, $cidr := $cidrs }}{{ $cidr }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .annotations }}
@@ -282,10 +277,6 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
-          - path: {{ $path.path }}
-            pathType: Prefix
-          {{- else }} # TODO: -- remove oldRewritePolicy
           {{- if or $path.rewriteTargetDisabled (eq $path.path "/") }}
           - path: {{ $path.path }}
             pathType: Prefix
@@ -293,7 +284,6 @@ spec:
           - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
             pathType: Prefix
           {{- end }}
-          {{- end }} # TODO: -- remove oldRewritePolicy
             backend:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}
@@ -316,7 +306,7 @@ kind: Ingress
 metadata:
   name: {{ template "myfullname" $root }}-ingress-{{ $serviceName }}-sidecar{{ .path | trimSuffix "/" | default "-root" | replace "/" "-" }}
   annotations:
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~ /\.(?!well-known).* {
         deny all;
         access_log off;
@@ -324,99 +314,95 @@ metadata:
         return 404;
       }
     # TODO: make forbidden paths configurable
-    {{ $annoPrefix }}ingress.kubernetes.io/server-snippet: |
+    nginx.ingress.kubernetes.io/server-snippet: |
       location ~* ^/xmlrpc.php$ {
         return 403;
       }
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "X-Content-Type-Options: nosniff";
       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
       {{- if not .defaultCSPDisabled }}
       more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
       {{- end }}
     {{- if hasKey . "basicAuthEnabled" | ternary .basicAuthEnabled $defaults.basicAuthEnabled }}
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-type: "basic"
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
-    {{ $annoPrefix }}ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-realm: {{ template "myname" $root }}
+    nginx.ingress.kubernetes.io/auth-secret: {{ .basicAuthHtpasswdSecret | default $defaults.basicAuthHtpasswdSecret }}
     {{- end }}
     {{- if or .rewriteTargetDisabled (eq .path "/") }}
     {{- else }}
-    {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget }}
-    {{- else }} # TODO: -- remove oldRewritePolicy
-    {{ $annoPrefix }}ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
-    {{- end }} # TODO: -- remove oldRewritePolicy
+    nginx.ingress.kubernetes.io/rewrite-target: {{ default "/" .rewriteTarget | trimSuffix "/" }}/$2
     {{- end }}
     {{- if .clientMaxBodySize | default $defaults.clientMaxBodySize }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .clientMaxBodySize | default $defaults.clientMaxBodySize | quote }}
     {{- end }}
     {{- if .bufferSize | default $defaults.bufferSize }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
+    nginx.ingress.kubernetes.io/proxy-buffer-size: {{ .bufferSize | default $defaults.bufferSize | quote }}
     {{- end }}
     {{- if .requestBuffering | default $defaults.requestBuffering }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
+    nginx.ingress.kubernetes.io/proxy-request-buffering: {{ .requestBuffering | default $defaults.requestBuffering | quote }}
     {{- end }}
     {{- if .connectTimeout | default $defaults.connectTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .connectTimeout | default $defaults.connectTimeout | quote }}
     {{- end }}
     {{- if .sendTimeout | default $defaults.sendTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{ .sendTimeout | default $defaults.sendTimeout | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
     {{- if .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: {{ .nextUpstreamTimeout | default $defaults.nextUpstreamTimeout | quote }}
     {{- end }}
     {{- if .limitConnections | default $defaults.limitConnections }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-connections: {{ .limitConnections | default $defaults.limitConnections | quote }}
+    nginx.ingress.kubernetes.io/limit-connections: {{ .limitConnections | default $defaults.limitConnections | quote }}
     {{- end }}
     {{- if .limitRpm | default $defaults.limitRpm }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rpm: {{ .limitRpm | default $defaults.limitRpm | quote }}
+    nginx.ingress.kubernetes.io/limit-rpm: {{ .limitRpm | default $defaults.limitRpm | quote }}
     {{- end }}
     {{- if .limitRate | default $defaults.limitRate }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
+    nginx.ingress.kubernetes.io/limit-rate: {{ .limitRate | default $defaults.limitRate | quote }}
     {{- end }}
     {{- if .limitRateAfter | default $defaults.limitRateAfter }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
+    nginx.ingress.kubernetes.io/limit-rate-after: {{ .limitRateAfter | default $defaults.limitRateAfter | quote }}
     {{- end }}
     {{- if coalesce .limitRate $defaults.limitRate .limitRateAfter $defaults.limitRateAfter }}
-    {{ $annoPrefix }}ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
     {{- end }}
     {{- $limitWhitelistCidrs := .limitWhitelistCidrs | default $defaults.limitWhitelistCidrs }}
     {{- if $limitWhitelistCidrs }}
-    {{ $annoPrefix }}ingress.kubernetes.io/limit-whitelist: |
+    nginx.ingress.kubernetes.io/limit-whitelist: |
       {{ range $limitWhitelistCidrs }}{{ . }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .modsecurityEnabled | default $defaults.modsecurityEnabled }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "true"
-    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
     {{- if .modsecurityRules | default $defaults.modsecurityRules }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/modsecurity-snippet: {{ .modsecurityRules | default $defaults.modsecurityRules }}
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: {{ .modsecurityRules | default $defaults.modsecurityRules }}
     {{- else }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "true"
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
     {{- end }}
     {{- else }}
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-modsecurity: "false"
-    {{ $annoPrefix }}ingress.kubernetes.io/enable-owasp-core-rules: "false"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "false"
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "false"
     {{- end }}
     {{- $allowedCountries := .allowedCountries | default $defaults.allowedCountries }}
     {{- $blockedCountries := .blockedCountries | default $defaults.blockedCountries }}
     {{- if $allowedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($geoip2_city_country_code !~ ^({{ range $allowedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- else if $blockedCountries }}
-    {{ $annoPrefix }}ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($geoip2_city_country_code ~ ^({{ range $blockedCountries }}{{ . }}|{{ end }}dummy)$) {
         return 444;
       }
     {{- end }}
     {{- $cidrs := .allowedCidrs | default $defaults.allowedCidrs }}
     {{- if $cidrs }}
-    {{ $annoPrefix }}ingress.kubernetes.io/whitelist-source-range: |
+    nginx.ingress.kubernetes.io/whitelist-source-range: |
       {{ range $i, $cidr := $cidrs }}{{ $cidr }},{{ end }}127.0.0.1/32
     {{- end }}
     {{- if .annotations }}
@@ -433,10 +419,6 @@ spec:
     - host: {{ $domain.name }}
       http:
         paths:
-          {{- if $root.Values.ingress.oldRewritePolicy }} # TODO: -- remove oldRewritePolicy
-          - path: {{ $path.path }}
-            pathType: Prefix
-          {{- else }} # TODO: -- remove oldRewritePolicy                    
           {{- if or $path.rewriteTargetDisabled (eq $path.path "/") }}
           - path: {{ $path.path }}
             pathType: Prefix
@@ -444,7 +426,6 @@ spec:
           - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
             pathType: Prefix
           {{- end }}
-          {{- end }} # TODO: -- remove oldRewritePolicy
             backend:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}

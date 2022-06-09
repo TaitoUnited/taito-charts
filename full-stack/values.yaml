@@ -41,8 +41,6 @@ persistence:
 
 ingress:
   class: ""
-  oldRewritePolicy: false
-  oldAcmeCertificate: false
   tls: true
   certManagerEnabled: true
   domains:

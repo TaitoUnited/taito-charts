@@ -9,18 +9,14 @@
 {{- end }}
 {{- if $cert.required }}
 
-{{- if .Values.ingress.oldAcmeCertificate }}
-apiVersion: cert-manager.io/v1alpha2
-{{- else }}
 apiVersion: cert-manager.io/v1
-{{- end }}
 kind: Certificate
 metadata:
   name: {{ template "myfullname" . }}-certificate
 spec:
   secretName: {{ template "myfullname" . }}-ssl
   issuerRef:
-    name: letsencrypt-issuer
+    name: {{ .Values.ingress.issuer | default "letsencrypt-issuer" }} 
     kind: ClusterIssuer
   dnsNames:
     {{- range $domain := .Values.ingress.domains }}
@@ -33,23 +29,6 @@ spec:
     {{- end }}
     {{- end }}
     {{- end }}
-  {{- if .Values.ingress.oldAcmeCertificate }}
-  acme:
-    config:
-    - http01:
-        ingressClass: nginx
-      domains:
-        {{- range $domain := .Values.ingress.domains }}
-        {{- if not $domain.certSecret }}
-        - {{ $domain.name }}
-        {{- range $altDomain := $domain.altDomains }}
-        {{- if $altDomain.name }}
-        - {{ $altDomain.name }}
-        {{- end }}
-        {{- end }}
-        {{- end }}
-        {{- end }}
-  {{- end }}
 
 {{- end }}
 

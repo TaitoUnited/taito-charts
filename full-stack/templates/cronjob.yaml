@@ -48,6 +48,7 @@ spec:
             role: {{ $serviceName }}
             # TODO: access labels for cronjobs also
         spec:
+          activeDeadlineSeconds: {{ $job.activeDeadlineSeconds | default nil }}
           restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
           securityContext:
             {{- if quote $job.fsGroup }}

@@ -132,7 +132,7 @@ spec:
               {{- if $job.args }}
               args:
                 {{- range $job.args }}
-                - {{ . }}
+                - {{ . | quote }}
                 {{- end }}
               {{- end }}
               resources:

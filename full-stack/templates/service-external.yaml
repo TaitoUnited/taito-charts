@@ -1,0 +1,38 @@
+{{- $root := . -}}
+{{- $defaults := .Values.serviceDefaults -}}
+
+{{- range $serviceName, $service := .Values.services }}
+{{- with $service }}
+{{- if (or (not (hasKey . "enabled")) (.enabled)) }}
+{{- $type := default "service" .type -}}
+{{- if .external }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}-external
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  selector:
+    app: {{ template "myname" $root }}
+    release: {{ $root.Release.Name }}
+    {{- if default $defaults.tier .tier }}
+    tier: {{ default $defaults.tier .tier }}
+    {{- end }}
+    role: {{ $serviceName }}-external
+  ports:
+    {{- range $p := .external.ports }}
+    - name: {{ $p.port | quote }}
+      protocol: {{ $p.protocol | default "TCP" }}
+      port: {{ $p.port }}
+      {{- if $p.targetPort }}
+      targetPort: {{ $p.targetPort }}
+      {{- end }}
+    {{- end }}
+  type: LoadBalancer
+  loadBalancerIP: {{ .external.ip }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

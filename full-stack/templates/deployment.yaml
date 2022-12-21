@@ -247,6 +247,11 @@ spec:
             {{- range $p := .ports }}
             - containerPort: {{ $p.targetPort | default $p.port }}
             {{- end }}
+            {{- if .external }}
+            {{- range $p := .external.ports }}
+            - containerPort: {{ $p.targetPort | default $p.port }}
+            {{- end }}
+            {{- end }}
           resources:
             requests:
               cpu: {{ .cpuRequest | default $defaults.cpuRequest }}

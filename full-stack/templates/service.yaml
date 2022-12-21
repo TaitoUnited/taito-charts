@@ -22,12 +22,14 @@ spec:
     role: {{ $serviceName }}
   ports:
     - name: service
+      protocol: {{ .protocol | default "TCP" }}
       port: {{ .port | default $defaults.port }}
       {{- if .targetPort }}
       targetPort: {{ .targetPort }}
       {{- end }}
     {{- range $p := .ports }}
     - name: {{ $p.port | quote }}
+      protocol: {{ $p.protocol | default "TCP" }}
       port: {{ $p.port }}
       {{- if $p.targetPort }}
       targetPort: {{ $p.targetPort }}
@@ -37,12 +39,14 @@ spec:
     {{- if .sidecar.enabled }}
     {{- if .sidecar.port }}
     - name: sidecar
+      protocol: {{ .sidecar.protocol | default "TCP" }}
       port: {{ .sidecar.port }}
       {{- if .sidecar.targetPort }}
       targetPort: {{ .sidecar.targetPort }}
       {{- end }}
     {{- range $p := .sidecar.ports }}
     - name: {{ $p.port | quote }}
+      protocol: {{ $p.protocol | default "TCP" }}
       port: {{ $p.port }}
       {{- if $p.targetPort }}
       targetPort: {{ $p.targetPort }}

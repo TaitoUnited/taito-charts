@@ -19,7 +19,7 @@ spec:
     {{- if default $defaults.tier .tier }}
     tier: {{ default $defaults.tier .tier }}
     {{- end }}
-    role: {{ $serviceName }}-external
+    role: {{ $serviceName }}
   ports:
     {{- range $p := .external.ports }}
     - name: {{ $p.port | quote }}

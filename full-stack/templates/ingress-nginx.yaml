@@ -139,7 +139,7 @@ spec:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}
                 port:
-                  number: {{ $service.port | default $defaults.port }}
+                  number: {{ coalesce $path.port $service.port $defaults.port }}
           {{- end }}
           {{- end }}
           {{- end }}
@@ -288,7 +288,7 @@ spec:
               service:
                 name: {{ template "myfullname" $root }}-{{ $serviceName }}
                 port:
-                  number: {{ $service.port | default $defaults.port }}
+                  number: {{ coalesce $path.port $service.port $defaults.port }}
     {{- end }}
 ---
 {{- end }}

@@ -6,12 +6,54 @@
 {{- if (or (not (hasKey . "enabled")) (.enabled)) }}
 {{- $type := default "service" .type -}}
 {{- if or (eq "service" $type) (eq "external" $type) }}
+
+{{- $numberOfPaths := concat (dig "paths" (list) $service) (dig "sidecar" "paths" (list) $service) | len -}}
+
+{{- if gt $numberOfPaths 0 }}
+{{- if eq "gce" $root.Values.ingress.class }}
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+spec:
+  {{- if not .livenessDisabled }}
+  {{- if not .livenessCommand }}
+  healthCheck:
+    checkIntervalSec: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
+    timeoutSec: {{ coalesce .livenessTimeout $defaults.livenessTimeout 3 }}
+    healthyThreshold: {{ coalesce .livenessSuccessThreshold $defaults.livenessSuccessThreshold 1 }}
+    unhealthyThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
+    type: HTTP
+    requestPath: {{ coalesce .livenessPath $defaults.livenessPath }}
+    port: {{ coalesce .livenessPort .port $defaults.port }}
+  {{- end }}
+  {{- end }}
+  {{- if .readTimeout | default $defaults.readTimeout }}
+  timeoutSec: {{ .readTimeout | default $defaults.readTimeout | quote }}
+  {{- end }}
+  {{- if .securityPolicyName | default $defaults.securityPolicyName }}
+  securityPolicy:
+    name: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "myfullname" $root }}-{{ $serviceName }}
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
+    {{- if gt $numberOfPaths 0 }}
+    {{- if eq "gce" $root.Values.ingress.class }}
+    {{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+    cloud.google.com/backend-config: '{"default": "{{ template "myfullname" $root }}-{{ $serviceName }}"}'
+    {{- end }}
+    {{- end }}
+    {{- end }}
 spec:
   selector:
     app: {{ template "myname" $root }}

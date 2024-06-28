@@ -1,0 +1,78 @@
+{{- $root := . -}}
+{{- $defaults := .Values.serviceDefaults -}}
+
+{{- if eq "gce" $root.Values.ingress.class }}
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ template "myfullname" . }}
+spec:
+  {{- if .Values.ingress.tls }}
+  redirectToHttps:
+    enabled: true
+  {{- end }}
+---
+
+{{- if .Values.ingress.tls }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ template "myfullname" . }}
+spec:
+  domains:
+    {{- range $domain := .Values.ingress.domains }}
+    - {{ $domain.name }}
+    {{- end }}
+---    
+{{- end }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "myfullname" . }}-ingress
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.allow-http: "true"
+    networking.gke.io/v1beta1.FrontendConfig: {{ template "myfullname" . }}
+    {{- if .Values.ingress.tls }}
+    networking.gke.io/managed-certificates: {{ template "myfullname" . }}
+    {{- end }}
+    {{- if .Values.ingress.staticIpName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.staticIpName }}
+    ingress.kubernetes.io/static-ip: {{ .Values.ingress.staticIpName }}
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
+    {{ $annotationName }}: {{ $annotationValue }}
+    {{- end }}
+    {{- end }}
+spec:
+  ingressClassName: gce
+  rules:
+    # TODO: rewrite target url (remove prefix for path) -> not supported on gce ingress?
+    {{- range $domain := .Values.ingress.domains }}
+    - host: {{ $domain.name }}
+      http:
+        paths:
+          {{- range $serviceName, $service := $root.Values.services }}
+          {{- if or (not (hasKey $service "enabled")) ($service.enabled) }}
+          {{- range $path := $service.paths }}
+          {{- with $path }}
+          - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "" "/" }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "myfullname" $root }}-{{ $serviceName }}
+                port:
+                  number: {{ $service.port | default $defaults.port }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+
+    {{- end }}
+
+{{- end }}
+{{- end }}

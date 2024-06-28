@@ -41,6 +41,8 @@ persistence:
 
 ingress:
   class: ""
+  namespace: ""
+  staticIpName: ""
   tls: true
   certManagerEnabled: true
   domains:
@@ -90,6 +92,7 @@ serviceDefaults:
   rewriteTargetDisabled:
   # Security
   serviceAccountName: default
+  securityPolicyName:
   runAsUser:
   runAsGroup:
   fsGroup:

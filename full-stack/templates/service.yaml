@@ -9,6 +9,8 @@
 
 {{- $numberOfPaths := concat (dig "paths" (list) $service) (dig "sidecar" "paths" (list) $service) | len -}}
 
+
+
 {{- if gt $numberOfPaths 0 }}
 {{- if eq "gce" $root.Values.ingress.class }}
 {{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
@@ -40,6 +42,63 @@ spec:
 {{- end }}
 {{- end }}
 {{- end }}
+
+
+
+{{- if gt $numberOfPaths 0 }}
+{{- if eq "gcp-gateway" $root.Values.ingress.class }}
+{{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+
+{{- if not .livenessDisabled }}
+{{- if not .livenessCommand }}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+spec:
+  default:
+    checkIntervalSec: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
+    timeoutSec: {{ coalesce .livenessTimeout $defaults.livenessTimeout 3 }}
+    healthyThreshold: {{ coalesce .livenessSuccessThreshold $defaults.livenessSuccessThreshold 1 }}
+    unhealthyThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
+    logConfig:
+      enabled: false
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ coalesce .livenessPort .port $defaults.port }}
+        requestPath: {{ coalesce .livenessPath $defaults.livenessPath }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ template "myfullname" $root }}-{{ $serviceName }}
+---
+{{- end }}
+{{- end }}
+
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+spec:
+  default:
+    {{- if .securityPolicyName | default $defaults.securityPolicyName }}
+    securityPolicy: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
+    {{- end }}
+    {{- if .readTimeout | default $defaults.readTimeout }}
+    timeoutSec: {{ .readTimeout | default $defaults.readTimeout | quote }}
+    {{- end }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ template "myfullname" $root }}-{{ $serviceName }}
+---
+
+{{- end }}
+{{- end }}
+{{- end }}
+
+# TODO: service capacity and traffic-based autoscaling https://cloud.google.com/kubernetes-engine/docs/concepts/traffic-management
 
 apiVersion: v1
 kind: Service

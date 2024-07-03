@@ -1,0 +1,83 @@
+# TODO: Add to terraform infra setup:
+# - Create Cloud Armor policy with terraform
+# - Enable Gateway API of kubernetes cluster with terraform (perhaps enabled by default?)
+# - Enable Certificate Manager API with terraform
+# - Create google_certificate_manager_certificate_map with terraform: https://cloud.google.com/certificate-manager/docs/deploy-google-managed-lb-auth#create_a_certificate_map
+# - Create SSL policy with terraform (min TLS 1.2, modern profile): https://cloud.google.com/load-balancing/docs/use-ssl-policies#create_ssl_policies
+# - Create gateway with kubernetes-admin helm chart (below)
+# - Create Cloud IDS and configure some alerts, etc
+
+# Original example: https://cloud.google.com/kubernetes-engine/docs/how-to/deploying-gateways#redirect_http_traffic_from_an_infrastructure_namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway-infra
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway-infra-config
+  labels:
+    httpAllowed: "true"
+---
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: external-http
+  namespace: gateway-infra
+  annotations:
+    networking.gke.io/certmap: common-kube # TODO: as variable
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  addresses:
+    - type: NamedAddress
+      value: common-kube-gateway # TODO: as variable
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              httpAllowed: "true"
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+        namespaces:
+          from: All
+---
+apiVersion: networking.gke.io/v1
+kind: GCPGatewayPolicy
+metadata:
+  name: external-http
+  namespace: gateway-infra
+spec:
+  default:
+    sslPolicy: default # TODO: as variable
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: external-http
+---
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: redirect
+  namespace: gateway-infra-config
+spec:
+  parentRefs:
+    - namespace: gateway-infra
+      name: external-http
+      sectionName: http
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https

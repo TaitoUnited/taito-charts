@@ -62,7 +62,7 @@ spec:
     healthyThreshold: {{ coalesce .livenessSuccessThreshold $defaults.livenessSuccessThreshold 1 }}
     unhealthyThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
     logConfig:
-      enabled: false
+      enabled: {{ $root.Values.global.debug | default false }}
     config:
       type: HTTP
       httpHealthCheck:
@@ -82,6 +82,8 @@ metadata:
   name: {{ template "myfullname" $root }}-{{ $serviceName }}
 spec:
   default:
+    logging:
+      enabled: {{ $root.Values.global.debug | default false }}
     {{- if .securityPolicyName | default $defaults.securityPolicyName }}
     securityPolicy: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
     {{- end }}

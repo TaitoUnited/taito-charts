@@ -529,7 +529,7 @@ spec:
             allowPrivilegeEscalation: false
           command:
             - /cloud_sql_proxy
-            - -verbose=false
+            - -verbose={{ $root.Values.global.debug | default false }}
             - -log_debug_stdout=true
             - --dir=/cloudsql
             - -instances={{ .db.instance }}=tcp:{{ .db.port }}

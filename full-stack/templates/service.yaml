@@ -83,7 +83,7 @@ metadata:
 spec:
   default:
     logging:
-      enabled: {{ $root.Values.global.debug | default false }}
+      enabled: true
     {{- if .securityPolicyName | default $defaults.securityPolicyName }}
     securityPolicy: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
     {{- end }}

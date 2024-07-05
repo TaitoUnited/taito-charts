@@ -37,13 +37,14 @@ spec:
           type: ReplacePrefixMatch
           replacePrefixMatch: {{ default "/" $path.rewriteTarget | trimSuffix "/" | quote }}
     {{- end }}
-    {{- if not .defaultCSPDisabled }}
     - type: ResponseHeaderModifier
       responseHeaderModifier:
+        remove: ["Server"]
+        {{- if not .defaultCSPDisabled }}
         add:
           - name: Content-Security-Policy
             value: frame-ancestors 'none'
-    {{- end }}
+        {{- end }}
     backendRefs:
     - name: {{ template "myfullname" $root }}-{{ $serviceName }}
       port: {{ $service.port | default $defaults.port }}

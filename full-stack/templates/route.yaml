@@ -30,11 +30,13 @@ spec:
         type: PathPrefix
         value: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "" "/" }}
     filters:
+    {{- if not $path.rewriteTargetDisabled }}
     - type: URLRewrite
       urlRewrite:
         path:
           type: ReplacePrefixMatch
-          replacePrefixMatch: ""
+          replacePrefixMatch: {{ default "/" $path.rewriteTarget | trimSuffix "/" | quote }}
+    {{- end }}
     {{- if not .defaultCSPDisabled }}
     - type: ResponseHeaderModifier
       responseHeaderModifier:

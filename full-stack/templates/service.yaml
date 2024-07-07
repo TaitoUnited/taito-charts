@@ -34,9 +34,9 @@ spec:
   {{- if .readTimeout | default $defaults.readTimeout }}
   timeoutSec: {{ .readTimeout | default $defaults.readTimeout | quote }}
   {{- end }}
-  {{- if .securityPolicyName | default $defaults.securityPolicyName }}
+  {{- if .wafSecurityPolicyName | default $defaults.wafSecurityPolicyName }}
   securityPolicy:
-    name: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
+    name: {{ .wafSecurityPolicyName | default $defaults.wafSecurityPolicyName | quote }}
   {{- end }}
 ---
 {{- end }}
@@ -84,8 +84,8 @@ spec:
   default:
     logging:
       enabled: true
-    {{- if .securityPolicyName | default $defaults.securityPolicyName }}
-    securityPolicy: {{ .securityPolicyName | default $defaults.securityPolicyName | quote }}
+    {{- if .wafSecurityPolicyName | default $defaults.wafSecurityPolicyName }}
+    securityPolicy: {{ .wafSecurityPolicyName | default $defaults.wafSecurityPolicyName | quote }}
     {{- end }}
     {{- if .readTimeout | default $defaults.readTimeout }}
     timeoutSec: {{ .readTimeout | default $defaults.readTimeout | quote }}

@@ -96,7 +96,7 @@ serviceDefaults:
   rewriteTargetDisabled:
   # Security
   serviceAccountName: default
-  securityPolicyName:
+  wafSecurityPolicyName:
   runAsUser:
   runAsGroup:
   fsGroup:

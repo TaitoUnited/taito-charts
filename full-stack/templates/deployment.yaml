@@ -206,6 +206,7 @@ spec:
           {{- end }}
           {{- end }}
       {{- end }}
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds | default $defaults.terminationGracePeriodSeconds }}
       containers:
         - name: {{ template "myname" $root }}-{{ $serviceName }}
           {{- if .image }}
@@ -262,6 +263,12 @@ spec:
               {{- if .gpuLimit }}
               nvidia.com/gpu: {{ .gpuLimit }}
               {{- end }}
+          lifecycle:
+          {{- if .preStopHookSleepSeconds | default $defaults.preStopHookSleepSeconds }}
+            preStopHook:
+              exec:
+                command: ["/bin/sh", "-c", "sleep {{ .preStopHookSleepSeconds | default $defaults.preStopHookSleepSeconds }}s"]
+          {{- end }}
           {{- if not .livenessDisabled }}
           livenessProbe:
             {{- if .livenessCommand }}

@@ -57,6 +57,10 @@ serviceDefaults:
   livenessPath: /healthz
   # livenessCommand:
   livenessInitialDelay: 3
+  # Graceful termination: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-configuration#customize_timeouts
+  drainingTimeoutSeconds: 10
+  preStopHookSleepSeconds: 70
+  terminationGracePeriodSeconds: 90
   # Paths
   paths:
     # - path:

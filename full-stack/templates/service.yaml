@@ -90,6 +90,8 @@ spec:
     {{- if .readTimeout | default $defaults.readTimeout }}
     timeoutSec: {{ .readTimeout | default $defaults.readTimeout | quote }}
     {{- end }}
+    connectionDraining:
+      drainingTimeoutSec: {{ .drainingTimeoutSeconds | default $defaults.drainingTimeoutSeconds }}
   targetRef:
     group: ""
     kind: Service

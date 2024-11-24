@@ -3,6 +3,8 @@
 Example values.yaml:
 
 ```
+networkPolicyEnabled: true
+
 serviceAccounts:
   - name: my-service-account
 

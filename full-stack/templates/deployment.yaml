@@ -212,7 +212,11 @@ spec:
             {{- end }}
             privileged: {{ .privileged | default false }}
             allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default false }}
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
+              drop: ["ALL"]
               add:
                 {{- if .capabilities }}
                 {{- range $cab := .capabilities }}
@@ -406,7 +410,11 @@ spec:
             {{- end }}
             privileged: {{ .sidecar.privileged | default false }}
             allowPrivilegeEscalation: {{ .sidecar.allowPrivilegeEscalation | default false }}
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
+              drop: ["ALL"]
               add:
                 {{- if .sidecar.capabilities }}
                 {{- range $cab := .sidecar.capabilities }}
@@ -518,6 +526,11 @@ spec:
             runAsGroup: 2
             privileged: false
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
           command:
             - /cloud_sql_proxy
             - -verbose={{ $root.Values.global.debug | default false }}

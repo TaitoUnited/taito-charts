@@ -68,16 +68,12 @@ spec:
   - to:
     - namespaceSelector:
         matchLabels:
-          networking/namespace: kube-system
-      podSelector:
-        matchLabels:
-          k8s-app: kube-dns
-  {{- if $httpProxy.enabled }}
-  - to:
-    - podSelector:
-        matchLabels:
-          fullname: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy
-  {{- end }}
+          kubernetes.io/metadata.name: kube-system
+    ports:
+    - protocol: TCP
+      port: 53  
+    - protocol: UDP
+      port: 53  
   {{- range $egress := .egress }}
   {{- if and (not $egress.ip) (not $egress.domain) }}
   - to:

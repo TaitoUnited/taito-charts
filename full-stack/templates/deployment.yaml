@@ -51,15 +51,6 @@ spec:
 ---
 {{- end }}
 
-{{- $httpProxy := dict "enabled" false -}}
-{{- if $root.Values.networkPolicyEnabled}}
-{{- range $egress := .egress }}
-{{- if $egress.domain }}
-{{- $dummy := set $httpProxy "enabled" true -}}
-{{- end }}
-{{- end }}
-{{- end }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -96,9 +87,6 @@ spec:
         {{- if $egress.fullname }}
         access-{{ $egress.fullname }}: "true"
         {{- end }}
-        {{- end }}
-        {{- if $httpProxy.enabled }}
-        access-{{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy: "true"
         {{- end }}
         {{- end }}
     spec:
@@ -318,10 +306,6 @@ spec:
               configMapRef:
                 name: {{ template "myfullname" $root }}-common
           env:
-            {{- if $httpProxy.enabled }}
-            - name: DOMAIN_PROXY
-              value: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy:3128
-            {{- end }}
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
             {{- if .serviceAccount.secret }}
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -627,58 +611,6 @@ spec:
         {{- end }}
         {{- end }}
 ---
-{{- if $httpProxy.enabled }}
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy
-spec:
-  replicas: {{ $defaults.replicas | default 1 }}
-  selector:
-    matchLabels:
-      app: {{ template "myname" $root }}
-      release: {{ $root.Release.Name }}
-      tier: proxy
-      role: {{ $serviceName }}-http-proxy
-  template:
-    metadata:
-      labels:
-        app: {{ template "myname" $root }}
-        release: {{ $root.Release.Name }}
-        tier: proxy
-        role: {{ $serviceName }}-http-proxy
-    spec:
-      automountServiceAccountToken: false
-      {{- if .nodeSelector }}
-      nodeSelector:
-      {{- range $name, $value := .nodeSelector }}
-        {{ $name }}: {{ $value | quote }}
-      {{- end }}
-      {{- else if $defaults.nodeSelector }}
-      nodeSelector:
-      {{- range $name, $value := $defaults.nodeSelector }}
-        {{ $name }}: {{ $value | quote }}
-      {{- end }}
-      {{- end }}
-      containers:
-        - name: {{ template "myname" $root }}-{{ $serviceName }}-http-proxy
-          image: {{ .httpProxyImage | default $defaults.httpProxyImage }}
-          imagePullPolicy: {{ $global.imagePullPolicy | quote }}
-          ports:
-            - containerPort: 3128
-          resources:
-            requests:
-              cpu: 2m
-              memory: 2Mi
-            limits:
-              cpu: 50m
-              memory: 100Mi
-          # TODO: liveness and readiness probe (squid returns HTTP 400)
-          env:
-            - name: SITES_WHITELIST
-              value: {{ range $egress := .egress }}{{ if $egress.domain }}{{ $egress.domain }} {{ end }}{{ end }}
----
-{{- end }}
 
 {{- end }}
 {{- end }}

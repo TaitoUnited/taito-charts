@@ -26,13 +26,6 @@ spec:
 {{- $type := default "service" .type -}}
 {{- if or (eq "service" $type) (eq "external" $type) }}
 
-{{- $httpProxy := dict "enabled" false -}}
-{{- range $egress := .egress }}
-{{- if $egress.domain }}
-{{ $dummy := set $httpProxy "enabled" true }}
-{{- end }}
-{{- end }}
-
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -115,30 +108,6 @@ spec:
   {{- end }}
   {{- end }}
 ---
-{{- if $httpProxy.enabled }}
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy
-spec:
-  podSelector:
-    matchLabels:
-      app: {{ template "myname" $root }}
-      release: {{ $root.Release.Name }}
-      tier: proxy
-      role: {{ $serviceName }}-http-proxy
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          access-{{ template "myfullname" $root }}-{{ $serviceName }}-http-proxy: "true"
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 0.0.0.0/0
----
-{{- end }}
-
 
 {{- end }}
 {{- end }}

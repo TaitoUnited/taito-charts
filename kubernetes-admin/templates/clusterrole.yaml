@@ -6,21 +6,32 @@ metadata:
     taito.dev/aggregate-to-developers: "true"
     taito.dev/aggregate-to-booters: "true"
 rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods", "pods/log", "ingresses", "ingresses/status","statefulsets","statefulsets/status"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["batch"]
-  resources: ["cronjobs", "cronjobs/status", "jobs", "jobs/status"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["metrics.k8s.io"]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses","ingresses/status","networkpolicies"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["policy"]
-  resources: ["poddisruptionbudgets","poddisruptionbudgets/status"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources:
+      [
+        "pods",
+        "pods/log",
+        "ingresses",
+        "ingresses/status",
+        "statefulsets",
+        "statefulsets/status",
+      ]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs", "cronjobs/status", "jobs", "jobs/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "ingresses/status", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.gke.io"]
+    resources: ["fqdnnetworkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets", "poddisruptionbudgets/status"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -28,8 +39,8 @@ metadata:
   name: taito-booter
 aggregationRule:
   clusterRoleSelectors:
-  - matchLabels:
-      taito.dev/aggregate-to-booters: "true"
+    - matchLabels:
+        taito.dev/aggregate-to-booters: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -38,8 +49,8 @@ metadata:
   name: taito-proxyer
 aggregationRule:
   clusterRoleSelectors:
-  - matchLabels:
-      taito.dev/aggregate-to-proxyers: "true"
+    - matchLabels:
+        taito.dev/aggregate-to-proxyers: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -49,9 +60,9 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["secrets"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -61,9 +72,9 @@ metadata:
     taito.dev/aggregate-to-developers: "true"
     taito.dev/aggregate-to-booters: "true"
 rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods"]
-  verbs: ["delete", "get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods"]
+    verbs: ["delete", "get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -72,12 +83,12 @@ metadata:
   labels:
     taito.dev/aggregate-to-developers: "true"
 rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods/exec"]
-  verbs: ["create"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods/exec"]
+    verbs: ["create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -87,12 +98,12 @@ metadata:
     taito.dev/aggregate-to-developers: "true"
     taito.dev/aggregate-to-proxyers: "true"
 rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods/portforward"]
-  verbs: ["get", "list", "create"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods/portforward"]
+    verbs: ["get", "list", "create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -101,51 +112,146 @@ metadata:
   labels:
     taito.dev/aggregate-to-privileged-deployers: "true"
 rules:
-# Read permissions for status check
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-# Write permissions for basic resources
-- apiGroups: ["", "extensions", "apps"]
-  resources: [
-    "daemonsets",
-    "deployments","deployments/rollback","deployments/scale",
-    "statefulsets","statefulsets/rollback","statefulsets/scale",
-    "replicasets","replicasets/scale","replicationcontrollers/scale"
-  ]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-- apiGroups: ["", "extensions", "apps"]
-  resources: [
-    "configmaps","endpoints","persistentvolumeclaims","replicationcontrollers",
-    "services","services/proxy"
-  ]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-- apiGroups: ["autoscaling"]
-  resources: ["horizontalpodautoscalers"]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-- apiGroups: ["batch"]
-  resources: ["jobs", "cronjobs"]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-# Write permissions also for some additional resources
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["secrets"]
-  verbs: ["create", "delete", "deletecollection","patch","update","get","list","watch"]
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["serviceaccounts"]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-- apiGroups: ["policy"]
-  resources: ["poddisruptionbudgets"]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-- apiGroups: ["cert-manager.io"]
-  resources: ["certificates"]
-  verbs: ["create", "delete", "deletecollection", "patch", "update", "get", "list", "watch"]
-# Read-only permissions for critical auth and networking resouces (non-privileged)
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["rolebindings"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses","networkpolicies"]
-  verbs: ["get", "list", "watch"]
+  # Read permissions for status check
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  # Write permissions for basic resources
+  - apiGroups: ["", "extensions", "apps"]
+    resources:
+      [
+        "daemonsets",
+        "deployments",
+        "deployments/rollback",
+        "deployments/scale",
+        "statefulsets",
+        "statefulsets/rollback",
+        "statefulsets/scale",
+        "replicasets",
+        "replicasets/scale",
+        "replicationcontrollers/scale",
+      ]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["", "extensions", "apps"]
+    resources:
+      [
+        "configmaps",
+        "endpoints",
+        "persistentvolumeclaims",
+        "replicationcontrollers",
+        "services",
+        "services/proxy",
+      ]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  # Write permissions also for some additional resources
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["secrets"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["serviceaccounts"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  # Read-only permissions for critical auth and networking resouces (non-privileged)
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["rolebindings"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.gke.io"]
+    resources: ["fqdnnetworkpolicies"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -154,23 +260,66 @@ metadata:
   labels:
     taito.dev/aggregate-to-privileged-deployers: "true"
 rules:
-# Allow creation of new namespaces
-- apiGroups: [""]
-  resources: ["namespaces"]
-  verbs: ["create"]
-# Write permissions for critical auth and networking resouces (privileged)
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["rolebindings"]
-  verbs: ["create", "delete", "deletecollection","patch","update","get", "list", "watch"]
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses","networkpolicies"]
-  verbs: ["create", "delete", "deletecollection","patch","update","get", "list", "watch"]
-- apiGroups: ["policy"]
-  resources: ["podsecuritypolicies"]
-  verbs: ["use"]
-- apiGroups: ["certmanager.k8s.io"]
-  resources: ["certificates"]
-  verbs: ["create", "delete", "deletecollection","patch","update","get", "list", "watch"]
+  # Allow creation of new namespaces
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["create"]
+  # Write permissions for critical auth and networking resouces (privileged)
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["rolebindings"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["networking.gke.io"]
+    resources: ["fqdnnetworkpolicies"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["policy"]
+    resources: ["podsecuritypolicies"]
+    verbs: ["use"]
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -180,8 +329,8 @@ metadata:
     taito.dev/aggregate-to-developers: "true"
 aggregationRule:
   clusterRoleSelectors:
-  - matchLabels:
-      taito.dev/aggregate-to-privileged-deployers: "true"
+    - matchLabels:
+        taito.dev/aggregate-to-privileged-deployers: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -190,8 +339,8 @@ metadata:
   name: taito-developer
 aggregationRule:
   clusterRoleSelectors:
-  - matchLabels:
-      taito.dev/aggregate-to-developers: "true"
+    - matchLabels:
+        taito.dev/aggregate-to-developers: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -199,6 +348,6 @@ kind: ClusterRole
 metadata:
   name: taito-iam-admin
 rules:
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["roles", "rolebindings"]
-  verbs: ["*"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
+    verbs: ["*"]

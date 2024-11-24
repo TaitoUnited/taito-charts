@@ -26,6 +26,13 @@ spec:
 {{- $type := default "service" .type -}}
 {{- if or (eq "service" $type) (eq "external" $type) }}
 
+{{- $fqdnPolicy := dict "enabled" false -}}
+{{- range $egress := .egress }}
+{{- if $egress.domain }}
+{{ $dummy := set $fqdnPolicy "enabled" true }}
+{{- end }}
+{{- end }}
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -108,6 +115,30 @@ spec:
   {{- end }}
   {{- end }}
 ---
+
+{{- if $fqdnPolicy.enabled }}
+apiVersion: networking.gke.io/v1alpha1
+kind: FQDNNetworkPolicy
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "myname" $root }}
+      release: {{ $root.Release.Name }}
+      {{- if default $defaults.tier .tier }}
+      tier: {{ default $defaults.tier .tier }}
+      {{- end }}
+      role: {{ $serviceName }}
+  egress:
+  - matches:
+    {{- range $egress := .egress }}
+    {{- if $egress.domain }}
+    - pattern: {{ $egress.domain | quote }}
+    {{- end }}
+    {{- end }}
+---
+{{- end }}
 
 {{- end }}
 {{- end }}

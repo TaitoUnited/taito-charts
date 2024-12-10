@@ -1,3 +1,6 @@
-networkPolicyEnabled: true
 serviceAccounts: []
 roles: []
+
+networkPolicyEnabled: true
+certManagerNetworkPolicyEnabled: true
+certManagerNamespace: cert-manager

@@ -12,4 +12,36 @@ spec:
   - Egress
 ---
 
+{{- if .Values.certManagerNetworkPolicyEnabled}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-acme-http-solver
+spec:
+  podSelector:
+    matchLabels:
+      acme.cert-manager.io/http01-solver: "true"
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: {{- if .Values.certManagerNamespace}}
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+---
+{{- end }}
+
+
 {{- end }}

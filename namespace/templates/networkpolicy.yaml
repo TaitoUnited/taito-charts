@@ -35,7 +35,7 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: {{- if .Values.certManagerNamespace}}
+          name: {{.Values.certManagerNamespace}}
   - from:
     - namespaceSelector:
         matchLabels:

@@ -278,7 +278,7 @@ spec:
                 - name: Host
                   value: {{ $root.Values.global.domain | quote }}
             {{- end }}
-            initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay }}
+            initialDelaySeconds: {{ coalesce .livenessInitialDelay $defaults.livenessInitialDelay 120 }}
             periodSeconds: {{ coalesce .livenessPeriod $defaults.livenessPeriod 10 }}
             timeoutSeconds: {{ coalesce .livenessTimeout $defaults.livenessTimeout 3 }}
             failureThreshold: {{ coalesce .livenessFailureThreshold $defaults.livenessFailureThreshold 3 }}
@@ -299,8 +299,8 @@ spec:
                 - name: Host
                   value: {{ $root.Values.global.domain | quote }}
             {{- end }}
-            initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 30 }}
-            periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 10 }}
+            initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 15 }}
+            periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 5 }}
             timeoutSeconds: {{ coalesce .readinessTimeout $defaults.readinessTimeout 3 }}
             failureThreshold: {{ coalesce .readinessFailureThreshold $defaults.readinessFailureThreshold 6 }}
             successThreshold: {{ coalesce .readinessSuccessThreshold $defaults.readinessSuccessThreshold 1 }}
@@ -438,7 +438,7 @@ spec:
               path: {{ coalesce .sidecar.livenessPath $defaults.livenessPath }}
               port: {{ coalesce .sidecar.livenessPort .sidecar.port $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: {{ coalesce .sidecar.livenessInitialDelay $defaults.livenessInitialDelay }}
+            initialDelaySeconds: {{ coalesce .sidecar.livenessInitialDelay $defaults.livenessInitialDelay 120 }}
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
@@ -448,8 +448,8 @@ spec:
               path: {{ coalesce .sidecar.readinessPath .sidecar.livenessPath $defaults.livenessPath }}
               port: {{ coalesce .sidecar.readinessPort .sidecar.livenessPort .sidecar.port $defaults.port }}
               scheme: HTTP
-            initialDelaySeconds: {{ coalesce .sidecar.readinessInitialDelay 30 }}
-            periodSeconds: 10
+            initialDelaySeconds: {{ coalesce .sidecar.readinessInitialDelay 15 }}
+            periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: {{ coalesce .sidecar.readinessFailureThreshold 6 }}
             successThreshold: 1

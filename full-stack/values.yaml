@@ -55,7 +55,7 @@ serviceDefaults:
   tier:
   livenessPath: /healthz
   # livenessCommand:
-  livenessInitialDelay: 3
+  livenessInitialDelay: 120
   # Graceful termination: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-configuration#customize_timeouts
   drainingTimeoutSeconds: 0
   preStopHookSleepSeconds: 0

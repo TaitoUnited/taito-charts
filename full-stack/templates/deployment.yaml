@@ -302,7 +302,7 @@ spec:
             initialDelaySeconds: {{ coalesce .readinessInitialDelay $defaults.readinessInitialDelay 15 }}
             periodSeconds: {{ coalesce .readinessPeriod $defaults.readinessPeriod 5 }}
             timeoutSeconds: {{ coalesce .readinessTimeout $defaults.readinessTimeout 3 }}
-            failureThreshold: {{ coalesce .readinessFailureThreshold $defaults.readinessFailureThreshold 6 }}
+            failureThreshold: {{ coalesce .readinessFailureThreshold $defaults.readinessFailureThreshold 12 }}
             successThreshold: {{ coalesce .readinessSuccessThreshold $defaults.readinessSuccessThreshold 1 }}
           {{- end }}
           envFrom:
@@ -451,7 +451,7 @@ spec:
             initialDelaySeconds: {{ coalesce .sidecar.readinessInitialDelay 15 }}
             periodSeconds: 5
             timeoutSeconds: 3
-            failureThreshold: {{ coalesce .sidecar.readinessFailureThreshold 6 }}
+            failureThreshold: {{ coalesce .sidecar.readinessFailureThreshold 12 }}
             successThreshold: 1
           {{- end }}
           envFrom:

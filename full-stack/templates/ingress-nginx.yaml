@@ -41,7 +41,7 @@ metadata:
     {{- end }}
     {{- if $domain.annotations }}
     {{- range $annotationName, $annotationValue := $domain.annotations }}
-    {{ $annotationName }}: {{ $annotationValue }}
+    {{ $annotationName }}: {{- $annotationValue | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
 spec:
@@ -89,7 +89,7 @@ metadata:
     {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- range $annotationName, $annotationValue := .Values.ingress.annotations }}
-    {{ $annotationName }}: {{ $annotationValue }}
+    {{ $annotationName }}: {{- $annotationValue | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
     nginx.ingress.kubernetes.io/server-snippet: |
@@ -265,7 +265,7 @@ metadata:
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
-    {{ $annotationName }}: {{ $annotationValue }}
+    {{ $annotationName }}: {{- $annotationValue | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
 spec:
@@ -407,7 +407,7 @@ metadata:
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
-    {{ $annotationName }}: {{ $annotationValue }}
+    {{ $annotationName }}: {{- $annotationValue | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
 spec:

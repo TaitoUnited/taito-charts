@@ -407,7 +407,7 @@ metadata:
     {{- end }}
     {{- if .annotations }}
     {{- range $annotationName, $annotationValue := .annotations }}
-    {{ $annotationName }}: {{- toYaml $annotationValue | nindent 4 }}
+    {{ $annotationName }}: {{- $annotationValue | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
 spec:

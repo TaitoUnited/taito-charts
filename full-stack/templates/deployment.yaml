@@ -162,7 +162,38 @@ spec:
                   - {{ $serviceName }}
               topologyKey: kubernetes.io/hostname        
       initContainers:
-      {{- if .initCommand }}
+        {{- if and (.db) (eq $provider "gcp") }}
+        {{- if .db.useProxy }}
+        - name: cloud-sql-proxy
+          restartPolicy: Always
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.15.1
+          args:
+            # - --private-ip
+            # - --auto-iam-authn
+            - --structured-logs
+            - --credentials-file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }}
+            - --port={{ .db.port }}
+            - {{ .db.instance }}
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]          
+          resources:
+            requests:
+              memory: 50Mi
+              cpu: 10m
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+        {{- end }}
+        {{- end }}
+
+        {{- if .initCommand }}
         - name: {{ template "myname" $root }}-{{ $serviceName }}-init
           image: busybox
           command: ['sh', '-c', {{ .initCommand | quote }}]
@@ -193,7 +224,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-      {{- end }}
+        {{- end }}
       terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds | default $defaults.terminationGracePeriodSeconds }}
       containers:
         - name: {{ template "myname" $root }}-{{ $serviceName }}
@@ -517,37 +548,6 @@ spec:
         {{- end }}
         {{- end }}
 
-        {{- if and (.db) (eq $provider "gcp") }}
-        {{- if .db.useProxy }}
-        - name: cloudsql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.18.0-alpine
-          securityContext:
-            runAsUser: 2
-            runAsGroup: 2
-            privileged: false
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop: ["ALL"]
-          command:
-            - /cloud_sql_proxy
-            - -verbose={{ $root.Values.global.debug | default false }}
-            - -log_debug_stdout=true
-            - --dir=/cloudsql
-            - -instances={{ .db.instance }}=tcp:{{ .db.port }}
-            - -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }}
-          volumeMounts:
-            - name: cloudsql-instance-credentials
-              mountPath: /secrets/cloudsql
-              readOnly: true
-            - name: ssl-certs
-              mountPath: /etc/ssl/certs
-            - name: cloudsql
-              mountPath: /cloudsql
-        {{- end }}
-        {{- end }}
       volumes:
         {{- if .hostDevices }}
         {{- range .hostDevices }}
@@ -609,11 +609,6 @@ spec:
         - name: cloudsql-instance-credentials
           secret:
             secretName: {{ regexReplaceAll "\\.[a-zA-Z0-9]*$" .db.proxySecret "" }}
-        - name: ssl-certs
-          hostPath:
-            path: /etc/ssl/certs
-        - name: cloudsql
-          emptyDir:
         {{- end }}
         {{- end }}
         {{- if and (.serviceAccount) (eq $provider "gcp") }}

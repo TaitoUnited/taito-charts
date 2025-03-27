@@ -128,6 +128,12 @@ spec:
                 - {{ . }}
                 {{- end }}
               {{- end }}
+              {{- if $job.args }}
+              args:
+                {{- range $job.args }}
+                - {{ . }}
+                {{- end }}
+              {{- end }}
               {{- if $job.stdin }}
               stdin: {{ $job.stdin }}
               {{- end }}

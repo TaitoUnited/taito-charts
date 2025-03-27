@@ -260,6 +260,12 @@ spec:
             - {{ . | quote }}
             {{- end }}
           {{- end }}
+          {{- if .args }}
+          args:
+            {{- range .args }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
           {{- if .stdin }}
           stdin: {{ .stdin }}
           {{- end }}
@@ -455,6 +461,12 @@ spec:
           {{- if .sidecar.command }}
           command:
             {{- range .sidecar.command }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .sidecar.args }}
+          args:
+            {{- range .sidecar.args }}
             - {{ . | quote }}
             {{- end }}
           {{- end }}

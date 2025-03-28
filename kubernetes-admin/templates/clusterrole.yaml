@@ -244,7 +244,7 @@ rules:
       ]
   # Read-only permissions for critical auth and networking resouces (non-privileged)
   - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["rolebindings"]
+    resources: ["rolebindings", "roles"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses", "networkpolicies"]
@@ -266,7 +266,7 @@ rules:
     verbs: ["create"]
   # Write permissions for critical auth and networking resouces (privileged)
   - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["rolebindings"]
+    resources: ["rolebindings", "roles"]
     verbs:
       [
         "create",

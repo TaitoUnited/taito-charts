@@ -101,6 +101,38 @@ spec:
                     - {{ .placementPreferSameAs }}
                 topologyKey: "kubernetes.io/hostname"
               {{- end }}
+          initContainers:
+            {{- if and (.db) (eq $provider "gcp") }}
+            {{- if .db.useProxy }}
+            - name: cloud-sql-proxy
+              restartPolicy: Always
+              image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.15.1
+              args:
+                # - --private-ip
+                # - --auto-iam-authn
+                - --quitquitquit
+                - --structured-logs
+                - --credentials-file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }}
+                - --port={{ .db.port }}
+                - {{ .db.instance }}
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                seccompProfile:
+                  type: RuntimeDefault
+                capabilities:
+                  drop: ["ALL"]          
+              resources:
+                requests:
+                  memory: 50Mi
+                  cpu: 10m
+              volumeMounts:
+                - name: cloudsql-instance-credentials
+                  mountPath: /secrets/cloudsql
+                  readOnly: true
+            {{- end }}
+            {{- end }}
           containers:
             - name: {{ template "myname" $root }}-{{ $job.name }}
               {{- if .image }}
@@ -227,40 +259,7 @@ spec:
                   readOnly: true
               {{- end }}
               {{- end }}
-            {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
-                - mountPath: /tmp/pod
-                  name: tmp-pod
-            - name: cloudsql-proxy
-              image: gcr.io/cloudsql-docker/gce-proxy:1.18.0-alpine
-              command: ["/bin/sh", "-c"]
-              args:
-                - |
-                  # Start cloud sql proxy in background
-                  /cloud_sql_proxy -verbose=false -log_debug_stdout=true --dir=/cloudsql -instances={{ .db.instance }}=tcp:{{ .db.port }} -credential_file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }} & CHILD_PID=$!
-
-                  # Kill cloud sql proxy if file /tmp/pod/terminated exists
-                  (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
-
-                  # Exit
-                  wait $CHILD_PID
-                  if [[ -f "/tmp/pod/terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
-              volumeMounts:
-                - name: cloudsql-instance-credentials
-                  mountPath: /secrets/cloudsql
-                  readOnly: true
-                - name: ssl-certs
-                  mountPath: /etc/ssl/certs
-                - name: cloudsql
-                  mountPath: /cloudsql
-                - mountPath: /tmp/pod
-                  name: tmp-pod
-                  readOnly: true
-            {{- end }}
           volumes:
-            {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
-            - name: tmp-pod
-              emptyDir: {}
-            {{- end }}
             {{- range $name, $value := $defaults.secrets }}
             - name: default- {{- lower $name | replace "_" "-" }}
               secret:
@@ -285,15 +284,12 @@ spec:
                 - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
                   path: {{ $name }}
             {{- end }}
-            {{- if and (.db) (ne $env "local") (eq $provider "gcp") }}
+            {{- if and (.db) (eq $provider "gcp") }}
+            {{- if .db.useProxy }}
             - name: cloudsql-instance-credentials
               secret:
                 secretName: {{ regexReplaceAll "\\.[a-zA-Z0-9]*$" .db.proxySecret "" }}
-            - name: ssl-certs
-              hostPath:
-                path: /etc/ssl/certs
-            - name: cloudsql
-              emptyDir:
+            {{- end }}
             {{- end }}
             {{- if and (.serviceAccount) (eq $provider "gcp") }}
             {{- if .serviceAccount.secret }}

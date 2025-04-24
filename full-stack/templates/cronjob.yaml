@@ -163,7 +163,7 @@ spec:
               {{- if $job.args }}
               args:
                 {{- range $job.args }}
-                - {{ . }}
+                - {{ . | quote }}
                 {{- end }}
               {{- end }}
               {{- if $job.stdin }}
@@ -171,12 +171,6 @@ spec:
               {{- end }}
               {{- if $job.tty }}
               tty: {{ $job.tty }}
-              {{- end }}
-              {{- if $job.args }}
-              args:
-                {{- range $job.args }}
-                - {{ . | quote }}
-                {{- end }}
               {{- end }}
               resources:
                 requests:

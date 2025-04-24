@@ -3,7 +3,8 @@
 
 {{- range $serviceName, $service := .Values.services }}
 {{- with $service }}
-{{- if (or (not (hasKey . "enabled")) (.enabled)) }}
+{{- if or (not (hasKey . "enabled")) (.enabled) }}
+{{- if or (not (hasKey . "serviceEnabled")) (.serviceEnabled) }}
 {{- $type := default "service" .type -}}
 {{- if .external }}
 apiVersion: v1
@@ -32,6 +33,7 @@ spec:
   type: LoadBalancer
   loadBalancerIP: {{ .external.ip }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

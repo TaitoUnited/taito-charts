@@ -7,6 +7,7 @@
 {{- range $serviceName, $service := .Values.services }}
 {{- with $service }}
 {{- if or (not (hasKey . "enabled")) (.enabled) }}
+{{- if or (not (hasKey . "serviceEnabled")) (.serviceEnabled) }}
 {{- $type := default "service" .type -}}
 {{- if or (eq "service" $type) (eq "external" $type) }}
 {{- if .autoscale }}
@@ -632,6 +633,7 @@ spec:
         {{- end }}
 ---
 
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

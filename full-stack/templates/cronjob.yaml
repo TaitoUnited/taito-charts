@@ -154,6 +154,18 @@ spec:
                   type: RuntimeDefault
                 capabilities:
                   drop: ["ALL"]
+              {{- if $job.shellCommand }}
+              command:
+                - sh
+                - -c
+                - >
+                  {{ $job.shellCommand }};
+                  {{- if and (.db) (eq $provider "gcp") }}
+                  {{- if .db.useProxy }}
+                  exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $$exit_code
+                  {{- end }}
+                  {{- end }}
+              {{- end }}                  
               {{- if $job.command }}
               command:
                 {{- range $job.command }}

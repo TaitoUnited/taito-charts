@@ -162,7 +162,9 @@ spec:
                   {{ $job.shellCommand }};
                   {{- if and (.db) (eq $provider "gcp") }}
                   {{- if .db.useProxy }}
-                  exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $$exit_code
+                  exit_code=$?;
+                  if which curl > /dev/null; then curl -X POST localhost:9091/quitquitquit; else wget --method=POST http://localhost:9091/quitquitquit; fi;
+                  exit $$exit_code;
                   {{- end }}
                   {{- end }}
               {{- end }}                  

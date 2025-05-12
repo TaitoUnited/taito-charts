@@ -93,6 +93,43 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: taito-pod-runner
+  labels:
+    taito.dev/aggregate-to-developers: "true"
+rules:
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: taito-pod-portforwarder
   labels:
     taito.dev/aggregate-to-developers: "true"

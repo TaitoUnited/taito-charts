@@ -134,7 +134,7 @@ spec:
             {{- end }}
             {{- end }}
           containers:
-            - name: {{ template "myname" $root }}-{{ $job.name }}
+            - name: {{ template "myname" $root }}-{{ $serviceName }}-{{ $job.name }}
               {{- if .image }}
               image: {{ .image }}
               {{- else }}

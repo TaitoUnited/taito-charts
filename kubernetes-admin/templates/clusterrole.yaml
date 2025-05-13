@@ -101,6 +101,19 @@ rules:
     resources: ["pods/log"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods/exec"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["", "extensions", "apps"]
     resources: ["pods"]
     verbs:
       [

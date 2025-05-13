@@ -163,7 +163,7 @@ spec:
                   {{- if and (.db) (eq $provider "gcp") }}
                   {{- if .db.useProxy }}
                   exit_code=$?;
-                  if which curl > /dev/null; then curl -X POST localhost:9091/quitquitquit; else wget --post-data="" http://localhost:9091/quitquitquit; fi;
+                  if which curl > /dev/null; then curl -X POST localhost:9091/quitquitquit; else wget --post-data="" http://localhost:9091/quitquitquit -O /dev/null; fi;
                   exit $$exit_code;
                   {{- end }}
                   {{- end }}

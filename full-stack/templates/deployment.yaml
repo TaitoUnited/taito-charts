@@ -378,10 +378,10 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
-          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "default-") | indent 10 }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "default-") | indent 12 }}
           {{- end }}
           {{- range $name, $value := .secrets }}
-          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "") | indent 10 }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "") | indent 12 }}
           {{- end }}
           {{- if .hostDevices }}
           {{- range .hostDevices }}
@@ -512,7 +512,7 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}
-          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "sidecar-") | indent 10 }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "sidecar-") | indent 12 }}
           {{- end }}
           {{- if .sidecar.temporaryVolumeMounts }}
           {{- range .sidecar.temporaryVolumeMounts }}

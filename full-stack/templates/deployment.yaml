@@ -378,20 +378,10 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := $defaults.secrets }}
-          {{- if $value }}
-            - name: default- {{- lower $name | replace "_" "-" }}
-              mountPath: /run/secrets/ {{- $name }}
-              subPath: {{ $name }}
-              readOnly: true
-          {{- end }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "default-") | indent 10 }}
           {{- end }}
           {{- range $name, $value := .secrets }}
-          {{- if $value }}
-            - name: {{ lower $name | replace "_" "-" }}
-              mountPath: /run/secrets/ {{- $name }}
-              subPath: {{ $name }}
-              readOnly: true
-          {{- end }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "") | indent 10 }}
           {{- end }}
           {{- if .hostDevices }}
           {{- range .hostDevices }}
@@ -522,12 +512,7 @@ spec:
             {{- end }}
           volumeMounts:
           {{- range $name, $value := .sidecar.secrets }}
-          {{- if $value }}
-            - name: sidecar- {{- lower $name | replace "_" "-" }}
-              mountPath: /run/secrets/ {{- $name }}
-              subPath: {{ $name }}
-              readOnly: true
-          {{- end }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "sidecar-") | indent 10 }}
           {{- end }}
           {{- if .sidecar.temporaryVolumeMounts }}
           {{- range .sidecar.temporaryVolumeMounts }}
@@ -571,35 +556,14 @@ spec:
         {{- end }}
         {{- end }}
         {{- range $name, $value := $defaults.secrets }}
-        {{- if $value }}
-        - name: default- {{- lower $name | replace "_" "-" }}
-          secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
-            items:
-            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
-              path: {{ $name }}
-        {{- end }}
+        {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "default-") | indent 8 }}
         {{- end }}
         {{- range $name, $value := .secrets }}
-        {{- if $value }}
-        - name: {{ lower $name | replace "_" "-" }}
-          secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
-            items:
-            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
-              path: {{ $name }}
-        {{- end }}
+        {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "") | indent 8 }}
         {{- end }}
         {{- if dig "sidecar" "enabled" "" . }}
         {{- range $name, $value := .sidecar.secrets }}
-        {{- if $value }}
-        - name: sidecar- {{- lower $name | replace "_" "-" }}
-          secret:
-            secretName: {{ regexReplaceAll "\\.[.a-zA-Z0-9]*$" $value "" }}
-            items:
-            - key: {{ regexFind "\\.[.a-zA-Z0-9]*$" $value | substr 1 -1 }}
-              path: {{ $name }}
-        {{- end }}
+        {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "sidecar-") | indent 8 }}
         {{- end }}
         {{- end }}
         {{- if .temporaryVolumeMounts }}

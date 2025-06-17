@@ -92,6 +92,13 @@ spec:
         {{- end }}
     spec:
       securityContext:
+        privileged: false
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+        capabilities:
+          drop: ["ALL"]
         {{- if quote .fsGroup }}
         fsGroup: {{ .fsGroup }}
         {{- end }}
@@ -198,6 +205,14 @@ spec:
         - name: {{ template "myname" $root }}-{{ $serviceName }}-init
           image: busybox
           command: ['sh', '-c', {{ .initCommand | quote }}]
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]          
           volumeMounts:
           {{- if .temporaryVolumeMounts }}
           {{- range .temporaryVolumeMounts }}

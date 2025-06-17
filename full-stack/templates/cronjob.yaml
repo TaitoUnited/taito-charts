@@ -108,7 +108,7 @@ spec:
               restartPolicy: Always
               image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.15.1
               args:
-                # - --private-ip
+                - --private-ip
                 # - --auto-iam-authn
                 - --quitquitquit
                 - --structured-logs

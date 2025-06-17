@@ -169,7 +169,7 @@ spec:
           restartPolicy: Always
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.15.1
           args:
-            # - --private-ip
+            - --private-ip
             # - --auto-iam-authn
             - --structured-logs
             - --credentials-file=/secrets/cloudsql/{{ regexFind "[a-zA-Z0-9]*$" .db.proxySecret }}

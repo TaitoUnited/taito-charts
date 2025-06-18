@@ -44,13 +44,44 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: {{ $root.Values.ingress.namespace }}
+          kubernetes.io/metadata.name: {{ $root.Values.ingress.namespace }}
   {{- end }}
   {{- end }}
+
   {{- range $ingress := .ingress }}
+  {{- if not $ingress.ip }}
   - from:
     - podSelector:
-        matchLabels: {{ toJson $ingress }}
+        matchLabels: {{ toJson (omit $ingress "namespace") }}
+      {{- if $ingress.namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ $ingress.namespace }}
+      {{- end }}
+  {{- end }}
+
+  {{- if $ingress.ip }}
+  {{- if eq $ingress.ip "private" }}
+  - from:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+  - from:
+    - ipBlock:
+        cidr: 172.16.0.0/12
+  - from:
+    - ipBlock:
+        cidr: 192.168.0.0/16
+  {{- else if eq $ingress.ip "any" }}
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+  {{- else }}
+  - from:
+    - ipBlock:
+        cidr: {{ $ingress.ip }}
+  {{- end }}
+  {{- end }}
+
   {{- end }}
   egress:
   - to:
@@ -66,7 +97,12 @@ spec:
   {{- if and (not $egress.ip) (not $egress.domain) }}
   - to:
     - podSelector:
-        matchLabels: {{ toJson $egress }}
+        matchLabels: {{ toJson (omit $egress "namespace") }}
+      {{- if $egress.namespace }}
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ $egress.namespace }}
+      {{- end }}
   {{- end }}
   {{- if $egress.ip }}
   {{- if eq $egress.ip "private" }}

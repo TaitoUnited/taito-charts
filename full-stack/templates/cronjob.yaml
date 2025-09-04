@@ -51,7 +51,7 @@ spec:
           activeDeadlineSeconds: {{ $job.activeDeadlineSeconds | default nil }}
           restartPolicy: {{ $job.restartPolicy | default "Never" }}
           securityContext:
-            {{- if coalesce $job.fsGroup .fsGroup | quote }}
+            {{- if coalesce $job.fsGroup .fsGroup | quote }} 
             fsGroup: {{ coalesce $job.fsGroup .fsGroup }}
             {{- end }}
           {{- if default $defaults.serviceAccountName $job.serviceAccountName }}
@@ -142,7 +142,7 @@ spec:
               {{- end }}
               imagePullPolicy: {{ $global.imagePullPolicy | quote }}
               securityContext:
-                {{- if coalesce $job.runAsUser .runAsUser | quote }}
+                {{- if coalesce $job.runAsUser .runAsUser | quote }}
                 runAsUser: {{ coalesce $job.runAsUser .runAsUser }}
                 {{- end }}
                 {{- if coalesce $job.runAsGroup .runAsGroup | quote }}

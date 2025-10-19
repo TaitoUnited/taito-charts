@@ -39,14 +39,21 @@ spec:
       template:
         metadata:
           labels:
-            fullname: {{ template "myfullname" $root }}-{{ $serviceName }}-{{ $job.name }}
+            fullname: {{ template "myfullname" $root }}-{{ $serviceName }}
+            jobname: {{ $job.name }}
             app: {{ template "myname" $root }}
             release: {{ $root.Release.Name }}
             {{- if default $defaults.tier .tier }}
             tier: {{ default $defaults.tier .tier }}
             {{- end }}
             role: {{ $serviceName }}
-            # TODO: access labels for cronjobs also
+            {{- if $root.Values.networkPolicyEnabled}}
+            {{- range $egress := .egress }}
+            {{- if $egress.fullname }}
+            access-{{ $egress.fullname }}: "true"
+            {{- end }}
+            {{- end }}
+            {{- end }}
         spec:
           activeDeadlineSeconds: {{ $job.activeDeadlineSeconds | default nil }}
           restartPolicy: {{ $job.restartPolicy | default "Never" }}

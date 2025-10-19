@@ -201,19 +201,27 @@ spec:
         {{- end }}
         {{- end }}
 
+        {{/* TODO: Init containers as an array with an option to enable defaults (mounts, etc). */}}
+        {{/* TODO: Make temporaryVolumeMount readOnly for main container. */}}
         {{- if .initCommand }}
         - name: {{ template "myname" $root }}-{{ $serviceName }}-init
-          image: busybox
+          image: {{ .initImage | default "busybox" }}
           command: ['sh', '-c', {{ .initCommand | quote }}]
           securityContext:
             privileged: false
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            {{- if .initRunAsUser }}
+            runAsUser: {{ .initRunAsUser }}
+            {{- end }}
             seccompProfile:
               type: RuntimeDefault
             capabilities:
               drop: ["ALL"]          
           volumeMounts:
+          {{- range $name, $value := .initSecrets }}
+          {{ include "fullstack.secretVolumeMount" (dict "name" $name "value" $value "prefix" "") | indent 12 }}
+          {{- end }}
           {{- if .temporaryVolumeMounts }}
           {{- range .temporaryVolumeMounts }}
             - mountPath: {{ .mountPath }}
@@ -574,6 +582,9 @@ spec:
         {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "default-") | indent 8 }}
         {{- end }}
         {{- range $name, $value := .secrets }}
+        {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "") | indent 8 }}
+        {{- end }}
+        {{- range $name, $value := .initSecrets }}
         {{ include "fullstack.secretVolume" (dict "name" $name "value" $value "prefix" "") | indent 8 }}
         {{- end }}
         {{- if dig "sidecar" "enabled" "" . }}

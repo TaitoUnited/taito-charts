@@ -273,11 +273,17 @@ spec:
             {{- end }}
             privileged: {{ .privileged | default false }}
             allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default false }}
+            {{- if .allowRunAsRoot }}
+            runAsNonRoot: false
+            {{- else }}
             runAsNonRoot: true
+            {{- end }}
             seccompProfile:
-              type: RuntimeDefault
+              type: {{ .seccompProfile | default "RuntimeDefault" }}
             capabilities:
+              {{- if not .doNotDropCapabilities }}
               drop: ["ALL"]
+              {{- end }}
               add:
                 {{- if .capabilities }}
                 {{- range $cab := .capabilities }}

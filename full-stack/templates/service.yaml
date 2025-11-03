@@ -164,6 +164,12 @@ spec:
   {{- if eq $type "external" }}
   type: LoadBalancer
   loadBalancerIP: {{ .externalIP }}
+  {{- if .allowedCidrs }}
+  loadBalancerSourceRanges:
+    {{- range .allowedCidrs }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
   {{- end }}
 ---
 {{- end }}

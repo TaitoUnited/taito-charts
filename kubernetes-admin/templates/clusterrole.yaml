@@ -27,7 +27,11 @@ rules:
     resources: ["ingresses", "ingresses/status", "networkpolicies"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.gke.io"]
-    resources: ["fqdnnetworkpolicies"]
+    resources:
+      ["fqdnnetworkpolicies", "gcpbackendpolicies", "healthcheckpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["policy"]
     resources: ["poddisruptionbudgets", "poddisruptionbudgets/status"]
@@ -281,6 +285,32 @@ rules:
       ]
   - apiGroups: ["cert-manager.io"]
     resources: ["certificates"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["networking.gke.io"]
+    resources: ["gcpbackendpolicies", "healthcheckpolicies"]
+    verbs:
+      [
+        "create",
+        "delete",
+        "deletecollection",
+        "patch",
+        "update",
+        "get",
+        "list",
+        "watch",
+      ]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
     verbs:
       [
         "create",

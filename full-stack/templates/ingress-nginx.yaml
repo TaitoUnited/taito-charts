@@ -282,7 +282,7 @@ spec:
             pathType: Prefix
           {{- else }}
           - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
           {{- end }}
             backend:
               service:
@@ -424,7 +424,7 @@ spec:
             pathType: Prefix
           {{- else }}
           - path: {{ $path.path }}{{ hasSuffix "/" $path.path | ternary "()(.*)" "(/|$)(.*)" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
           {{- end }}
             backend:
               service:

@@ -21,6 +21,7 @@ spec:
     tier: {{ default $defaults.tier .tier }}
     {{- end }}
     role: {{ $serviceName }}
+    service: "true"
   ports:
     {{- range $p := .external.ports }}
     - name: {{ $p.port | quote }}

@@ -126,6 +126,7 @@ spec:
     tier: {{ default $defaults.tier .tier }}
     {{- end }}
     role: {{ $serviceName }}
+    service: "true"
   ports:
     - name: service
       protocol: {{ .protocol | default "TCP" }}

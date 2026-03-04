@@ -66,6 +66,7 @@ spec:
       tier: {{ default $defaults.tier .tier }}
       {{- end }}
       role: {{ $serviceName }}
+      service: "true"
   {{- if default $defaults.strategyType .strategyType }}
   strategy:
     type: {{ default $defaults.strategyType .strategyType }}
@@ -83,6 +84,7 @@ spec:
         tier: {{ default $defaults.tier .tier }}
         {{- end }}
         role: {{ $serviceName }}
+        service: "true"
         {{- if $root.Values.networkPolicyEnabled}}
         {{- range $egress := .egress }}
         {{- if $egress.fullname }}

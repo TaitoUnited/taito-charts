@@ -46,7 +46,7 @@ spec:
             {{- if default $defaults.tier .tier }}
             tier: {{ default $defaults.tier .tier }}
             {{- end }}
-            role: {{ $serviceName }}-job
+            role: {{ $serviceName }}
             {{- if $root.Values.networkPolicyEnabled}}
             {{- range $egress := .egress }}
             {{- if $egress.fullname }}

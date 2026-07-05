@@ -2,3 +2,8 @@ provider:
 permissions:
   clusterRoles:
   namespaces:
+gateway:
+  namedAddress:
+  certMap:
+  sslPolicy:
+  securityPolicy:

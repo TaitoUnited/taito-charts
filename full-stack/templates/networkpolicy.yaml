@@ -45,6 +45,15 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: {{ $root.Values.ingress.namespace }}
+
+  # With Gateway enabled we need to allow traffic from anywhere as correct IPs are not know
+  # TODO: How to solve this?
+  {{- if eq "gcp-gateway" $root.Values.ingress.class }}
+  {{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
+  - {}
+  {{- end }}
+  {{- end }}
+          
   {{- end }}
   {{- end }}
 

@@ -46,11 +46,20 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: {{ $root.Values.ingress.namespace }}
 
-  # With Gateway enabled we need to allow traffic from anywhere as correct IPs are not know
-  # TODO: How to solve this?
+  # With Google Gateway enabled we need to allow traffic from any public IP, because we don't
+  # know the specific public IPs the Google load balancers use. However, in most setups
+  # Google VPC firewall blocks unauthorized traffic and let's traffic from load balancers through.
+  # Note that this doesn't allow traffic from other pods, only from public IPs outside the private
+  # network.
   {{- if eq "gcp-gateway" $root.Values.ingress.class }}
   {{- if or (not (hasKey $root.Values.ingress "enabled")) ($root.Values.ingress.enabled) }}
-  - {}
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
   {{- end }}
   {{- end }}
           

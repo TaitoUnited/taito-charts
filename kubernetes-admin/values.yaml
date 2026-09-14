@@ -6,4 +6,3 @@ gateway:
   namedAddress:
   certMap:
   sslPolicy:
-  securityPolicy:

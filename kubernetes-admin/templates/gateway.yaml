@@ -63,7 +63,6 @@ metadata:
 spec:
   default:
     sslPolicy: {{ .Values.gateway.sslPolicy }}
-    securityPolicy: {{ .Values.gateway.securityPolicy }}
   targetRef:
     group: gateway.networking.k8s.io
     kind: Gateway

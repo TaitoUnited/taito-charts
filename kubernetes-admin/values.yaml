@@ -6,3 +6,4 @@ gateway:
   namedAddress:
   certMap:
   sslPolicy:
+  tlsTerminate: true

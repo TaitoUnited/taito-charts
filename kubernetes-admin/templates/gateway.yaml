@@ -18,20 +18,43 @@ metadata:
   name: external-http
   namespace: gateway-infra
   annotations:
-    {{- if .Values.provider }}
+    {{- if .Values.gateway.certMap }}
     {{- if eq .Values.provider "gcp" }}
     networking.gke.io/certmap: {{ .Values.gateway.certMap }}
     {{- end }}
     {{- end }}
 spec:
-  {{- if .Values.provider }}
   {{- if eq .Values.provider "gcp" }}
   gatewayClassName: gke-l7-global-external-managed
+  {{- else }}
+  gatewayClassName: cilium  
   {{- end }}
-  {{- end }}
+  {{- if .Values.gateway.namedAddress }}
   addresses:
     - type: NamedAddress
       value: {{ .Values.gateway.namedAddress }}
+  {{- end }}
+  infrastructure:
+    annotations:
+      {{- if .Values.gateway.tlsTerminate }}
+      {{- if eq .Values.provider "upcloud" }}
+      service.beta.kubernetes.io/upcloud-load-balancer-config: |
+        {
+          "frontends": [
+            {
+              "name": "port-80",
+              "mode": "http",
+              "port": 80
+            },
+            {
+              "name": "port-443",
+              "mode": "tcp",
+              "port": 443
+            }
+          ]
+        }
+      {{- end }}
+      {{- end }}
   listeners:
     - name: http
       protocol: HTTP
@@ -44,16 +67,22 @@ spec:
           selector:
             matchLabels:
               httpAllowed: "true"
+    {{- if .Values.gateway.tlsTerminate }}
     - name: https
       protocol: HTTPS
       port: 443
+      {{- if not .Values.gateway.certMap }}
+      tls:
+        mode: Terminate
+        certificateRefs: []
+      {{- end }}
       allowedRoutes:
         kinds:
           - kind: HTTPRoute
         namespaces:
           from: All
+    {{- end }}
 ---
-{{- if .Values.provider }}
 {{- if eq .Values.provider "gcp" }}
 apiVersion: networking.gke.io/v1
 kind: GCPGatewayPolicy
@@ -68,7 +97,6 @@ spec:
     kind: Gateway
     name: external-http
 ---
-{{- end }}
 {{- end }}
 kind: HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1beta1

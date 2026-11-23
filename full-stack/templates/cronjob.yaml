@@ -161,6 +161,7 @@ spec:
                 {{- if coalesce $job.runAsGroup .runAsGroup | quote }}
                 runAsGroup: {{ coalesce $job.runAsGroup .runAsGroup }}
                 {{- end }}
+                privileged: false
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
                 seccompProfile:

@@ -94,8 +94,6 @@ spec:
         {{- end }}
     spec:
       securityContext:
-        privileged: false
-        allowPrivilegeEscalation: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault

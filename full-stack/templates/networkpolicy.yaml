@@ -151,6 +151,13 @@ spec:
         cidr: {{ $egress.ip }}
   {{- end }}
   {{- end }}
+  # Include domains that are CIDRs
+  # TODO: rename domain -> host
+  {{- if and $egress.domain (regexMatch `/` $egress.domain) }}
+  - to:
+    - ipBlock:
+        cidr: {{ $egress.domain }}
+  {{- end }}
   {{- end }}
 ---
 
@@ -172,7 +179,9 @@ spec:
   egress:
   - matches:
     {{- range $egress := .egress }}
-    {{- if $egress.domain }}
+    # Filter out CIDRs
+    # TODO: rename domain -> host
+    {{- if and $egress.domain (not (regexMatch `/` $egress.domain)) }}
     - pattern: {{ $egress.domain | quote }}
     {{- end }}
     {{- end }}
@@ -197,7 +206,9 @@ spec:
   egress:
     - toFQDNs:
         {{- range $egress := .egress }}
-        {{- if $egress.domain }}
+        # Filter out CIDRs
+        # TODO: rename domain -> host
+        {{- if and $egress.domain (not (regexMatch `/` $egress.domain)) }}
         - matchPattern: {{ $egress.domain | quote }}
         {{- end }}
         {{- end }}

@@ -4,6 +4,8 @@
 {{- $provider := .Values.global.zone.provider -}}
 {{- $defaults := .Values.serviceDefaults -}}
 
+{{- $ipv4CidrRegex := `^([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]{1,2})?$` }}
+
 {{- if .Values.networkPolicyEnabled}}
 
 {{- /* TODO: network policies for cronjobs also */ -}}
@@ -153,7 +155,7 @@ spec:
   {{- end }}
   # Include domains that are CIDRs
   # TODO: rename domain -> host
-  {{- if and $egress.domain (regexMatch `/` $egress.domain) }}
+  {{- if and $egress.domain (regexMatch $ipv4CidrRegex $egress.domain) }}
   - to:
     - ipBlock:
         cidr: {{ $egress.domain }}
@@ -181,7 +183,7 @@ spec:
     {{- range $egress := .egress }}
     # Filter out CIDRs
     # TODO: rename domain -> host
-    {{- if and $egress.domain (not (regexMatch `/` $egress.domain)) }}
+    {{- if and $egress.domain (not (regexMatch $ipv4CidrRegex $egress.domain)) }}
     - pattern: {{ $egress.domain | quote }}
     {{- end }}
     {{- end }}
@@ -208,7 +210,7 @@ spec:
         {{- range $egress := .egress }}
         # Filter out CIDRs
         # TODO: rename domain -> host
-        {{- if and $egress.domain (not (regexMatch `/` $egress.domain)) }}
+        {{- if and $egress.domain (not (regexMatch $ipv4CidrRegex $egress.domain)) }}
         - matchPattern: {{ $egress.domain | quote }}
         {{- end }}
         {{- end }}

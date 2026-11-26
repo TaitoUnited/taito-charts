@@ -154,7 +154,8 @@ spec:
   {{- end }}
 ---
 
-{{- if $fqdnPolicy.enabled }}
+# TODO: check provider instead of ingress.class
+{{- if and ($fqdnPolicy.enabled) (ne "cilium" $root.Values.ingress.class) }}
 apiVersion: networking.gke.io/v1alpha1
 kind: FQDNNetworkPolicy
 metadata:
@@ -175,6 +176,31 @@ spec:
     - pattern: {{ $egress.domain | quote }}
     {{- end }}
     {{- end }}
+---
+{{- end }}
+
+# TODO: check provider instead of ingress.class
+{{- if and ($fqdnPolicy.enabled) (eq "cilium" $root.Values.ingress.class) }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ template "myfullname" $root }}-{{ $serviceName }}
+spec:
+  endpointSelector:
+    matchLabels:
+      app: {{ template "myname" $root }}
+      release: {{ $root.Release.Name }}
+      {{- if default $defaults.tier .tier }}
+      tier: {{ default $defaults.tier .tier }}
+      {{- end }}
+      role: {{ $serviceName }}
+  egress:
+    - toFQDNs:
+        {{- range $egress := .egress }}
+        {{- if $egress.domain }}
+        - matchPattern: {{ $egress.domain | quote }}
+        {{- end }}
+        {{- end }}
 ---
 {{- end }}
 
